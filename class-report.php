@@ -12,7 +12,7 @@ class report
     {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        $sql = "select nasname, shortname, secret from nas where org_id = ? and shortname = ?";
+        $sql = "select ip, site.address, site.radkey from site, siteip where site.id = siteip.site_id and org_id = ? and site.address = ?";
         $handle = $dblink->prepare($sql);
         $handle->bindValue(1, $site->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site->name, PDO::PARAM_STR);
@@ -30,18 +30,18 @@ class report
     {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        $sql = "select distinct name, shortname from nas, organisation where organisation.id=nas.org_id order by name";
+        $sql = "select organisation.name, site.address from site, organisation where organisation.id=site.org_id order by organisation.name, site.address";
         $handle = $dblink->prepare($sql);
         $handle->execute();
         $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
         $this->subject = "List of sites subscribed to user.wifi";
-        $this->columns = array("IP Address", "Site Name");
+        $this->columns = array("Organisation", "Site Name");
     }
     function topSites()
     {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        $sql = 'select shortname, count(distinct username) as usercount from logs where start > DATE_SUB(NOW(), INTERVAL 30 DAY)  group by shortname having usercount > 2 order by usercount desc';
+        $sql = 'select name, count(distinct username) as usercount from logs where start > DATE_SUB(NOW(), INTERVAL 30 DAY)  group by shortname having usercount > 2 order by usercount desc';
         $handle = $dblink->prepare($sql);
         $handle->execute();
         $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
