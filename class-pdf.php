@@ -15,7 +15,7 @@ class PDF
         $config = config::getInstance();
         $this->message = file_get_contents($config->values['pdf-contents']['newsite-file']);
         $this->message = str_replace("%ORG%", $site->org_name, $this->message);
-        $this->message = str_replace("%RADKEY%", $site->radkey, $this->message);
+        $this->message = str_replace("%RADKEY%", $site->radKey, $this->message);
         $this->message = str_replace("%DESCRIPTION%", $site->name, $this->message);
         $this->message = str_replace("%KIOSKKEY%", $site->kioskKey, $this->message);
         $this->filename = $site->org_name . "-" . $site->name;
