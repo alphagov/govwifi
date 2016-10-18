@@ -1,7 +1,6 @@
 <?php
 
-class PDF
-{
+class PDF {
     public $filename;
     public $filepath;
     public $subject;
@@ -10,14 +9,16 @@ class PDF
     public $password;
     public $encrypt = TRUE;
 
-    public function populateNewSite($site)
-    {
+    public function populateNewSite($site) {
         $config = config::getInstance();
-        $this->message = file_get_contents($config->values['pdf-contents']['newsite-file']);
+        $this->message = file_get_contents(
+                $config->values['pdf-contents']['newsite-file']);
         $this->message = str_replace("%ORG%", $site->org_name, $this->message);
         $this->message = str_replace("%RADKEY%", $site->radKey, $this->message);
-        $this->message = str_replace("%DESCRIPTION%", $site->name, $this->message);
-        $this->message = str_replace("%KIOSKKEY%", $site->kioskKey, $this->message);
+        $this->message = str_replace(
+                "%DESCRIPTION%", $site->name, $this->message);
+        $this->message = str_replace(
+                "%KIOSKKEY%", $site->kioskKey, $this->message);
         $this->filename = $site->org_name . "-" . $site->name;
         $this->filename = preg_replace("/[^a-zA-Z0-9]/", "_", $this->filename);
         $this->filename .= ".pdf";
@@ -25,21 +26,21 @@ class PDF
         $this->subject = "New Site";
     }
 
-    public function populateLogrequest($org_admin)
-    {
+    public function populateLogrequest($org_admin) {
         $config = config::getInstance();
-        $this->filename = date("Ymd") . $org_admin->org_name . "-" . $org_admin->name .
-            "-Logs";
+        $this->filename = date("Ymd") .
+                $org_admin->org_name . "-" . $org_admin->name . "-Logs";
         $this->filename = preg_replace("/[^a-zA-Z0-9]/", "_", $this->filename);
         $this->filename .= ".pdf";
         $this->filepath = $config->values['pdftemp-path'] . $this->filename;
-        $this->subject = "Generated on: " . date("d-m-Y") . " Requestor: " . $org_admin->
-            name;
-        $this->message = file_get_contents($config->values['pdf-contents']['logrequest-file']);
+        $this->subject =
+                "Generated on: " . date("d-m-Y") .
+                " Requestor: " . $org_admin->name;
+        $this->message = file_get_contents(
+                $config->values['pdf-contents']['logrequest-file']);
     }
 
-    public function generatePDF($report = null)
-    {
+    public function generatePDF($report = null) {
         // Generate PDF with the site details
         // Encrypts the file then returns the password
         $un_filename = $this->filepath . "-unencrypted";
@@ -56,12 +57,12 @@ class PDF
         $pdf->SetFont('Arial', '', 12);
         // Write Body
 
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->message) as $line)
-        {
-            if ($line == "%TABLE%")
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->message) as $line) {
+            if ($line == "%TABLE%") {
                 $this->PdfSqlTable($pdf, $report);
-            else
+            } else {
                 $pdf->Write(5, $line . "\n");
+            }
         }
         $pdf->Output($un_filename);
         if ($this->encrypt) {
@@ -71,23 +72,20 @@ class PDF
         }
     }
 
-    private function dontEncryptPdf($filename)
-    {
+    private function dontEncryptPdf($filename) {
         copy($filename,$this->filepath);
         unlink($filename);
     }
 
-    private function encryptPdf($filename)
-    {
+    private function encryptPdf($filename) {
         $this->setRandomPdfPassword();
-        exec("/usr/bin/qpdf --encrypt " . $this->password . " - 256 -- " . $filename .
+        exec("/usr/bin/qpdf --encrypt " . $this->password .
+            " - 256 -- " . $filename .
             " " . $this->filepath);
         unlink($filename);
     }
 
-    private function PdfSqlTable($pdf, $report)
-    {
-
+    private function PdfSqlTable($pdf, $report) {
         $totalrows = 0;
         $w = array(
             0,
@@ -109,23 +107,25 @@ class PDF
         // Get column widths for headings
 
         $column = 0;
-        while (isset($report->columns[$column]))
-        {
-            $collength = $widthConstant + round(($widthMultiplier * strlen($report->columns[$column])));
-            if ($w[$column] < $collength)
+        while (isset($report->columns[$column])) {
+            $collength = $widthConstant +
+                round(($widthMultiplier * strlen($report->columns[$column])));
+            if ($w[$column] < $collength) {
                 $w[$column] = $collength;
+            }
             $column++;
         }
         // Get column widths for data
-        foreach ($report->result as $row[$totalrows])
-        {
+        foreach ($report->result as $row[$totalrows]) {
             $column = 0;
 
-            while (isset($row[$totalrows][$column]))
-            {
-                $collength = $widthConstant + round(($widthMultiplier * strlen($row[$totalrows][$column])));
-                if ($w[$column] < $collength)
+            while (isset($row[$totalrows][$column])) {
+                $collength = $widthConstant +
+                    round(
+                        ($widthMultiplier * strlen($row[$totalrows][$column])));
+                if ($w[$column] < $collength) {
                     $w[$column] = $collength;
+                }
                 $column++;
             }
             $totalrows++;
@@ -134,19 +134,16 @@ class PDF
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Write(5, $report->subject . "\n");
         $column = 0;
-        while (isset($report->columns[$column]))
-        {
+        while (isset($report->columns[$column])) {
             $pdf->Cell($w[$column], 6, $report->columns[$column], 1, 0, 'C');
             $column++;
         }
         $pdf->Ln();
         $pdf->SetFont('Arial', '', 12);
         // Write column
-        for ($rownum = 0; $rownum <= $totalrows; $rownum++)
-        {
+        for ($rownum = 0; $rownum <= $totalrows; $rownum++) {
             $column = 0;
-            while (isset($row[$rownum][$column]))
-            {
+            while (isset($row[$rownum][$column])) {
                 $pdf->Cell($w[$column], 6, $row[$rownum][$column], 1, 0, 'C');
                 $column++;
             }
@@ -154,8 +151,7 @@ class PDF
         }
     }
 
-    private function setRandomPdfPassword()
-    {
+    private function setRandomPdfPassword() {
         $config = config::getInstance();
         $length = $config->values['pdf-password']['length'];
         $pattern = $config->values['pdf-password']['regex'];
@@ -164,8 +160,7 @@ class PDF
         $this->password = substr($pass, 0, $length);
     }
 
-    private function strongRandomBytes($length)
-    {
+    private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
         if (!$strong)
@@ -173,11 +168,8 @@ class PDF
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }
-
         return $bytes;
     }
-
-
 }
 
 ?>

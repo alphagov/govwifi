@@ -1,6 +1,6 @@
 <?php
 
-require ("../common.php");
+require "../common.php";
 
 $emailreq = new emailRequest();
 

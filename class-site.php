@@ -1,7 +1,6 @@
 <?php
 
-class site
-{
+class site {
     public $radKey;
     public $kioskKey;
     public $name;
@@ -15,7 +14,6 @@ class site
     public $address;
     public $dailyCode;
     public $dailyCodeDate;
-
 
     public function writeRecord() {
         $db = DB::getInstance();
@@ -36,9 +34,9 @@ class site
         $handle->bindValue(':dailycode', $this->dailyCode, PDO::PARAM_STR);
         $handle->bindValue(':dailycodedate', $this->dailyCodeDate, PDO::PARAM_INT);
         $handle->execute();
-        if (!$this->id)
+        if (!$this->id) {
             $this->id = $dblink->lastInsertId();
-
+        }
     }
 
     public function getDailyCode() {
@@ -46,7 +44,9 @@ class site
             $config = config::getInstance();
             $length = $config->values['daily-code']['length'];
             $pattern = $config->values['daily-code']['regex'];
-            $pass = preg_replace($pattern, "", base64_encode($this->strongRandomBytes($length * 4)));
+            $pass = preg_replace(
+                    $pattern, "",
+                    base64_encode($this->strongRandomBytes($length * 4)));
             $this->dailyCode = substr($pass, 0, $length);
             $this->dailyCodeDate = date("z");
             $this->writeRecord();
@@ -69,11 +69,13 @@ class site
         $this->dailyCode = $row['dailycode'];
         $this->dailyCodeDate = $row['dailycodedate'];
     }
+
     public function getWhitelist() {
         $whitelist = str_replace("$|",", ",$this->activationRegex);
         $whitelist = str_replace("$","",$whitelist);
         return $whitelist;
     }
+
     public function attributesText() {
         $attributes = "Postcode: ".$this->postcode."\n";
         $attributes .= "Activation-whitelist: ".$this->getWhitelist()."\n";
@@ -85,8 +87,7 @@ class site
     // TODO (afoldesi-gds): This should be the job of the servicedesk. Probably.
     public function updateFromEmail($emailBody) {
         $updated = FALSE;
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $emailBody) as $line)
-        {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $emailBody) as $line) {
             $line = str_replace(">","",$line);
             $line = str_replace("*","",$line);
             $line = trim($line);
@@ -119,14 +120,12 @@ class site
                     $this->dataController = $value;
                     $updated = TRUE;
                 break;
-
-
             }
         }
         return $updated;
     }
-    public function loadByKioskIp($ipAddr)
-    {
+
+    public function loadByKioskIp($ipAddr) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
@@ -144,17 +143,15 @@ class site
                                     from site, organisation, sourceip
                                     WHERE organisation.id = site.org_id
                                     and site.id=sourceip.site_id
-                                    and ? between sourceip.min and sourceip.max');
+                                    and ? between sourceip.min
+                                    and sourceip.max');
         $handle->bindValue(1, ip2long($ipAddr), PDO::PARAM_INT);
         $handle->execute();
         $row = $handle->fetch(\PDO::FETCH_ASSOC);
         $this->loadRow($row);
-
-
     }
 
-    public function loadByIp($ipAddr)
-    {
+    public function loadByIp($ipAddr) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
@@ -171,15 +168,15 @@ class site
                                     dailycodedate
                                     from site, organisation, siteip
                                     WHERE organisation.id = site.org_id
-                                    and site.id=siteip.site_id and siteip.ip = ?');
+                                    and site.id=siteip.site_id
+                                    and siteip.ip = ?');
         $handle->bindValue(1, $ipAddr, PDO::PARAM_STR);
         $handle->execute();
         $row = $handle->fetch(\PDO::FETCH_ASSOC);
         $this->loadRow($row);
     }
 
-    public function loadByAddress($address)
-    {
+    public function loadByAddress($address) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
@@ -203,54 +200,39 @@ class site
         $this->loadRow($row);
     }
 
-    public function addIPs($iplist)
-    {
+    public function addIPs($iplist) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        foreach ($iplist as $ip_addr)
-        {
-            $handle = $dblink->prepare('insert into siteip (ip, site_id) VALUES (?,?)');
+        foreach ($iplist as $ip_addr) {
+            $handle = $dblink->prepare(
+                    'insert into siteip (ip, site_id) VALUES (?,?)');
             $handle->bindValue(1, $ip_addr, PDO::PARAM_STR);
             $handle->bindValue(2, $this->id, PDO::PARAM_INT);
-            try
-            {
+            try {
                 $handle->execute();
-            }
-            catch (PDOException $e)
-            {
+            } catch (PDOException $e) {
                 // if it already exists the insert will fail, silently continue.
             }
-
-
         }
-
     }
 
-    public function addSourceIPs($iplist)
-    {
+    public function addSourceIPs($iplist) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        foreach ($iplist as $ip_addr)
-        {
+        foreach ($iplist as $ip_addr) {
             $handle = $dblink->prepare('insert into sourceip (min, max, site_id) VALUES (?,?,?)');
             $handle->bindValue(1, ip2long($ip_addr['min']), PDO::PARAM_INT);
             $handle->bindValue(2, ip2long($ip_addr['max']), PDO::PARAM_INT);
             $handle->bindValue(3, $this->id, PDO::PARAM_INT);
-            try
-            {
+            try {
                 $handle->execute();
-            }
-            catch (PDOException $e)
-            {
+            } catch (PDOException $e) {
                 // if it already exists the insert will fail, silently continue.
             }
-
-
         }
-
     }
-    public function setRadkey()
-    {
+
+    public function setRadkey() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select secret, kioskkey from nas WHERE shortname=? and org_id=?');
@@ -258,51 +240,44 @@ class site
         $handle->bindValue(2, $this->org_id, PDO::PARAM_INT);
         $handle->execute();
         $row = $handle->fetch(\PDO::FETCH_ASSOC);
-        if ($row)
-            {
+        if ($row) {
             $this->radKey = $row['secret'];
             $this->kioskKey = $row['kioskkey'];
-            }
-        else
-            {
+        } else {
             $this->generateRandomRadKey();
             $this->generateRandomKioskKey();
-            }
+        }
     }
 
-    private function generateRandomRadKey()
-    {
+    private function generateRandomRadKey() {
         $config = config::getInstance();
         $length = $config->values['radius-password']['length'];
         $pattern = $config->values['radius-password']['regex'];
-        $pass = preg_replace($pattern, "", base64_encode($this->strongRandomBytes($length *
-            4)));
+        $pass = preg_replace(
+                $pattern, "",
+                base64_encode($this->strongRandomBytes($length * 4)));
         $this->radKey = substr($pass, 0, $length);
     }
-    private function generateRandomKioskKey()
-    {
+
+    private function generateRandomKioskKey() {
         $config = config::getInstance();
         $length = $config->values['kiosk-password']['length'];
         $pattern = $config->values['kiosk-password']['regex'];
-        $pass = preg_replace($pattern, "", base64_encode($this->strongRandomBytes($length *
-            10)));
+        $pass = preg_replace(
+                $pattern, "",
+                base64_encode($this->strongRandomBytes($length * 10)));
         $this->kioskKey = substr($pass, 0, $length);
     }
-    private function strongRandomBytes($length)
-    {
+
+    private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
-
-        if (!$strong)
-        {
+        if (!$strong) {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }
-
         return $bytes;
     }
-
-
 }
 
 ?>

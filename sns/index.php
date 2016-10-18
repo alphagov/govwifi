@@ -1,5 +1,5 @@
 <?php
-require ("../common.php");
+require "../common.php";
 $emailreq = new emailRequest();
 
 $json = file_get_contents('php://input');

@@ -1,8 +1,7 @@
 <?php
 
 
-class orgAdmin
-{
+class orgAdmin {
     public $email;
     public $org_name;
     public $org_id;
@@ -10,14 +9,14 @@ class orgAdmin
     public $name;
     public $authorised;
 
-    public function __construct($email)
-    {
+    public function __construct($email) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-               
         
         $this->email = $email;
-        $handle = $dblink->prepare('select id,mobile,orgname,name from orgs_admins_view where email=?');
+        $handle = $dblink->prepare(
+                'select id,mobile,orgname,name from orgs_admins_view ' .
+                'where email=?');
         $handle->bindValue(1, $this->email, PDO::PARAM_STR);
         $handle->execute();
         $row = $handle->fetch(\PDO::FETCH_ASSOC);

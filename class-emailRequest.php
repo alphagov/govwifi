@@ -1,38 +1,31 @@
 <?php
 
-class emailRequest
-{
+class emailRequest {
     public $emailFrom;
     public $emailTo;
     public $emailToCMD;
     public $emailBody;
     public $emailSubject;
 
-    public function verify()
-    {
+    public function verify() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('delete from verify where email = :email');
         $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
         $handle->execute();
-        $handle = $dblink->prepare('insert into verify (code, email) values (:code,:email)');
+        $handle = $dblink->prepare(
+                'insert into verify (code, email) values (:code,:email)');
         $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
         $attempts=0;
         $success=false;
-        while ($success==false and $attempts<10)
-        {
-
-        try
-            {
+        while ($success==false and $attempts<10) {
+            try {
                 $attempts++;
                 $code = $this->generateRandomVerifyCode();
                 $handle->bindValue(':code', $code, PDO::PARAM_STR);
                 $handle->execute();
                 $success=true;
-
-            }
-            catch (PDOException $e)
-            {
+            } catch (PDOException $e) {
                 $success=false;
             }
         }
@@ -44,22 +37,22 @@ class emailRequest
         }
     }
 
-    private function generateRandomVerifyCode()
-    {
+    private function generateRandomVerifyCode() {
         $config = config::getInstance();
         $length = $config->values['verify-code']['length'];
         $pattern = $config->values['verify-code']['regex'];
-        $pass = preg_replace($pattern, "", base64_encode($this->strongRandomBytes($length * 10)));
+        $pass = preg_replace(
+                $pattern,
+                "",
+                base64_encode($this->strongRandomBytes($length * 10)));
         return substr($pass, 0, $length);
     }
 
-    private function strongRandomBytes($length)
-    {
+    private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
 
-        if (!$strong)
-        {
+        if (!$strong) {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }
@@ -67,32 +60,29 @@ class emailRequest
         return $bytes;
     }
 
-    public function enroll()
-    {
+    public function enroll() {
         // Self enrollment request
-        if ($this->fromAuthDomain())
-        {
+        if ($this->fromAuthDomain()) {
             error_log("EMAIL: Self Enrolling : " . $this->emailFrom->text);
             $user = new user;
             $user->identifier = $this->emailFrom;
             $user->sponsor = $this->emailFrom;
             $user->enroll();
-
-        } else
-        {
-            error_log("EMAIL: Ignoring self enrollment from : " . $this->emailFrom->text);
+        } else {
+            error_log(
+                    "EMAIL: Ignoring self enrollment from : "
+                    . $this->emailFrom->text);
         }
     }
 
-    public function sponsor()
-    {
-        if ($this->fromAuthDomain())
-        {
-            error_log("EMAIL: Sponsored request from: " . $this->emailFrom->text);
-            $enrollcount = 0;
+    public function sponsor() {
+        if ($this->fromAuthDomain()) {
+            error_log(
+                "EMAIL: Sponsored request from: "
+                . $this->emailFrom->text);
 
-            foreach ($this->contactList() as $identifier)
-            {
+            $enrollcount = 0;
+            foreach ($this->contactList() as $identifier) {
                 $enrollcount++;
                 $user = new user;
                 $user->identifier = $identifier;
@@ -103,63 +93,63 @@ class emailRequest
             $email->to = $this->emailFrom->text;
             $email->sponsor($enrollcount);
             $email->send();
-        } else
-        {
-            error_log("EMAIL: Ignoring sponsored reqeust from : " . $this->emailFrom->text);
+        } else {
+            error_log(
+                "EMAIL: Ignoring sponsored reqeust from : "
+                . $this->emailFrom->text);
         }
     }
 
-    public function logRequest()
-    {
-
-
+    public function logRequest() {
         $orgAdmin = new orgAdmin($this->emailFrom->text);
-        if ($orgAdmin->authorised)
-        {
 
+        if ($orgAdmin->authorised) {
             $report = new report;
             $report->orgAdmin = $orgAdmin;
-            error_log("EMAIL: processing log request from : " . $this->emailFrom->text .
-                " representing " . $orgAdmin->org_name);
+            error_log(
+                "EMAIL: processing log request from : " . $this->emailFrom->text
+                . " representing " . $orgAdmin->org_name);
             $subjectArray = explode(":", $this->emailSubject, 2);
             $reportType = strtolower(trim($subjectArray[0]));
             $pdf = new pdf;
-            if (count($subjectArray) > 1)
-            {
+            if (count($subjectArray) > 1) {
                 $criteria = trim($subjectArray[1]);
             }
-            switch ($reportType)
-            {
+            switch ($reportType) {
                 case "topsites":
                     $report->topSites();
                     $pdf->encrypt = FALSE;
-                    error_log("Top Sites report generated records:" . count($report->result));
+                    error_log(
+                        "Top Sites report generated records: "
+                        . count($report->result));
                     break;
-
                 case "sitelist":
                     $report->siteList();
-                    error_log("Site list generated records:" . count($report->result));
+                    error_log(
+                        "Site list generated records: "
+                        . count($report->result));
                     break;
                 case "site":
                     $report->bySite($criteria);
-                    error_log("Site list generated records:" . count($report->result));
+                    error_log(
+                        "Site list generated records: "
+                        . count($report->result));
                     break;
-
                 case "user":
                     $report->byUser($criteria);
-                    error_log("User report generated records:" . count($report->result));
+                    error_log(
+                        "User report generated records: "
+                        . count($report->result));
                     break;
-
                 default:
                     $report->byOrgId();
-                    error_log("Report by Org ID generated records:" . count($report->result));
+                    error_log(
+                        "Report by Org ID generated records: "
+                        . count($report->result));
                     break;
-
             }
 
-
             // Create report pdf
-
             $pdf->populateLogRequest($orgAdmin);
             $pdf->landscape = true;
             $pdf->generatePDF($report);
@@ -174,20 +164,19 @@ class emailRequest
             $sms = new smsResponse;
             $sms->to = $orgAdmin->mobile;
             $sms->logrequest($pdf);
-
         }
     }
 
-    public function newSite()
-    {
-        $this->emailSubject = str_ireplace("re: ","",$this->emailSubject);
+    public function newSite() {
+        $this->emailSubject = str_ireplace("re: ", "", $this->emailSubject);
         $db = DB::getInstance();
         $dblink = $db->getConnection();
 
         $orgAdmin = new orgAdmin($this->emailFrom->text);
-        if ($orgAdmin->authorised)
-        {
-            error_log("EMAIL: processing new site request from : " . $this->emailFrom->text);
+        if ($orgAdmin->authorised) {
+            error_log(
+                "EMAIL: processing new site request from : "
+                . $this->emailFrom->text);
             // Add the new site & IP addresses
             $outcome = "Existing site updated\n";
             $site = new site();
@@ -197,31 +186,35 @@ class emailRequest
                 $site->org_id = $orgAdmin->org_id;
                 $site->org_name = $orgAdmin->org_name;
                 $site->name = $this->emailSubject;
-                error_log("EMAIL: creating new site : ".$site->name);
+                error_log(
+                    "EMAIL: creating new site : " . $site->name);
                 $outcome = "New site created\n";
                 $site->setRADKey();
                 if ($site->updateFromEmail($this->emailBody))
                     $outcome .= "Site attributes updated\n";
                 $site->writeRecord();
                 $action = "created";
-            }
-            else if ($site->updateFromEmail($this->emailBody)) {
-                error_log("EMAIL: updating site atributes : ".$site->name);
+            } else if ($site->updateFromEmail($this->emailBody)) {
+                error_log(
+                    "EMAIL: updating site atributes : " . $site->name);
                 $outcome .= "Site attributes updated\n";
                 $site->writeRecord();
             }
 
             $newSiteIPs = $this->ipList();
             if (count($newSiteIPs) >0) {
-                error_log("EMAIL: Adding client IP addresses : ".$site->name);
-                $outcome .= count($newSiteIPs)."RADIUS IP Addresses added\n";
+                error_log(
+                    "EMAIL: Adding client IP addresses : " . $site->name);
+                $outcome .= count($newSiteIPs) . " RADIUS IP Addresses added\n";
                 $site->addIPs($newSiteIPs);
             }
 
             $newSiteSourceIPs = $this->sourceIpList();
             if (count($newSiteSourceIPs) >0) {
-                error_log("EMAIL: Adding source IP addresses : ".$site->name);
-                $outcome .= count($newSiteIPs)."Source IP Address ranges added\n";
+                error_log(
+                    "EMAIL: Adding source IP addresses : " . $site->name);
+                $outcome .=
+                    count($newSiteIPs) . " Source IP Address ranges added\n";
                 $site->addSourceIPs($newSiteSourceIPs);
             }
 
@@ -237,9 +230,7 @@ class emailRequest
             $email->to = $orgAdmin->email;
             if ($outcome) {
                 $email->newSite($action,$outcome,$site);
-            }
-            else
-            {
+            } else {
                 $email->newSiteBlank($site);
             }
             $email->filename = $pdf->filename;
@@ -250,68 +241,63 @@ class emailRequest
             $sms->to = $orgAdmin->mobile;
             $sms->newsite($pdf);
 
-
-        } else
-        {
-            error_log("EMAIL: Ignoring new site request from : " . $this->emailFrom->text);
+        } else {
+            error_log(
+                "EMAIL: Ignoring new site request from : "
+                . $this->emailFrom->text);
         }
     }
 
     // TODO(afoldesi-gds): Unused.
-    private function extractMobileNo()
-    {
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody) as $contact)
-            {
-                $contact = new identifier(trim($contact));
-                if ($contact->validMobile)
-                    {
-                    return $contact;
-                    }
+    private function extractMobileNo() {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
+                as $contact) {
+            $contact = new identifier(trim($contact));
+            if ($contact->validMobile) {
+                return $contact;
             }
+        }
     }
 
-    private function contactList()
-    {
-
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody) as $contact)
-        {
+    private function contactList() {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
+                as $contact) {
             $contact = new identifier(trim($contact));
-            if ($contact->validEmail or $contact->validMobile)
-            {
+            if ($contact->validEmail or $contact->validMobile) {
                 $list[] = $contact;
             }
         }
         return $list;
     }
 
-    private function ipList()
-    {
+    private function ipList() {
         $list = array();
 
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody) as $ipAddr)
-        {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
+                as $ipAddr) {
             $ipAddr = preg_replace('/[^0-9.]/', '', $ipAddr);
             if (filter_var($ipAddr, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 |
-                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE))
-            {
+                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE)) {
                 $list[] = $ipAddr;
             }
         }
         return $list;
     }
 
-    private function sourceIpList()
-    {
+    private function sourceIpList() {
         $list = array();
 
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody) as $ipAddr)
-        {
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
+                as $ipAddr) {
             $ipAddr = preg_replace('/[^-0-9.]/', '', $ipAddr);
             $ipAddr = explode("-",$ipAddr);
-            if (count($ipAddr) == 2 and filter_var($ipAddr[0], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 |
-                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) and filter_var($ipAddr[1], FILTER_VALIDATE_IP, FILTER_FLAG_IPV4 |
-                FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE))
-            {
+            if (count($ipAddr) == 2
+                    and filter_var($ipAddr[0], FILTER_VALIDATE_IP,
+                            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |
+                            FILTER_FLAG_NO_RES_RANGE)
+                    and filter_var($ipAddr[1], FILTER_VALIDATE_IP,
+                            FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |
+                            FILTER_FLAG_NO_RES_RANGE)) {
                 $list[] = array("min" => $ipAddr[0],'max' => $ipAddr[1]);
             }
         }
@@ -319,30 +305,27 @@ class emailRequest
     }
 
 
-    public function fromAuthDomain()
-    {
+    public function fromAuthDomain() {
         $config = config::getInstance();
-        return (preg_match($config->values['authorised-domains'], $this->emailFrom->
-            text));
+        return preg_match(
+                $config->values['authorised-domains'],
+                $this->emailFrom->text);
     }
 
-    public function setEmailSubject($subject)
-    {
+    public function setEmailSubject($subject) {
         $this->emailSubject = $subject;
     }
-    public function setEmailBody($body)
-    {
+
+    public function setEmailBody($body) {
         $this->emailBody = strip_tags(strtolower($body));
     }
 
-    public function setEmailTo($to)
-    {
+    public function setEmailTo($to) {
         $this->emailTo = $to;
         $this->emailToCMD = strtolower(trim(strtok($this->emailTo, "@")));
     }
 
-    public function setEmailFrom($from)
-    {
+    public function setEmailFrom($from) {
         $this->emailFrom = new identifier($from);
     }
 }
