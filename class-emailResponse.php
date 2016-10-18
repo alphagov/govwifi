@@ -20,15 +20,26 @@ class emailResponse
     {
         $config = config::getInstance();
         $this->subject = $config->values['email-messages']['sponsor-subject'];
-        $this->message = file_get_contents($config->values['email-messages']['sponsor-file']);
-        $this->message = str_replace("%X%", $count, $this->message);
+        if ($count>0) {
+            $this->message = file_get_contents($config->values['email-messages']['sponsor-file']);
+            $this->message = str_replace("%X%", $count, $this->message);
+        }
+        else
+        {
+            $this->message = file_get_contents($config->values['email-messages']['sponsor-help-file']);
+        }
     }
 
-    public function newsite()
+    public function newsite($action,$outcome,$site)
     {
         $config = config::getInstance();
-        $this->subject = $config->values['email-messages']['newsite-subject'];
+        $this->from = $config->values['email-newsitereply'];
+        $this->subject = $site->name;
         $this->message = file_get_contents($config->values['email-messages']['newsite-file']);
+        $this->message = str_replace("%OUTCOME%", $outcome, $this->message);
+        $this->message = str_replace("%ACTION%", $action, $this->message);
+        $this->message = str_replace("%NAME%", $site->name, $this->message);
+        $this->message = str_replace("%ATTRIBUTES%", $site->attributesText(), $this->message);
     }
 
     public function enroll($user)
@@ -54,9 +65,10 @@ class emailResponse
     public function send()
     {
         $config = config::getInstance();
+        // TODO(afoldesi-gds): Test (debug) attachments with this version.
 	$client = Aws\Ses\SesClient::factory(array(
 	'version' => 'latest',
-	'region' => 'eu-west-1', 
+	'region' => 'eu-west-1',
         'key'    => $config->values['AWS']['Access-keyID'],
         'secret' => $config->values['AWS']['Access-key']
         ));
