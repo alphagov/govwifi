@@ -7,7 +7,6 @@ class smsResponse
     public $template;
     public $personalisation;
 
-
     public function __construct()
     {
         $this->setNoReply();
@@ -38,7 +37,7 @@ class smsResponse
             } catch (NotifyException $e){}
 
     }
- 
+
 
     public function newsite($pdf)
     {
@@ -69,13 +68,41 @@ class smsResponse
         $this->template=$config->values['notify']['wifi-details'];
         $this->send();
     }
+    //TODO (afoldesi-gds): Incomplete, unused. Update to use notify templates.
+    public function restrictedUnset($site)
+    {
+        $config = config::getInstance();
+        $this->message = file_get_contents($config->values['sms-messages']['restricted-unset-file']);
+        $this->message = str_replace("%ADDRESS%", $site->name, $this->message);
+        $this->message = str_replace("%WHITELIST%", $site->getWhitelist(), $this->message);
+        $this->send();
+    }
+    //TODO (afoldesi-gds): Incomplete, unused. Update to use notify templates.
+    public function restrictedSet($site)
+    {
+        $config = config::getInstance($site);
+        $this->message = file_get_contents($config->values['sms-messages']['restricted-set-file']);
+        $this->message = str_replace("%ADDRESS%", $site->name, $this->message);
+        $this->message = str_replace("%WHITELIST%", $site->getWhitelist(), $this->message);
 
+        $this->send();
+    }
 
     public function terms()
     {
         $config = config::getInstance();
 	$this->personalisation['KEYWORD']=$config->values['reply-keyword'];
 	$this->template=$config->values['notify']['terms'];
+        $this->send();
+
+    }
+    //TODO (afoldesi-gds): Update to use notify templates.
+    public function activate()
+    {
+        $config = config::getInstance();
+        $this->message = file_get_contents($config->values['sms-messages']['activate-file']);
+        $this->message = str_replace("%KEYWORD%", $config->values['reply-keyword'], $this->
+            message);
         $this->send();
 
     }

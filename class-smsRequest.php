@@ -17,11 +17,42 @@ class smsRequest
         // remove whitespace and convert to lower case
         $this->message = strtolower(trim($message));
         // remove any instances of wifi from the message
-        $this->message = str_replace($config->values['strip-keyword'], "", $this->
-            message);
+        $this->message = str_replace(
+                $config->values['strip-keyword'],
+                "",
+                $this->message);
 
-        $this->messageWords = explode(' ', $this->message);
+        $this->messageWords = explode(' ', trim($this->message));
 
+    }
+
+    public function verify()
+    {
+        error_log("SMS: Received an email verification code from ".$this->sender->text);
+        $user = new user();
+        $user->identifier = $this->sender;
+        $user->codeVerify($this->messageWords[0]);
+    }
+    public function dailycode()
+    {
+
+        $user = new user();
+        $user->identifier = $this->sender;
+        $sms = new smsResponse;
+        $sms->to = $this->sender->text;
+        $sms->setReply();
+        $login = $user->codeActivate($this->messageWords[0]);
+        error_log("SMS: Received a daily code from ".$this->sender->text." User: ".$login);
+        if ($login)
+             {
+                $sms->activate();
+                error_log("SMS: Account exists, sending activation response to ".$this->sender->text);
+            }
+            else
+            {
+                $sms->terms();
+                error_log("SMS: No account, sending terms to ".$this->sender->text);
+            }
     }
 
     public function security()
@@ -45,6 +76,7 @@ class smsRequest
     {
         error_log("SMS: Creating new password for ".$this->sender->text);
         $user = new user();
+        // TODO(afoldesi-gds): Discuss what happens to the sponsor field.
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
         $user->enroll(true);
