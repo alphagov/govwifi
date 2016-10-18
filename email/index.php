@@ -29,10 +29,11 @@ if (isset($_REQUEST['sender']))
 
 switch ($emailreq->emailToCMD)
 {
-    case "enroll":
-        $emailreq->enroll();
+    case "verify":
+        $emailreq->verify();
         break;
     case "enrol":
+    case "enroll":
         $emailreq->enroll();
         break;
     case "sponsor":
@@ -42,7 +43,6 @@ switch ($emailreq->emailToCMD)
         $emailreq->newsite();
         break;
     case "logrequest":
-
         $emailreq->logrequest();
         break;
 }
