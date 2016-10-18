@@ -6,6 +6,7 @@ class user
     public $login;
     public $password;
     public $sponsor;
+    public $email;
 
 
     public function enroll($force = false)
@@ -17,7 +18,48 @@ class user
         $this->radiusDbWrite();
         $this->sendCredentials();
     }
+    public function kioskActivate($site_id)
+    {
+        $db = DB::getInstance();
+        $dblink = $db->getConnection();
+        $handle = $dblink->prepare('insert into activation (site_id, contact) values (:siteId,:contact)');
+        $handle->bindValue(':siteId', $site_id, PDO::PARAM_INT);
+        $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
+        $handle->execute();
+    }
 
+    public function codeActivate($code)
+    {
+        $this->loadRecord();
+        $db = DB::getInstance();
+        $dblink = $db->getConnection();
+        $handle = $dblink->prepare('insert into activation (dailycode, contact) values (:dailycode,:contact)');
+        $handle->bindValue(':dailycode', $code, PDO::PARAM_INT);
+        $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
+        $handle->execute();
+        return $this->login;
+    }
+    public function codeVerify($code)
+    {
+
+        $db = DB::getInstance();
+        $dblink = $db->getConnection();
+        $handle = $dblink->prepare('select email from verify where code = :code');
+        $handle->bindValue(':code', $code, PDO::PARAM_STR);
+        $handle->execute();
+        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+
+        if ($row) {
+            $handle = $dblink->prepare('delete from verify where code = :code');
+            $handle->bindValue(':code', $code, PDO::PARAM_STR);
+            $handle->execute();
+
+            $handle = $dblink->prepare('update userdetails set email = :email where contact = :contact');
+            $handle->bindValue(':email', $row['email'], PDO::PARAM_STR);
+            $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
+            $handle->execute();
+        }
+    }
 
     private function sendCredentials()
     {
@@ -27,33 +69,69 @@ class user
             $sms->setReply();
             $sms->to = $this->identifier->text;
             $sms->enroll($this);
-        } else
-            if ($this->identifier->validEmail)
+        } else if ($this->identifier->validEmail)
             {
                 $email = new emailResponse();
                 $email->to = $this->identifier->text;
                 $email->enroll($this);
 
             }
+    }
 
+    public function activatedHere($site) {
+        if ($this->identifier->validMobile) {
+        $db = DB::getInstance();
+        $dblink = $db->getConnection();
+        $handle = $dblink->prepare('SELECT IF ((date(now()) - max(date(`activated`)))<site.activation_days,"YES","NO") as valid, IF (count(1)=0,"YES","NO") as firstvisit
+                                    from activation,site WHERE (activation.site_id = site.id or activation.dailycode = site.dailycode) AND site_id = ? AND contact = ?');
+        $handle->bindValue(1, $site->id, PDO::PARAM_INT);
+        $handle->bindValue(2, $this->identifier->text, PDO::PARAM_STR);
+        $handle->execute();
+        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        if ($row['valid'] == "YES")
+            return true;
+            else {
+                if ($row['firstvisit'] == "YES") {
+                    // Send text message the first time a user enters a building
+                    error_log("SMS: Sending restricted building to ".$this->identifier->text);
+                    $sms = new smsResponse;
+                    $sms->to = $this->identifier->text;
+                    $sms->setReply();
+
+                    if ($this->email)
+                        $sms->restrictedSet($site);
+                        else
+                        $sms->restrictedUnset($site);
+                    // Put an entry in the activations database with a date of 0
+                    $handle = $dblink->prepare('insert into activation (activated, site_id, contact) values (0, ?, ?)');
+                    $handle->bindValue(1, $site->id, PDO::PARAM_INT);
+                    $handle->bindValue(2, $this->identifier->text, PDO::PARAM_STR);
+                    $handle->execute();
+                }
+            return false;
+            }
+        }
     }
 
     private function radiusDbWrite()
     {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-     
+
         // Insert user record
-        $handle = $dblink->prepare('insert into userdetails (username, contact, sponsor,password) VALUES
-                                    (:login,:contact,:sponsor,:password) ON DUPLICATE KEY UPDATE sponsor=:sponsor, password=:password');
+        // TODO(afoldesi-gds): Discuss handling of sponsor - update this after
+        // the db schema has changed.
+        $handle = $dblink->prepare('insert into userdetails (username, contact, email,password) VALUES
+                                    (:login,:contact,:email,:password) ON DUPLICATE KEY UPDATE email=:email, password=:password');
         $handle->bindValue(':login', $this->login, PDO::PARAM_STR);
         $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
-        $handle->bindValue(':sponsor', $this->sponsor->text, PDO::PARAM_STR);
+        $handle->bindValue(':email', $this->email, PDO::PARAM_STR);
         $handle->bindValue(':password', $this->password, PDO::PARAM_STR);
         $handle->execute();
 
         // Populate the record for the cache
         $userRecord['contact'] = $this->identifier->text;
+        $userRecord['email'] = $this->email;
         $userRecord['sponsor'] = $this->sponsor->text;
         $userRecord['password'] = $this->password;
 
@@ -77,31 +155,36 @@ class user
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $row = false;
-        $m = MC::getInstance();
-        $userRecord = $m->m->get($this->login);
+        if ($this->login) {
+            $m = MC::getInstance();
+            $userRecord = $m->m->get($this->login);
 
-        if (!$userRecord)
-        {
-            $handle = $dblink->prepare('select * from userdetails where username=?');
-            $handle->bindValue(1, $this->login, PDO::PARAM_STR);
+            if (!$userRecord)
+            {
+                $handle = $dblink->prepare('select * from userdetails where username=?');
+                $handle->bindValue(1, $this->login, PDO::PARAM_STR);
+                $handle->execute();
+                $userRecord = $handle->fetch(\PDO::FETCH_ASSOC);
+
+                if ($m->m->getResultCode() == Memcached::RES_NOTFOUND && $userRecord)
+                {
+                    // Not in cache but in the database - let's cache it for next time
+                    $m->m->set($this->login, $userRecord);
+                }
+            }
+        } else if ($this->identifier->validMobile) {
+            $handle = $dblink->prepare('select * from userdetails where contact=?');
+            $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
             $handle->execute();
             $userRecord = $handle->fetch(\PDO::FETCH_ASSOC);
-
-            if ($m->m->getResultCode() == Memcached::RES_NOTFOUND and $userRecord)
-            {
-                // Not in cache but in the database - let's cache it for next time
-                $m->m->set($this->login, $userRecord);
-
-            }
-
-
         }
         if ($userRecord)
         {
+            $this->login = strtoupper($userRecord['username']);
             $this->password = $userRecord['password'];
             $this->identifier = new identifier($userRecord['contact']);
             $this->sponsor = new identifier($userRecord['sponsor']);
-
+            $this->email = $userRecord['email'];
         } else
         {
             $this->newPassword();
