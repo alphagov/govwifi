@@ -4,12 +4,12 @@ $emailreq = new emailRequest();
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-if (isset($data['SubscribeURL'])) 
-{
+// TODO(afoldesi-gds): Check if there is a way to check authentication to make
+// sure that we are talking to the right service.
+if (isset($data['SubscribeURL'])) {
     file_get_contents($data['SubscribeURL']);
     error_log("AWS SNS SubscribeURL confirmed");
-} else 
-{
+} else {
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
     preg_match($pattern,reset($data['mail']['commonHeaders']['from']),$matches);
     $emailreq->setEmailFrom($matches[0]);

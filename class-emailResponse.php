@@ -70,8 +70,10 @@ class emailResponse {
 	$client = Aws\Ses\SesClient::factory(array(
             'version' => 'latest',
             'region' => 'eu-west-1',
-            'key'    => $config->values['AWS']['Access-keyID'],
-            'secret' => $config->values['AWS']['Access-key']
+            'credentials' => [
+                'key'    => $config->values['AWS']['Access-keyID'],
+                'secret' => $config->values['AWS']['Access-key']
+            ]
         ));
         $request = array();
         $request['Source'] = $this->from;
