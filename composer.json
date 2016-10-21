@@ -1,0 +1,10 @@
+{
+    "require": {
+        "php-http/guzzle6-adapter": "^1.1",
+        "alphagov/notifications-php-client": "dev-master",
+        "aws/aws-sdk-php": "^3.19"
+    },
+    "config": {
+        "optimize-autoloader": true
+    }
+}

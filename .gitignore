@@ -1,1 +1,9 @@
-nbproject/
+nbproject
+.idea
+
+# Dependencies
+vendor
+composer.phar
+# The composer.lock file is committed to make sure we use the same versions
+# of our dependencies across the board; and also that upgrades are intentional,
+# and tracked.
