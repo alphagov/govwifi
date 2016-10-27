@@ -7,7 +7,13 @@ $data = json_decode($json, true);
 // TODO(afoldesi-gds): Check if there is a way to check authentication to make
 // sure that we are talking to the right service.
 if (isset($data['SubscribeURL'])) {
-    file_get_contents($data['SubscribeURL']);
+    $streamContext = stream_context_create(array(
+        "ssl"=>array(
+            "verify_peer" => false,
+            "verify_peer_name" => false,
+        )
+    ));
+    file_get_contents($data['SubscribeURL'], false, $streamContext);
     error_log("AWS SNS SubscribeURL confirmed");
 } else {
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
