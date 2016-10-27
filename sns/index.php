@@ -4,17 +4,35 @@ $emailreq = new emailRequest();
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
-// TODO(afoldesi-gds): Check if there is a way to check authentication to make
-// sure that we are talking to the right service.
+
 if (isset($data['SubscribeURL'])) {
-    $streamContext = stream_context_create(array(
-        "ssl"=>array(
-            "verify_peer" => false,
-            "verify_peer_name" => false,
-        )
-    ));
-    file_get_contents($data['SubscribeURL'], false, $streamContext);
-    error_log("AWS SNS SubscribeURL confirmed");
+    // We need to replace the param separators in the url, otherwise the
+    // request will fail with status 400 - Bad Request.
+    $subscribeUrl = str_replace("&amp;", "&", $data['SubscribeURL']);
+    $urlRegex = "/^https:\/\/sns\.[^.]+\.amazonaws.com\/.+/";
+    if (preg_match($urlRegex, $subscribeUrl) !== 1) {
+        error_log("AWS SNS SubscribeURL received, but doesn't appear to be "
+                . "pointing to the expected service! URL: "
+                . ">>>" . $subscribeUrl . "<<<");
+    } else {
+        // TODO: See if it's sensible to check their certificate.
+        $response = file_get_contents(
+            $subscribeUrl,
+            false,
+            stream_context_create(array(
+                "ssl"=>array(
+                    "verify_peer" => false,
+                    "verify_peer_name" => false,
+                )
+            ))
+        );
+        if ($response === false) {
+            error_log("AWS SNS SubscribeURL received, subscription FAILED. URL:"
+                    . " >>>" . $subscribeUrl . "<<<");
+        } else {
+            error_log("AWS SNS SubscribeURL confirmed.");
+        }
+    }
 } else {
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
     preg_match($pattern,reset($data['mail']['commonHeaders']['from']),$matches);
