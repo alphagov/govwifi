@@ -5,6 +5,10 @@ $emailreq = new emailRequest();
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
+error_log("SNS - json: >>>" . var_dump($json) . "<<<");
+error_log("SNS - data: >>>" . var_dump($data) . "<<<");
+error_log("SNS - post: >>>" . var_dump($_POST) . "<<<");
+
 if (isset($data['SubscribeURL'])) {
     // We need to replace the param separators in the url, otherwise the
     // request will fail with status 400 - Bad Request.
