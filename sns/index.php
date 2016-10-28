@@ -37,6 +37,8 @@ if (isset($data['SubscribeURL'])) {
             error_log("AWS SNS SubscribeURL confirmed.");
         }
     }
+} else if (empty($data) || empty($data['mail'])) {
+    error_log("AWS SNS - empty data received.");
 } else {
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
     preg_match($pattern,reset($data['mail']['commonHeaders']['from']),$matches);
