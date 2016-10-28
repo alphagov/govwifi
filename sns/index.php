@@ -64,10 +64,12 @@ if (isset($data['SubscribeURL'])) {
 
     switch ($emailreq->emailToCMD) {
         case "enroll":
+        case "enrol":
+        case "signup":
             $emailreq->enroll();
         break;
-        case "enrol":
-            $emailreq->enroll();
+        case "verify":
+            $emailreq->verify();
         break;
         case "sponsor":
             $emailreq->sponsor();
