@@ -15,17 +15,7 @@ if (isset($data['SubscribeURL'])) {
                 . "pointing to the expected service! URL: "
                 . ">>>" . $subscribeUrl . "<<<");
     } else {
-        // TODO: See if it's sensible to check their certificate.
-        $response = file_get_contents(
-            $subscribeUrl,
-            false,
-            stream_context_create(array(
-                "ssl"=>array(
-                    "verify_peer" => false,
-                    "verify_peer_name" => false,
-                )
-            ))
-        );
+        $response = file_get_contents($subscribeUrl);
         if ($response === false) {
             error_log("AWS SNS SubscribeURL received, subscription FAILED. URL:"
                     . " >>>" . $subscribeUrl . "<<<");
