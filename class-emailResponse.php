@@ -11,7 +11,8 @@ class emailResponse {
     public function __construct() {
         $config = config::getInstance();
         $this->from = $config->values['email-noreply'];
-
+        $this->subject = "";
+        $this->message = "";
     }
 
     public function sponsor($count) {
@@ -22,7 +23,8 @@ class emailResponse {
                     $config->values['email-messages']['sponsor-file']);
             $this->message = str_replace("%X%", $count, $this->message);
         } else {
-            $this->message = file_get_contents($config->values['email-messages']['sponsor-help-file']);
+            $this->message = file_get_contents(
+                    $config->values['email-messages']['sponsor-help-file']);
         }
     }
 
@@ -37,6 +39,13 @@ class emailResponse {
         $this->message = str_replace("%NAME%", $site->name, $this->message);
         $this->message = str_replace(
                 "%ATTRIBUTES%", $site->attributesText(), $this->message);
+    }
+
+    public function newSiteBlank($site) {
+        $config = config::getInstance();
+        $this->subject = $site->name;
+        $this->message = file_get_contents(
+            $config->values['email-messages']['newsite-help-file']);
     }
 
     public function enroll($user) {
@@ -66,8 +75,8 @@ class emailResponse {
 
     public function send() {
         $config = config::getInstance();
-        // TODO(afoldesi-gds): Test (debug) attachments with this version.
-	$client = Aws\Ses\SesClient::factory(array(
+        // TODO(afoldesi-gds): (Low)Refactor out deprecated factory method.
+	    $client = Aws\Ses\SesClient::factory(array(
             'version' => 'latest',
             'region' => 'eu-west-1',
             'credentials' => [
@@ -75,38 +84,28 @@ class emailResponse {
                 'secret' => $config->values['AWS']['Access-key']
             ]
         ));
-        $request = array();
-        $request['Source'] = $this->from;
-        $request['Destination']['ToAddresses'] = array($this->to);
-        $request['Message']['Subject']['Data'] = $this->subject;
-        $request['Message']['Body']['Text']['Data'] = $this->message;
 
+        $email = Swift_Message::newInstance();
+        $email->setTo($this->to);
+        $email->setFrom($this->from);
+        $email->setSubject($this->subject);
+        $email->setBody($this->message);
+        if (!empty($this->filepath)) {
+           $email->attach(Swift_Attachment::fromPath($this->filepath));
+        }
 
         try {
-            $result = $client->sendEmail($request);
+            $result = $client->sendRawEmail(array(
+                "RawMessage" => array(
+                    "Data" => $email->toString()
+                )
+            ));
             $messageId = $result->get('MessageId');
             error_log("Email sent! Message ID: $messageId"."\n");
         } catch (Exception $e) {
             error_log(
                 "The email was not sent. Error message: ".$e->getMessage());
         }
-    }
-
-    function tryEmailProvider($provider) {
-        $config = config::getInstance();
-        $conf_index = 'email-provider' . $provider;
-        $success = false;
-        if ($config->values[$conf_index]['enabled']) {
-            switch ($config->values[$conf_index]['provider']) {
-                case "postmark":
-                    $success = $this->tryPostMark($provider);
-                    break;
-                case "mailgun":
-                    $success = $this->tryMailGun($provider);
-                    break;
-            }
-        }
-        return $success;
     }
 }
 

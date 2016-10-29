@@ -50,7 +50,7 @@ class PDF {
             $pdf = new FPDF();
         $pdf->AddPage();
         $pdf->SetFont('Courier', 'B', 16);
-        $pdf->Cell(40, 10, 'user.wifi Service');
+        $pdf->Cell(40, 10, 'GovWifi Service');
         $pdf->Ln(20);
         $pdf->Cell(80, 10, $this->subject);
         $pdf->Ln(20);
