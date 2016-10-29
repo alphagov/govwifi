@@ -5,10 +5,6 @@ $emailreq = new emailRequest();
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-error_log("SNS - json: >>>" . var_dump($json) . "<<<");
-error_log("SNS - data: >>>" . var_dump($data) . "<<<");
-error_log("SNS - post: >>>" . var_dump($_POST) . "<<<");
-
 if (isset($data['SubscribeURL'])) {
     // We need to replace the param separators in the url, otherwise the
     // request will fail with status 400 - Bad Request.
@@ -19,17 +15,7 @@ if (isset($data['SubscribeURL'])) {
                 . "pointing to the expected service! URL: "
                 . ">>>" . $subscribeUrl . "<<<");
     } else {
-        // TODO: See if it's sensible to check their certificate.
-        $response = file_get_contents(
-            $subscribeUrl,
-            false,
-            stream_context_create(array(
-                "ssl"=>array(
-                    "verify_peer" => false,
-                    "verify_peer_name" => false,
-                )
-            ))
-        );
+        $response = file_get_contents($subscribeUrl);
         if ($response === false) {
             error_log("AWS SNS SubscribeURL received, subscription FAILED. URL:"
                     . " >>>" . $subscribeUrl . "<<<");
@@ -37,28 +23,35 @@ if (isset($data['SubscribeURL'])) {
             error_log("AWS SNS SubscribeURL confirmed.");
         }
     }
-} else if (empty($data) || empty($data['mail'])) {
+} else if (!isset($data['Message'])) {
     error_log("AWS SNS - empty data received.");
 } else {
+    $message = json_decode($data['Message'], true);
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
-    preg_match($pattern,reset($data['mail']['commonHeaders']['from']),$matches);
-    $emailreq->setEmailFrom($matches[0]);
-    error_log("AWS SNS EMAIL: From : " . $matches[0]);
-    preg_match($pattern,reset($data['mail']['commonHeaders']['to']),$matches);
-    $emailreq->setEmailTo($matches[0]);
-    $emailreq->setEmailSubject($data['mail']['commonHeaders']['subject']);
-    $config = config::getInstance();
-    $bucket = $config->values['AWS']['email-bucket'];
-    $key = $data['receipt']['action']['objectKey'];
+    preg_match(
+        $pattern,
+        reset($message['mail']['commonHeaders']['from']),
+        $fromMatches);
+    $emailreq->setEmailFrom($fromMatches[0]);
+    error_log("AWS SNS EMAIL: From : " . $fromMatches[0]);
+    preg_match(
+        $pattern,
+        reset($message['mail']['commonHeaders']['to']),
+        $toMatches);
+    $emailreq->setEmailTo($toMatches[0]);
+    $emailreq->setEmailSubject($message['mail']['commonHeaders']['subject']);
+    $bucket = $message['receipt']['action']['bucketName'];
+    $key = $message['receipt']['action']['objectKey'];
 
-    $s3 = new Aws\S3\S3Client([
+    $config = config::getInstance();
+    $s3 = new Aws\S3\S3Client(array(
         'version' => 'latest',
         'region'  => 'eu-west-1',
-        'credentials' => [
+        'credentials' => array(
             'key'    => $config->values['AWS']['Access-keyID'],
             'secret' => $config->values['AWS']['Access-key']
-            ]
-        ]);
+        )
+    ));
     $result = $s3->getObject(array(
         'Bucket' => $bucket,
         'Key'    => $key
