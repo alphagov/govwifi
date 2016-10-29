@@ -2,7 +2,8 @@
     "require": {
         "php-http/guzzle6-adapter": "^1.1",
         "alphagov/notifications-php-client": "dev-master",
-        "aws/aws-sdk-php": "^3.19"
+        "aws/aws-sdk-php": "^3.19",
+        "swiftmailer/swiftmailer": "@stable"
     },
     "config": {
         "optimize-autoloader": true
