@@ -36,7 +36,7 @@ class report {
         $handle = $dblink->prepare($sql);
         $handle->execute();
         $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
-        $this->subject = "List of sites subscribed to user.wifi";
+        $this->subject = "List of sites subscribed to GovWifi";
         $this->columns = array("Organisation", "Site Name");
     }
 
