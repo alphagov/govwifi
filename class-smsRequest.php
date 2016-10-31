@@ -33,8 +33,7 @@ class smsRequest {
     public function dailycode() {
         $user = new user();
         $user->identifier = $this->sender;
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
         $login = $user->codeActivate($this->messageWords[0]);
         error_log(
@@ -54,16 +53,14 @@ class smsRequest {
 
     public function security() {
         error_log("SMS: Security info request from ".$this->sender->text);
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
         $sms->security();
     }
 
     public function help() {
         error_log("SMS: Sending help information to ".$this->sender->text);
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
         $sms->help($this->message);
     }
@@ -88,8 +85,7 @@ class smsRequest {
             $user->sponsor = $this->sender;
             $user->enroll();
         } else {
-            $sms = new smsResponse;
-            $sms->to = $this->sender->text;
+            $sms = new smsResponse($this->sender->text);
             $sms->setReply();
             $sms->terms();
             error_log(

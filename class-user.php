@@ -67,9 +67,8 @@ class user {
 
     private function sendCredentials() {
         if ($this->identifier->validMobile) {
-            $sms = new smsResponse();
+            $sms = new smsResponse($this->identifier->text);
             $sms->setReply();
-            $sms->to = $this->identifier->text;
             $sms->enroll($this);
         } else if ($this->identifier->validEmail) {
             $email = new emailResponse();
@@ -102,8 +101,7 @@ class user {
                     error_log(
                         "SMS: Sending restricted building to " .
                         $this->identifier->text);
-                    $sms = new smsResponse;
-                    $sms->to = $this->identifier->text;
+                    $sms = new smsResponse($this->identifier->text);
                     $sms->setReply();
 
                     if ($this->email) {

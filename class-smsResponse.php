@@ -1,13 +1,14 @@
 <?php
 
 class smsResponse {
-    public $from;
-    public $to;
+    private $from;
+    private $destinationNumber;
     public $template;
     public $personalisation;
 
-    public function __construct() {
+    public function __construct($destinationNumber) {
         $this->setNoReply();
+        $this->destinationNumber = $destinationNumber;
     }
 
     public function setReply() {
@@ -29,7 +30,7 @@ class smsResponse {
 
         try {
             $response = $notifyClient->sendSms(
-                    $this->to,
+                    $this->destinationNumber,
                     $this->template,
                     $this->personalisation);
         } catch (NotifyException $e) {
