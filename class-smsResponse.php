@@ -1,19 +1,19 @@
 <?php
 
 class smsResponse {
-    public $from;
-    public $to;
+    private $from;
+    private $destinationNumber;
     public $template;
     public $personalisation;
 
-    public function __construct() {
+    public function __construct($destinationNumber) {
         $this->setNoReply();
+        $this->destinationNumber = $destinationNumber;
     }
 
     public function setReply() {
         $config = config::getInstance();
         $this->from = $config->values['reply-sender'];
-
     }
 
     public function setNoReply() {
@@ -21,7 +21,7 @@ class smsResponse {
         $this->from = $config->values['noreply-sender'];
     }
 
-    public function send() {
+    private function send() {
         $config = config::getInstance();
         $notifyClient = new \Alphagov\Notifications\Client([
             'serviceId'     => $config->values['notify']['serviceId'],
@@ -30,7 +30,7 @@ class smsResponse {
 
         try {
             $response = $notifyClient->sendSms(
-                    $this->to,
+                    $this->destinationNumber,
                     $this->template,
                     $this->personalisation);
         } catch (NotifyException $e) {
@@ -38,98 +38,89 @@ class smsResponse {
         }
     }
 
-    public function newsite($pdf) {
+    public function sendNewsitePassword($pdf) {
         $config = config::getInstance();
-	$this->personalisation['PASSWORD'] = $pdf->password;
-	$this->personalisation['FILENAME'] = $pdf->filename;
-	$this->template=$config->values['notify']['newsite-password'];
+        $this->personalisation['PASSWORD'] = $pdf->password;
+        $this->personalisation['FILENAME'] = $pdf->filename;
+        $this->template=$config->values['notify']['newsite-password'];
         $this->send();
     }
 
-    public function logrequest($pdf) {
+    public function sendLogrequestPassword($pdf) {
         $config = config::getInstance();
-	$this->personalisation['PASSWORD'] = $pdf->password;
+	    $this->personalisation['PASSWORD'] = $pdf->password;
         $this->personalisation['FILENAME'] = $pdf->filename;
         $this->template=$config->values['notify']['logrequest-password'];
         $this->send();
     }
 
-    public function enroll($user) {
+    public function sendCredentials($user) {
         $config = config::getInstance();
-	$this->personalisation['LOGIN'] = $user->login;
+	    $this->personalisation['LOGIN'] = $user->login;
         $this->personalisation['PASS'] = $user->password;
-	$this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
+	    $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
         $this->template=$config->values['notify']['wifi-details'];
         $this->send();
     }
-    //TODO (afoldesi-gds): Incomplete, unused. Update to use notify templates.
-    public function restrictedUnset($site) {
+
+    public function sendRestrictedSiteHelpEmailUnset(site $site) {
         $config = config::getInstance();
-        $this->message = file_get_contents(
-                $config->values['sms-messages']['restricted-unset-file']);
-        $this->message = str_replace("%ADDRESS%", $site->name, $this->message);
-        $this->message = str_replace(
-                "%WHITELIST%", $site->getWhitelist(), $this->message);
-        $this->send();
-    }
-    //TODO (afoldesi-gds): Incomplete, unused. Update to use notify templates.
-    public function restrictedSet($site) {
-        $config = config::getInstance($site);
-        $this->message = file_get_contents(
-                $config->values['sms-messages']['restricted-set-file']);
-        $this->message = str_replace("%ADDRESS%", $site->name, $this->message);
-        $this->message = str_replace(
-                "%WHITELIST%", $site->getWhitelist(), $this->message);
+        $this->personalisation['ADDRESS'] = $site->name;
+        $this->personalisation['WHITELIST'] = $site->getWhitelist();
+        $this->template = $config->values['notify']['restricted-site-email-unset'];
         $this->send();
     }
 
-    public function terms() {
+    public function sendRestrictedSiteHelpEmailSet(site $site) {
         $config = config::getInstance();
-	$this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
-	$this->template = $config->values['notify']['terms'];
-        $this->send();
-    }
-    //TODO (afoldesi-gds): Update to use notify templates.
-    public function activate() {
-        $config = config::getInstance();
-        $this->message = file_get_contents(
-                $config->values['sms-messages']['activate-file']);
-        $this->message = str_replace(
-                "%KEYWORD%", $config->values['reply-keyword'], $this->message);
+        $this->personalisation['ADDRESS'] = $site->name;
+        $this->template = $config->values['notify']['restricted-site-email-set'];
         $this->send();
     }
 
-    public function security() {
+    public function sendTerms() {
         $config = config::getInstance();
-	$this->personalisation['THUMBPRINT']=$config->values['radcert-thumbprint'];
-	$this->template=$config->values['notify']['security-details'];
+        $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
+        $this->template = $config->values['notify']['terms'];
         $this->send();
     }
 
-    public function help($os) {
+    public function sendDailyCodeConfirmation() {
         $config = config::getInstance();
+        $this->template = $config->values['notify']['daily-code-confirmation'];
+        $this->send();
+    }
 
+    public function sendSecurityInfo() {
+        $config = config::getInstance();
+        $this->personalisation['THUMBPRINT'] = $config->values['radcert-thumbprint'];
+        $this->template = $config->values['notify']['security-details'];
+        $this->send();
+    }
+
+    public function sendHelpForOs($os) {
+        $config = config::getInstance();
         switch ($os) {
             case (preg_match("/OSX/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-osx'];
+                $this->template = $config->values['notify']['help-osx'];
                 break;
             case (preg_match("/win.*(XP|7|8)/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-windows'];
+                $this->template = $config->values['notify']['help-windows'];
                 break;
             case (preg_match("/win.*10/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-windows10'];
+                $this->template = $config->values['notify']['help-windows10'];
                 break;
             case (preg_match("/android/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-android'];
+                $this->template = $config->values['notify']['help-android'];
                 break;
             case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-iphone'];
+                $this->template = $config->values['notify']['help-iphone'];
                 break;
             case (preg_match("/blackberry/i", $os) ? true : false):
-                $this->template=$config->values['notify']['help-blackberry'];
+                $this->template = $config->values['notify']['help-blackberry'];
                 break;
             default:
-                $this->template=$config->values['notify']['help'];
+                $this->template = $config->values['notify']['help'];
                 break;
         }
         $this->send();

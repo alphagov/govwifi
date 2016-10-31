@@ -67,10 +67,9 @@ class user {
 
     private function sendCredentials() {
         if ($this->identifier->validMobile) {
-            $sms = new smsResponse();
+            $sms = new smsResponse($this->identifier->text);
             $sms->setReply();
-            $sms->to = $this->identifier->text;
-            $sms->enroll($this);
+            $sms->sendCredentials($this);
         } else if ($this->identifier->validEmail) {
             $email = new emailResponse();
             $email->to = $this->identifier->text;
@@ -102,14 +101,13 @@ class user {
                     error_log(
                         "SMS: Sending restricted building to " .
                         $this->identifier->text);
-                    $sms = new smsResponse;
-                    $sms->to = $this->identifier->text;
+                    $sms = new smsResponse($this->identifier->text);
                     $sms->setReply();
 
                     if ($this->email) {
-                        $sms->restrictedSet($site);
+                        $sms->sendRestrictedSiteHelpEmailSet($site);
                     } else {
-                        $sms->restrictedUnset($site);
+                        $sms->sendRestrictedSiteHelpEmailUnset($site);
                     }
                     // Put an entry in the activations database with a date of 0
                     $handle = $dblink->prepare(

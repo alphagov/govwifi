@@ -161,9 +161,8 @@ class emailRequest {
             $email->filepath = $pdf->filepath;
             $email->send();
             // Create sms response for the code
-            $sms = new smsResponse;
-            $sms->to = $orgAdmin->mobile;
-            $sms->logrequest($pdf);
+            $sms = new smsResponse($orgAdmin->mobile);
+            $sms->sendLogrequestPassword($pdf);
         }
     }
 
@@ -237,9 +236,8 @@ class emailRequest {
             $email->filepath = $pdf->filepath;
             $email->send();
             // Create sms response for the code
-            $sms = new smsResponse;
-            $sms->to = $orgAdmin->mobile;
-            $sms->newsite($pdf);
+            $sms = new smsResponse($orgAdmin->mobile);
+            $sms->sendNewsitePassword($pdf);
 
         } else {
             error_log(

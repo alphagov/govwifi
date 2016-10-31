@@ -33,20 +33,19 @@ class smsRequest {
     public function dailycode() {
         $user = new user();
         $user->identifier = $this->sender;
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
         $login = $user->codeActivate($this->messageWords[0]);
         error_log(
             "SMS: Received a daily code from " .
                 $this->sender->text . " User: " . $login);
         if ($login) {
-            $sms->activate();
+            $sms->sendDailyCodeConfirmation();
             error_log(
                 "SMS: Account exists, sending activation response to " .
                     $this->sender->text);
         } else {
-            $sms->terms();
+            $sms->sendTerms();
             error_log("SMS: No account, sending terms to " .
                     $this->sender->text);
         }
@@ -54,18 +53,16 @@ class smsRequest {
 
     public function security() {
         error_log("SMS: Security info request from ".$this->sender->text);
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
-        $sms->security();
+        $sms->sendSecurityInfo();
     }
 
     public function help() {
         error_log("SMS: Sending help information to ".$this->sender->text);
-        $sms = new smsResponse;
-        $sms->to = $this->sender->text;
+        $sms = new smsResponse($this->sender->text);
         $sms->setReply();
-        $sms->help($this->message);
+        $sms->sendHelpForOs($this->message);
     }
 
     public function newPassword() {
@@ -88,10 +85,9 @@ class smsRequest {
             $user->sponsor = $this->sender;
             $user->enroll();
         } else {
-            $sms = new smsResponse;
-            $sms->to = $this->sender->text;
+            $sms = new smsResponse($this->sender->text);
             $sms->setReply();
-            $sms->terms();
+            $sms->sendTerms();
             error_log(
                 "SMS: Initial request, sending terms to ".$this->sender->text);
         }
