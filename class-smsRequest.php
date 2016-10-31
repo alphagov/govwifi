@@ -40,12 +40,12 @@ class smsRequest {
             "SMS: Received a daily code from " .
                 $this->sender->text . " User: " . $login);
         if ($login) {
-            $sms->activate();
+            $sms->sendDailyCodeConfirmation();
             error_log(
                 "SMS: Account exists, sending activation response to " .
                     $this->sender->text);
         } else {
-            $sms->terms();
+            $sms->sendTerms();
             error_log("SMS: No account, sending terms to " .
                     $this->sender->text);
         }
@@ -55,14 +55,14 @@ class smsRequest {
         error_log("SMS: Security info request from ".$this->sender->text);
         $sms = new smsResponse($this->sender->text);
         $sms->setReply();
-        $sms->security();
+        $sms->sendSecurityInfo();
     }
 
     public function help() {
         error_log("SMS: Sending help information to ".$this->sender->text);
         $sms = new smsResponse($this->sender->text);
         $sms->setReply();
-        $sms->help($this->message);
+        $sms->sendHelpForOs($this->message);
     }
 
     public function newPassword() {
@@ -87,7 +87,7 @@ class smsRequest {
         } else {
             $sms = new smsResponse($this->sender->text);
             $sms->setReply();
-            $sms->terms();
+            $sms->sendTerms();
             error_log(
                 "SMS: Initial request, sending terms to ".$this->sender->text);
         }

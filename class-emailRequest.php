@@ -162,7 +162,7 @@ class emailRequest {
             $email->send();
             // Create sms response for the code
             $sms = new smsResponse($orgAdmin->mobile);
-            $sms->logrequest($pdf);
+            $sms->sendLogrequestPassword($pdf);
         }
     }
 
@@ -237,7 +237,7 @@ class emailRequest {
             $email->send();
             // Create sms response for the code
             $sms = new smsResponse($orgAdmin->mobile);
-            $sms->newsite($pdf);
+            $sms->sendNewsitePassword($pdf);
 
         } else {
             error_log(

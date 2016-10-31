@@ -69,7 +69,7 @@ class user {
         if ($this->identifier->validMobile) {
             $sms = new smsResponse($this->identifier->text);
             $sms->setReply();
-            $sms->enroll($this);
+            $sms->sendCredentials($this);
         } else if ($this->identifier->validEmail) {
             $email = new emailResponse();
             $email->to = $this->identifier->text;
@@ -105,9 +105,9 @@ class user {
                     $sms->setReply();
 
                     if ($this->email) {
-                        $sms->restrictedSet($site);
+                        $sms->sendRestrictedSiteHelpEmailSet($site);
                     } else {
-                        $sms->restrictedUnset($site);
+                        $sms->sendRestrictedSiteHelpEmailUnset($site);
                     }
                     // Put an entry in the activations database with a date of 0
                     $handle = $dblink->prepare(

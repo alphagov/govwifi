@@ -94,7 +94,7 @@ class aaa {
                 if (!$this->user->login) {
                      $sms = new smsResponse($this->user->identifier->text);
                      $sms->setReply();
-                     $sms->terms();
+                     $sms->sendTerms();
                 }
             } else {
                 print $this->site->getDailyCode();
