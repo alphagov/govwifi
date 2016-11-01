@@ -6,6 +6,7 @@
         "swiftmailer/swiftmailer": "@stable"
     },
     "config": {
+        "vendor-dir": "src/vendor",
         "optimize-autoloader": true
     }
 }
