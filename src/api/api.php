@@ -9,5 +9,3 @@ header($_SERVER["SERVER_PROTOCOL"].' '.$aaa->responseHeader);
 header("Content-Type: application/json");
 
 print $aaa->responseBody;
-
-?>

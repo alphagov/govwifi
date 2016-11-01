@@ -281,5 +281,3 @@ class user {
         return $bytes;
     }
 }
-
-?>

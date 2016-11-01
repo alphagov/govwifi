@@ -15,5 +15,3 @@ class config {
         $this->values = parse_ini_file("/etc/enrollment.cfg", "TRUE");
     }
 }
-
-?>

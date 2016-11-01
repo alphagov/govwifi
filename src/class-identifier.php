@@ -47,5 +47,3 @@ class identifier {
         return strtolower($matches[0][0]);
     }
 }
-
-?>

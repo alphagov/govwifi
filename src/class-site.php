@@ -279,5 +279,3 @@ class site {
         return $bytes;
     }
 }
-
-?>

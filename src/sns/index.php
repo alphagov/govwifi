@@ -81,5 +81,3 @@ if (isset($data['SubscribeURL'])) {
         break;
     }
 }
-
-?>

@@ -327,5 +327,3 @@ class emailRequest {
         $this->emailFrom = new identifier($from);
     }
 }
-
-?>

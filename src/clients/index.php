@@ -20,5 +20,3 @@ if ($_REQUEST['key'] == "xp93rDXY65DKQ5IiKlUC0sN0WDwj0v") {
 ';
     }
 }
-
-?>

@@ -49,5 +49,3 @@ if ($smsReq->sender->validMobile)
 {
     error_log("SMS: Invalid number " . $smsReq->sender->text);
 }
-
-?>
