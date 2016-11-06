@@ -1,4 +1,5 @@
 <?php
+namespace Alphagov\GovWifi;
 
 class identifier {
     public $text;

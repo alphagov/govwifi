@@ -1,4 +1,5 @@
 <?php
+namespace Alphagov\GovWifi;
 
 class user {
     public $identifier;

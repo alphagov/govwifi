@@ -1,4 +1,6 @@
 <?php
+namespace Alphagov\GovWifi;
+
 require "../common.php";
 $emailreq = new emailRequest();
 

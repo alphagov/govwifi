@@ -1,4 +1,5 @@
 <?php
+namespace Alphagov\GovWifi;
 
 class MC {
     private static $instance; //The single instance

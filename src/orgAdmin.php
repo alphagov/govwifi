@@ -1,5 +1,5 @@
 <?php
-
+namespace Alphagov\GovWifi;
 
 class orgAdmin {
     public $email;

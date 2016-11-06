@@ -1,4 +1,5 @@
 <?php
+namespace Alphagov\GovWifi;
 
 require "../common.php";
 

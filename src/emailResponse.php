@@ -1,4 +1,5 @@
 <?php
+namespace Alphagov\GovWifi;
 
 class emailResponse {
     public $from;
