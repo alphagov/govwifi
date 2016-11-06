@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+
 class Report {
     public $orgAdmin;
     public $result;
@@ -18,7 +20,7 @@ class Report {
         $handle->bindValue(1, $site->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site->name, PDO::PARAM_STR);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "List of IP Addresses configured for" . $site->name;
         $this->columns = array(
             "IP Address",
@@ -36,7 +38,7 @@ class Report {
                 . "order by organisation.name, site.address";
         $handle = $dblink->prepare($sql);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "List of sites subscribed to GovWifi";
         $this->columns = array("Organisation", "Site Name");
     }
@@ -51,7 +53,7 @@ class Report {
                 . 'having usercount > 2 order by usercount desc';
         $handle = $dblink->prepare($sql);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "Sites by number of unique users in the last 30 days";
         $this->columns = array("Site Name", "Users");
     }
@@ -66,7 +68,7 @@ class Report {
         $handle = $dblink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "All authentications for "
                 . $this->orgAdmin->org_name
                 . " sites";
@@ -87,7 +89,7 @@ class Report {
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "All authentications for " . $site;
         $this->columns = array(
             "Start",
@@ -102,13 +104,13 @@ class Report {
     function byUser($user) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-
+        // TODO(afoldesi-gds): This won't work...
         $sql = "select start,stop,contact,sponsor from logs where username = ?";
         $handle = $dblink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "All authentications by the user " . $user;
         $this->columns = array(
             "Start",
@@ -135,7 +137,7 @@ class Report {
         $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->columns = array(
             "Date/Time",
             "Username",
@@ -145,6 +147,7 @@ class Report {
     }
 
     function userIdentifier($orgAdmin, $user) {
+        // TODO(afoldesi-gds): This won't work either. Merge error?
         $dblink = $db->getConnection();
         $sql = "select start,username,reply,contact,sponsor "
                 . "from logs where username = ?";
@@ -152,7 +155,7 @@ class Report {
         $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
-        $this->result = $handle->fetchAll(\PDO::FETCH_NUM);
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
     }
 }
 

@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+
 class Session {
 
     public $id;
@@ -38,7 +40,7 @@ class Session {
     }
 
     public function loadFromCache() {
-        $m = Memcache::getInstance();
+        $m = Cache::getInstance();
         $sessionRecord = $m->m->get($this->id);
         if ($sessionRecord) {
             $this->login = $sessionRecord['login'];
@@ -52,12 +54,12 @@ class Session {
     }
 
     public function deleteFromCache() {
-        $m = Memcache::getInstance();
+        $m = Cache::getInstance();
         $m->m->delete($this->id);
     }
 
     public function writeToCache() {
-        $m = Memcache::getInstance();
+        $m = Cache::getInstance();
         $m->m->set($this->id, $this->SessionRecord());
     }
 

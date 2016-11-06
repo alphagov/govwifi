@@ -31,7 +31,7 @@ class SmsRequest {
         $user->codeVerify($this->messageWords[0]);
     }
 
-    public function dailycode() {
+    public function dailyCode() {
         $user = new User();
         $user->identifier = $this->sender;
         $sms = new SmsResponse($this->sender->text);
@@ -69,7 +69,6 @@ class SmsRequest {
     public function newPassword() {
         error_log("SMS: Creating new password for ".$this->sender->text);
         $user = new User();
-        // TODO(afoldesi-gds): Discuss what happens to the sponsor field.
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
         $user->enroll(true);

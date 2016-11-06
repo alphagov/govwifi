@@ -1,6 +1,10 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Alphagov\Notifications\Client as NotifyClient;
+use Alphagov\Notifications\Exception\NotifyException;
+use Http\Adapter\Guzzle6\Client as Guzzle6Client;
+
 class SmsResponse {
     private $from;
     private $destinationNumber;
@@ -24,10 +28,10 @@ class SmsResponse {
 
     private function send() {
         $config = Config::getInstance();
-        $notifyClient = new \Alphagov\Notifications\Client([
+        $notifyClient = new NotifyClient([
             'serviceId'     => $config->values['notify']['serviceId'],
             'apiKey'        => $config->values['notify']['apiKey'],
-            'httpClient'    => new \Http\Adapter\Guzzle6\Client]);
+            'httpClient'    => new Guzzle6Client]);
 
         try {
             $response = $notifyClient->sendSms(

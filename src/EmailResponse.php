@@ -1,6 +1,11 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Aws\Ses\SesClient;
+use Exception;
+use Swift_Attachment;
+use Swift_Message;
+
 class EmailResponse {
     public $from;
     public $to;
@@ -29,7 +34,7 @@ class EmailResponse {
         }
     }
 
-    public function newsite($action,$outcome,$site) {
+    public function newSite($action, $outcome, Site $site) {
         $config = Config::getInstance();
         $this->from = $config->values['email-newsitereply'];
         $this->subject = $site->name;
@@ -77,7 +82,7 @@ class EmailResponse {
     public function send() {
         $config = Config::getInstance();
         // TODO(afoldesi-gds): (Low)Refactor out deprecated factory method.
-	    $client = Aws\Ses\SesClient::factory(array(
+	    $client = SesClient::factory(array(
             'version' => 'latest',
             'region' => 'eu-west-1',
             'credentials' => [

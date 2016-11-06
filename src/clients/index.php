@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+
 if ($_REQUEST['key'] == "xp93rDXY65DKQ5IiKlUC0sN0WDwj0v") {
 
     require "../common.php";

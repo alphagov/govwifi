@@ -1,6 +1,10 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
+use Memcached;
+use PDO;
+
 class User {
     public $identifier;
     public $login;
@@ -49,7 +53,7 @@ class User {
                 'select email from verify where code = :code');
         $handle->bindValue(':code', $code, PDO::PARAM_STR);
         $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        $row = $handle->fetch(PDO::FETCH_ASSOC);
 
         if ($row) {
             $handle = $dblink->prepare('delete from verify where code = :code');
@@ -93,7 +97,7 @@ class User {
             $handle->bindValue(1, $site->id, PDO::PARAM_INT);
             $handle->bindValue(2, $this->identifier->text, PDO::PARAM_STR);
             $handle->execute();
-            $row = $handle->fetch(\PDO::FETCH_ASSOC);
+            $row = $handle->fetch(PDO::FETCH_ASSOC);
             if ($row['valid'] == "YES") {
                 return true;
             } else {
@@ -149,7 +153,7 @@ class User {
         $userRecord['password'] = $this->password;
 
         // Write to memcache - we need to do this to flush old entries
-        $m = Memcache::getInstance();
+        $m = Cache::getInstance();
         $m->m->set($this->login, $userRecord);
     }
 
@@ -166,7 +170,7 @@ class User {
         $dblink = $db->getConnection();
         $row = false;
         if ($this->login) {
-            $m = Memcache::getInstance();
+            $m = Cache::getInstance();
             $userRecord = $m->m->get($this->login);
 
             if (!$userRecord) {
@@ -174,7 +178,7 @@ class User {
                         'select * from userdetails where username=?');
                 $handle->bindValue(1, $this->login, PDO::PARAM_STR);
                 $handle->execute();
-                $userRecord = $handle->fetch(\PDO::FETCH_ASSOC);
+                $userRecord = $handle->fetch(PDO::FETCH_ASSOC);
 
                 if ($m->m->getResultCode() == Memcached::RES_NOTFOUND
                     && $userRecord) {
@@ -187,7 +191,7 @@ class User {
                     'select * from userdetails where contact=?');
             $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
             $handle->execute();
-            $userRecord = $handle->fetch(\PDO::FETCH_ASSOC);
+            $userRecord = $handle->fetch(PDO::FETCH_ASSOC);
         }
 
         if ($userRecord) {
@@ -208,7 +212,7 @@ class User {
                 . 'from userdetails where username=?');
         $handle->bindValue(1, $uname, PDO::PARAM_STR);
         $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        $row = $handle->fetch(PDO::FETCH_ASSOC);
         if ($row['unamecount'] == 0) {
             return true;
         } else {
@@ -223,7 +227,7 @@ class User {
                 . 'from userdetails where contact=?');
         $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
         $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        $row = $handle->fetch(PDO::FETCH_ASSOC);
         if ($row)        {
             $username = $row['username'];
         } else {

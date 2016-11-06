@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+
 class OrgAdmin {
     public $email;
     public $org_name;
@@ -19,7 +21,7 @@ class OrgAdmin {
                 'where email=?');
         $handle->bindValue(1, $this->email, PDO::PARAM_STR);
         $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        $row = $handle->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             // if a row is returned then that user is an authorised contact
             $this->org_id = $row['id'];

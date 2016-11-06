@@ -1,6 +1,9 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+use PDOException;
+
 class DB {
     private $connection;
     private static $instance; //The single instance
@@ -20,14 +23,14 @@ class DB {
     private function __construct() {
         try {
             $this->setCredentials();
-            $this->connection = new \PDO(
+            $this->connection = new PDO(
                     'mysql:host=' . $this->hostname
                     . '; dbname=radius; charset=utf8mb4',
                     $this->username,
                     $this->password,
                     array(
-                        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-                        \PDO::ATTR_PERSISTENT => false));
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_PERSISTENT => false));
 
         } catch (PDOException $e) {
             error_log($e->getMessage());

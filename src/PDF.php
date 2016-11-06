@@ -1,6 +1,9 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
+use FPDF;
+
 class PDF {
     public $filename;
     public $filepath;
@@ -27,7 +30,7 @@ class PDF {
         $this->subject = "New Site";
     }
 
-    public function populateLogrequest($org_admin) {
+    public function populateLogRequest($org_admin) {
         $config = Config::getInstance();
         $this->filename = date("Ymd") .
                 $org_admin->org_name . "-" . $org_admin->name . "-Logs";

@@ -1,6 +1,10 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
+use PDO;
+use PDOException;
+
 class EmailRequest {
     public $emailFrom;
     public $emailTo;
@@ -112,7 +116,7 @@ class EmailRequest {
                 . " representing " . $orgAdmin->org_name);
             $subjectArray = explode(":", $this->emailSubject, 2);
             $reportType = strtolower(trim($subjectArray[0]));
-            $pdf = new pdf;
+            $pdf = new PDF();
             if (count($subjectArray) > 1) {
                 $criteria = trim($subjectArray[1]);
             }
@@ -189,7 +193,7 @@ class EmailRequest {
                 error_log(
                     "EMAIL: creating new site : " . $site->name);
                 $outcome = "New site created\n";
-                $site->setRADKey();
+                $site->setRadKey();
                 if ($site->updateFromEmail($this->emailBody))
                     $outcome .= "Site attributes updated\n";
                 $site->writeRecord();
@@ -219,7 +223,7 @@ class EmailRequest {
             }
 
             // Create the site information pdf
-            $pdf = new pdf;
+            $pdf = new PDF();
             $pdf->populateNewSite($site);
             $report = new Report;
             $report->orgAdmin = $orgAdmin;
@@ -229,7 +233,7 @@ class EmailRequest {
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
             if ($outcome) {
-                $email->newSite($action,$outcome,$site);
+                $email->newSite($action, $outcome, $site);
             } else {
                 $email->newSiteBlank($site);
             }
@@ -259,6 +263,7 @@ class EmailRequest {
     }
 
     private function contactList() {
+        $list = [];
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $contact) {
             $contact = new Identifier(trim($contact));

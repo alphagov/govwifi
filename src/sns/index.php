@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Aws\S3\S3Client;
+
 require "../common.php";
 $emailreq = new EmailRequest();
 
@@ -46,7 +48,7 @@ if (isset($data['SubscribeURL'])) {
     $key = $message['receipt']['action']['objectKey'];
 
     $config = Config::getInstance();
-    $s3 = new Aws\S3\S3Client(array(
+    $s3 = new S3Client(array(
         'version' => 'latest',
         'region'  => 'eu-west-1',
         'credentials' => array(

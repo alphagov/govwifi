@@ -1,7 +1,10 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class Memcache {
+use Memcached;
+use PDOException;
+
+class Cache {
     private static $instance; //The single instance
     public $m;
     public $hostname;

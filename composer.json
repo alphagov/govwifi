@@ -8,5 +8,10 @@
     "config": {
         "vendor-dir": "src/vendor",
         "optimize-autoloader": true
+    },
+    "autoload": {
+        "psr-4": {
+            "Alphagov\\GovWifi\\": "src/"
+        }
     }
 }

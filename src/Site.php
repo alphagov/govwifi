@@ -1,6 +1,10 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
+use PDO;
+use PDOException;
+
 class Site {
     public $radKey;
     public $kioskKey;
@@ -233,14 +237,14 @@ class Site {
         }
     }
 
-    public function setRadkey() {
+    public function setRadKey() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select secret, kioskkey from nas WHERE shortname=? and org_id=?');
         $handle->bindValue(1, $this->name, PDO::PARAM_STR);
         $handle->bindValue(2, $this->org_id, PDO::PARAM_INT);
         $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
+        $row = $handle->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             $this->radKey = $row['secret'];
             $this->kioskKey = $row['kioskkey'];
