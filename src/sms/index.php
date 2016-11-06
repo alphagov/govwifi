@@ -3,7 +3,7 @@ namespace Alphagov\GovWifi;
 
 require "../common.php";
 
-$smsReq = new smsRequest();
+$smsReq = new SmsRequest();
 
 if (isset($_REQUEST['source']))
     $smsReq->setSender($_REQUEST['source']);

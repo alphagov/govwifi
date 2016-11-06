@@ -1,17 +1,17 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class smsRequest {
+class SmsRequest {
     public $sender;
     public $message;
     public $messageWords;
 
     public function setSender($sender) {
-        $this->sender = new identifier($sender);
+        $this->sender = new Identifier($sender);
     }
 
     public function setMessage($message) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         // remove whitespace and convert to lower case
         $this->message = strtolower(trim($message));
         // remove any instances of wifi from the message
@@ -26,15 +26,15 @@ class smsRequest {
         error_log(
                 "SMS: Received an email verification code from " .
                 $this->sender->text);
-        $user = new user();
+        $user = new User();
         $user->identifier = $this->sender;
         $user->codeVerify($this->messageWords[0]);
     }
 
     public function dailycode() {
-        $user = new user();
+        $user = new User();
         $user->identifier = $this->sender;
-        $sms = new smsResponse($this->sender->text);
+        $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $login = $user->codeActivate($this->messageWords[0]);
         error_log(
@@ -54,21 +54,21 @@ class smsRequest {
 
     public function security() {
         error_log("SMS: Security info request from ".$this->sender->text);
-        $sms = new smsResponse($this->sender->text);
+        $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $sms->sendSecurityInfo();
     }
 
     public function help() {
         error_log("SMS: Sending help information to ".$this->sender->text);
-        $sms = new smsResponse($this->sender->text);
+        $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $sms->sendHelpForOs($this->message);
     }
 
     public function newPassword() {
         error_log("SMS: Creating new password for ".$this->sender->text);
-        $user = new user();
+        $user = new User();
         // TODO(afoldesi-gds): Discuss what happens to the sponsor field.
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
@@ -76,17 +76,17 @@ class smsRequest {
     }
 
     public function other() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
 
         if (!$config->values['send-terms']
             || $this->messageWords[0] == "agree") {
             error_log("SMS: Creating new account for ".$this->sender->text);
-            $user = new user();
+            $user = new User();
             $user->identifier = $this->sender;
             $user->sponsor = $this->sender;
             $user->enroll();
         } else {
-            $sms = new smsResponse($this->sender->text);
+            $sms = new SmsResponse($this->sender->text);
             $sms->setReply();
             $sms->sendTerms();
             error_log(

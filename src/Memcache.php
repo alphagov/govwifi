@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class MC {
+class Memcache {
     private static $instance; //The single instance
     public $m;
     public $hostname;

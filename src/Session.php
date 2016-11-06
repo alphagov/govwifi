@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class session {
+class Session {
 
     public $id;
     public $inOctets;
@@ -38,7 +38,7 @@ class session {
     }
 
     public function loadFromCache() {
-        $m = MC::getInstance();
+        $m = Memcache::getInstance();
         $sessionRecord = $m->m->get($this->id);
         if ($sessionRecord) {
             $this->login = $sessionRecord['login'];
@@ -52,12 +52,12 @@ class session {
     }
 
     public function deleteFromCache() {
-        $m = MC::getInstance();
+        $m = Memcache::getInstance();
         $m->m->delete($this->id);
     }
 
     public function writeToCache() {
-        $m = MC::getInstance();
+        $m = Memcache::getInstance();
         $m->m->set($this->id, $this->SessionRecord());
     }
 

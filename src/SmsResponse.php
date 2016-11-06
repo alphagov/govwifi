@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class smsResponse {
+class SmsResponse {
     private $from;
     private $destinationNumber;
     public $template;
@@ -13,17 +13,17 @@ class smsResponse {
     }
 
     public function setReply() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->from = $config->values['reply-sender'];
     }
 
     public function setNoReply() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->from = $config->values['noreply-sender'];
     }
 
     private function send() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $notifyClient = new \Alphagov\Notifications\Client([
             'serviceId'     => $config->values['notify']['serviceId'],
             'apiKey'        => $config->values['notify']['apiKey'],
@@ -40,7 +40,7 @@ class smsResponse {
     }
 
     public function sendNewsitePassword($pdf) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->personalisation['PASSWORD'] = $pdf->password;
         $this->personalisation['FILENAME'] = $pdf->filename;
         $this->template=$config->values['notify']['newsite-password'];
@@ -48,7 +48,7 @@ class smsResponse {
     }
 
     public function sendLogrequestPassword($pdf) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
 	    $this->personalisation['PASSWORD'] = $pdf->password;
         $this->personalisation['FILENAME'] = $pdf->filename;
         $this->template=$config->values['notify']['logrequest-password'];
@@ -56,7 +56,7 @@ class smsResponse {
     }
 
     public function sendCredentials($user) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
 	    $this->personalisation['LOGIN'] = $user->login;
         $this->personalisation['PASS'] = $user->password;
 	    $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
@@ -64,43 +64,43 @@ class smsResponse {
         $this->send();
     }
 
-    public function sendRestrictedSiteHelpEmailUnset(site $site) {
-        $config = config::getInstance();
+    public function sendRestrictedSiteHelpEmailUnset(Site $site) {
+        $config = Config::getInstance();
         $this->personalisation['ADDRESS'] = $site->name;
         $this->personalisation['WHITELIST'] = $site->getWhitelist();
         $this->template = $config->values['notify']['restricted-site-email-unset'];
         $this->send();
     }
 
-    public function sendRestrictedSiteHelpEmailSet(site $site) {
-        $config = config::getInstance();
+    public function sendRestrictedSiteHelpEmailSet(Site $site) {
+        $config = Config::getInstance();
         $this->personalisation['ADDRESS'] = $site->name;
         $this->template = $config->values['notify']['restricted-site-email-set'];
         $this->send();
     }
 
     public function sendTerms() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
         $this->template = $config->values['notify']['terms'];
         $this->send();
     }
 
     public function sendDailyCodeConfirmation() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->template = $config->values['notify']['daily-code-confirmation'];
         $this->send();
     }
 
     public function sendSecurityInfo() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->personalisation['THUMBPRINT'] = $config->values['radcert-thumbprint'];
         $this->template = $config->values['notify']['security-details'];
         $this->send();
     }
 
     public function sendHelpForOs($os) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         switch ($os) {
             case (preg_match("/OSX/i", $os) ? true : false):
                 $this->template = $config->values['notify']['help-osx'];

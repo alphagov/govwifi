@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class config {
+class Config {
     private static $instance;
     public $values;
 

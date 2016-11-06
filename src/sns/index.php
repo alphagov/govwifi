@@ -2,7 +2,7 @@
 namespace Alphagov\GovWifi;
 
 require "../common.php";
-$emailreq = new emailRequest();
+$emailreq = new EmailRequest();
 
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
@@ -45,7 +45,7 @@ if (isset($data['SubscribeURL'])) {
     $bucket = $message['receipt']['action']['bucketName'];
     $key = $message['receipt']['action']['objectKey'];
 
-    $config = config::getInstance();
+    $config = Config::getInstance();
     $s3 = new Aws\S3\S3Client(array(
         'version' => 'latest',
         'region'  => 'eu-west-1',

@@ -11,7 +11,7 @@ class PDF {
     public $encrypt = TRUE;
 
     public function populateNewSite($site) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->message = file_get_contents(
                 $config->values['pdf-contents']['newsite-file']);
         $this->message = str_replace("%ORG%", $site->org_name, $this->message);
@@ -28,7 +28,7 @@ class PDF {
     }
 
     public function populateLogrequest($org_admin) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->filename = date("Ymd") .
                 $org_admin->org_name . "-" . $org_admin->name . "-Logs";
         $this->filename = preg_replace("/[^a-zA-Z0-9]/", "_", $this->filename);
@@ -153,7 +153,7 @@ class PDF {
     }
 
     private function setRandomPdfPassword() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $length = $config->values['pdf-password']['length'];
         $pattern = $config->values['pdf-password']['regex'];
         $pass = preg_replace($pattern, "", base64_encode($this->strongRandomBytes($length *

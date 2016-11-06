@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class identifier {
+class Identifier {
     public $text;
     public $validEmail;
     public $validMobile;

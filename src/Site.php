@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class site {
+class Site {
     public $radKey;
     public $kioskKey;
     public $name;
@@ -42,7 +42,7 @@ class site {
 
     public function getDailyCode() {
         if ($this->dailyCodeDate <> date("z")) {
-            $config = config::getInstance();
+            $config = Config::getInstance();
             $length = $config->values['daily-code']['length'];
             $pattern = $config->values['daily-code']['regex'];
             $pass = preg_replace(
@@ -251,7 +251,7 @@ class site {
     }
 
     private function generateRandomRadKey() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $length = $config->values['radius-password']['length'];
         $pattern = $config->values['radius-password']['regex'];
         $pass = preg_replace(
@@ -261,7 +261,7 @@ class site {
     }
 
     private function generateRandomKioskKey() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $length = $config->values['kiosk-password']['length'];
         $pattern = $config->values['kiosk-password']['regex'];
         $pass = preg_replace(

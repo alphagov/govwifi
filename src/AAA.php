@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class aaa {
+class AAA {
     public $user;
     public $mac;
     public $siteIP;
@@ -23,7 +23,7 @@ class aaa {
                     $this->type = $parts[$x + 1];
                     break;
                 case "user":
-                    $this->user = new user;
+                    $this->user = new User;
                     $this->user->login = strtoupper($parts[$x + 1]);
                     $this->user->loadRecord();
                     break;
@@ -35,19 +35,19 @@ class aaa {
                     break;
                 case "site":
                     $this->siteIP = $parts[$x + 1];
-                    $this->site = new site;
+                    $this->site = new Site;
                     $this->site->loadByIp($this->siteIP);
                     break;
                 case "kioskip":
-                    $this->site = new site;
+                    $this->site = new Site;
                     $this->site->loadByKioskIp($parts[$x + 1]);
                     break;
                 case "result":
                     $this->result = $parts[$x + 1];
                     break;
                 case "phone":
-                    $this->user = new user;
-                    $this->user->identifier = new identifier($parts[$x + 1]);
+                    $this->user = new User;
+                    $this->user->identifier = new Identifier($parts[$x + 1]);
                     break;
                 case "code":
                     $this->kioskKey = $parts[$x + 1];
@@ -93,7 +93,7 @@ class aaa {
                 $this->user->kioskActivate($this->site->id);
                 $this->user->loadRecord();
                 if (!$this->user->login) {
-                     $sms = new smsResponse($this->user->identifier->text);
+                     $sms = new SmsResponse($this->user->identifier->text);
                      $sms->setReply();
                      $sms->sendTerms();
                 }
@@ -107,7 +107,7 @@ class aaa {
 
     public function accounting() {
         $acct = json_decode($this->requestJson, true);
-        $this->session = new session(
+        $this->session = new Session(
                 $this->user->login . $acct['Acct-Session-Id']['value'][0]);
 
         switch ($acct['Acct-Status-Type']['value'][0]) {

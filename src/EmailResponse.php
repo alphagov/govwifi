@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class emailResponse {
+class EmailResponse {
     public $from;
     public $to;
     public $subject;
@@ -10,14 +10,14 @@ class emailResponse {
     public $filepath;
 
     public function __construct() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->from = $config->values['email-noreply'];
         $this->subject = "";
         $this->message = "";
     }
 
     public function sponsor($count) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->subject = $config->values['email-messages']['sponsor-subject'];
         if ($count>0) {
             $this->message = file_get_contents(
@@ -30,7 +30,7 @@ class emailResponse {
     }
 
     public function newsite($action,$outcome,$site) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->from = $config->values['email-newsitereply'];
         $this->subject = $site->name;
         $this->message = file_get_contents(
@@ -43,14 +43,14 @@ class emailResponse {
     }
 
     public function newSiteBlank($site) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->subject = $site->name;
         $this->message = file_get_contents(
             $config->values['email-messages']['newsite-help-file']);
     }
 
     public function enroll($user) {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];
         $this->message = file_get_contents(
@@ -67,7 +67,7 @@ class emailResponse {
     }
 
     public function logrequest() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['logrequest-subject'];
         $this->message = file_get_contents(
@@ -75,7 +75,7 @@ class emailResponse {
     }
 
     public function send() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         // TODO(afoldesi-gds): (Low)Refactor out deprecated factory method.
 	    $client = Aws\Ses\SesClient::factory(array(
             'version' => 'latest',

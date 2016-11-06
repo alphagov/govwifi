@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class user {
+class User {
     public $identifier;
     public $login;
     public $password;
@@ -68,11 +68,11 @@ class user {
 
     private function sendCredentials() {
         if ($this->identifier->validMobile) {
-            $sms = new smsResponse($this->identifier->text);
+            $sms = new SmsResponse($this->identifier->text);
             $sms->setReply();
             $sms->sendCredentials($this);
         } else if ($this->identifier->validEmail) {
-            $email = new emailResponse();
+            $email = new EmailResponse();
             $email->to = $this->identifier->text;
             $email->enroll($this);
         }
@@ -102,7 +102,7 @@ class user {
                     error_log(
                         "SMS: Sending restricted building to " .
                         $this->identifier->text);
-                    $sms = new smsResponse($this->identifier->text);
+                    $sms = new SmsResponse($this->identifier->text);
                     $sms->setReply();
 
                     if ($this->email) {
@@ -149,7 +149,7 @@ class user {
         $userRecord['password'] = $this->password;
 
         // Write to memcache - we need to do this to flush old entries
-        $m = MC::getInstance();
+        $m = Memcache::getInstance();
         $m->m->set($this->login, $userRecord);
     }
 
@@ -166,7 +166,7 @@ class user {
         $dblink = $db->getConnection();
         $row = false;
         if ($this->login) {
-            $m = MC::getInstance();
+            $m = Memcache::getInstance();
             $userRecord = $m->m->get($this->login);
 
             if (!$userRecord) {
@@ -193,8 +193,8 @@ class user {
         if ($userRecord) {
             $this->login = strtoupper($userRecord['username']);
             $this->password = $userRecord['password'];
-            $this->identifier = new identifier($userRecord['contact']);
-            $this->sponsor = new identifier($userRecord['sponsor']);
+            $this->identifier = new Identifier($userRecord['contact']);
+            $this->sponsor = new Identifier($userRecord['sponsor']);
             $this->email = $userRecord['email'];
         } else {
             $this->newPassword();
@@ -237,7 +237,7 @@ class user {
 
 
     private function generateRandomUsername() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $length = $config->values['wifi-username']['length'];
         $pattern = $config->values['wifi-username']['regex'];
         $pass = preg_replace(
@@ -247,7 +247,7 @@ class user {
     }
 
     function generateRandomWifiPassword() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $password = "";
         if ($config->values['wifi-password']['random-words']) {
             $f_contents = file(

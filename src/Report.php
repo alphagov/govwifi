@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class report {
+class Report {
     public $orgAdmin;
     public $result;
     public $subject;

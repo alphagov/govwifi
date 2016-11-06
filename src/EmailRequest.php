@@ -1,7 +1,7 @@
 <?php
 namespace Alphagov\GovWifi;
 
-class emailRequest {
+class EmailRequest {
     public $emailFrom;
     public $emailTo;
     public $emailToCMD;
@@ -31,7 +31,7 @@ class emailRequest {
             }
         }
         if ($success) {
-            $email = new emailResponse;
+            $email = new EmailResponse;
             $email->to = $this->emailFrom->text;
             $email->verify($code);
             $email->send();
@@ -39,7 +39,7 @@ class emailRequest {
     }
 
     private function generateRandomVerifyCode() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         $length = $config->values['verify-code']['length'];
         $pattern = $config->values['verify-code']['regex'];
         $pass = preg_replace(
@@ -65,7 +65,7 @@ class emailRequest {
         // Self enrollment request
         if ($this->fromAuthDomain()) {
             error_log("EMAIL: Self Enrolling : " . $this->emailFrom->text);
-            $user = new user;
+            $user = new User;
             $user->identifier = $this->emailFrom;
             $user->sponsor = $this->emailFrom;
             $user->enroll();
@@ -85,12 +85,12 @@ class emailRequest {
             $enrollcount = 0;
             foreach ($this->contactList() as $identifier) {
                 $enrollcount++;
-                $user = new user;
+                $user = new User;
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
                 $user->enroll();
             }
-            $email = new emailResponse();
+            $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
             $email->sponsor($enrollcount);
             $email->send();
@@ -102,10 +102,10 @@ class emailRequest {
     }
 
     public function logRequest() {
-        $orgAdmin = new orgAdmin($this->emailFrom->text);
+        $orgAdmin = new OrgAdmin($this->emailFrom->text);
 
         if ($orgAdmin->authorised) {
-            $report = new report;
+            $report = new Report;
             $report->orgAdmin = $orgAdmin;
             error_log(
                 "EMAIL: processing log request from : " . $this->emailFrom->text
@@ -155,14 +155,14 @@ class emailRequest {
             $pdf->landscape = true;
             $pdf->generatePDF($report);
             // Create email response and attach the pdf
-            $email = new emailResponse;
+            $email = new EmailResponse;
             $email->to = $orgAdmin->email;
             $email->logrequest();
             $email->filename = $pdf->filename;
             $email->filepath = $pdf->filepath;
             $email->send();
             // Create sms response for the code
-            $sms = new smsResponse($orgAdmin->mobile);
+            $sms = new SmsResponse($orgAdmin->mobile);
             $sms->sendLogrequestPassword($pdf);
         }
     }
@@ -172,14 +172,14 @@ class emailRequest {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
 
-        $orgAdmin = new orgAdmin($this->emailFrom->text);
+        $orgAdmin = new OrgAdmin($this->emailFrom->text);
         if ($orgAdmin->authorised) {
             error_log(
                 "EMAIL: processing new site request from : "
                 . $this->emailFrom->text);
             // Add the new site & IP addresses
             $outcome = "Existing site updated\n";
-            $site = new site();
+            $site = new Site();
             $site->loadByAddress($this->emailSubject);
             $action = "updated";
             if (!$site->id) {
@@ -221,12 +221,12 @@ class emailRequest {
             // Create the site information pdf
             $pdf = new pdf;
             $pdf->populateNewSite($site);
-            $report = new report;
+            $report = new Report;
             $report->orgAdmin = $orgAdmin;
             $report->getIPList($site);
             $pdf->generatePDF($report);
             // Create email response and attach the pdf
-            $email = new emailResponse;
+            $email = new EmailResponse;
             $email->to = $orgAdmin->email;
             if ($outcome) {
                 $email->newSite($action,$outcome,$site);
@@ -237,7 +237,7 @@ class emailRequest {
             $email->filepath = $pdf->filepath;
             $email->send();
             // Create sms response for the code
-            $sms = new smsResponse($orgAdmin->mobile);
+            $sms = new SmsResponse($orgAdmin->mobile);
             $sms->sendNewsitePassword($pdf);
 
         } else {
@@ -251,7 +251,7 @@ class emailRequest {
     private function extractMobileNo() {
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $contact) {
-            $contact = new identifier(trim($contact));
+            $contact = new Identifier(trim($contact));
             if ($contact->validMobile) {
                 return $contact;
             }
@@ -261,7 +261,7 @@ class emailRequest {
     private function contactList() {
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $contact) {
-            $contact = new identifier(trim($contact));
+            $contact = new Identifier(trim($contact));
             if ($contact->validEmail or $contact->validMobile) {
                 $list[] = $contact;
             }
@@ -305,7 +305,7 @@ class emailRequest {
 
 
     public function fromAuthDomain() {
-        $config = config::getInstance();
+        $config = Config::getInstance();
         return preg_match(
                 $config->values['authorised-domains'],
                 $this->emailFrom->text);
@@ -325,6 +325,6 @@ class emailRequest {
     }
 
     public function setEmailFrom($from) {
-        $this->emailFrom = new identifier($from);
+        $this->emailFrom = new Identifier($from);
     }
 }
