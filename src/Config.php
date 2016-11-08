@@ -15,7 +15,7 @@ class Config {
     private function __construct() {
         $this->values = parse_ini_file("/etc/enrollment.cfg", "TRUE");
 	foreach ($this->values as $key => $value) {
-            if ($getend($key))
+            if (getenv($key))
 		$this->values[$key] = $value;
     }
 }
