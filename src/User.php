@@ -82,7 +82,7 @@ class User {
         }
     }
 
-    public function activatedHere($site) {
+    public function activatedHere(Site $site) {
         if ($this->identifier->validMobile) {
             $db = DB::getInstance();
             $dblink = $db->getConnection();
@@ -168,7 +168,7 @@ class User {
         # otherwise it will return a randomly generated one
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        $row = false;
+
         if ($this->login) {
             $m = Cache::getInstance();
             $userRecord = $m->m->get($this->login);

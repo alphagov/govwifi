@@ -2,6 +2,7 @@
 namespace Alphagov\GovWifi;
 
 class Config {
+    const HEALTH_CHECK_USER = "HEALTH";
     private static $instance;
     public $values;
 

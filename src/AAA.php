@@ -98,6 +98,7 @@ class AAA {
                      $sms->sendTerms();
                 }
             } else {
+                // TODO: print.
                 print $this->site->getDailyCode();
             }
         } else {
@@ -217,8 +218,24 @@ class AAA {
         $this->ap=$this->fixMac($mac);
     }
 
+    /**
+     * Tries to authorize the user based on her mobile number, email address,
+     * and site-specific settings. Sets the response header and content
+     * accordingly.
+     *
+     * If the site is restricted by an activation regex, the user's email
+     * is checked against this.
+     * If this check fails the user could still be authorized if she has
+     * a valid daily code already activated for the current site.
+     */
     public function authorize() {
-    // If this matches a user account continue
+        // Return immediately for health checks.
+        if (Config::HEALTH_CHECK_USER == $this->user->login) {
+            $this->authorizeResponse(TRUE);
+            return;
+        }
+
+        // If this matches a user account continue
         if (isset($this->user->identifier)
             && $this->user->identifier->text) {
 
@@ -234,7 +251,7 @@ class AAA {
                     . $this->site->activationRegex
                     . " Users email: " . $this->user->email);
                 // or the user has activated at this site
-            if ($this->user->activatedHere($this->site)) {
+                if ($this->user->activatedHere($this->site)) {
                     $this->authorizeResponse(TRUE);
                 } else {
                     $this->authorizeResponse(FALSE);
