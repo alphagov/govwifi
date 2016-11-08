@@ -63,7 +63,7 @@ class SmsRequest {
         error_log("SMS: Sending help information to ".$this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
-        $sms->sendHelpForOs($this->message);
+        $sms->sendHelp();
     }
 
     public function newPassword() {
@@ -71,19 +71,22 @@ class SmsRequest {
         $user = new User();
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
-        $user->enroll(true);
+        $user->signUp(true);
+    }
+
+    public function signUp() {
+        error_log("SMS: Creating new account for ".$this->sender->text);
+        $user = new User();
+        $user->identifier = $this->sender;
+        $user->sponsor = $this->sender;
+        $user->signUp($this->message);
     }
 
     public function other() {
         $config = Config::getInstance();
 
-        if (!$config->values['send-terms']
-            || $this->messageWords[0] == "agree") {
-            error_log("SMS: Creating new account for ".$this->sender->text);
-            $user = new User();
-            $user->identifier = $this->sender;
-            $user->sponsor = $this->sender;
-            $user->enroll();
+        if (!$config->values['send-terms']) {
+            $this->signUp();
         } else {
             $sms = new SmsResponse($this->sender->text);
             $sms->setReply();

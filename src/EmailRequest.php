@@ -65,17 +65,17 @@ class EmailRequest {
         return $bytes;
     }
 
-    public function enroll() {
-        // Self enrollment request
+    public function signUp() {
+        // Self service signup request
         if ($this->fromAuthDomain()) {
-            error_log("EMAIL: Self Enrolling : " . $this->emailFrom->text);
+            error_log("EMAIL: signup : " . $this->emailFrom->text);
             $user = new User;
             $user->identifier = $this->emailFrom;
             $user->sponsor = $this->emailFrom;
-            $user->enroll();
+            $user->signUp();
         } else {
             error_log(
-                    "EMAIL: Ignoring self enrollment from : "
+                    "EMAIL: Ignoring signup from : "
                     . $this->emailFrom->text);
         }
     }
@@ -86,17 +86,17 @@ class EmailRequest {
                 "EMAIL: Sponsored request from: "
                 . $this->emailFrom->text);
 
-            $enrollcount = 0;
+            $signupcount = 0;
             foreach ($this->contactList() as $identifier) {
-                $enrollcount++;
+                $signupcount++;
                 $user = new User;
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
-                $user->enroll();
+                $user->signUp();
             }
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
-            $email->sponsor($enrollcount);
+            $email->sponsor($signUpcount);
             $email->send();
         } else {
             error_log(
