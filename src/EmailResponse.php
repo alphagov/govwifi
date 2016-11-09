@@ -54,7 +54,7 @@ class EmailResponse {
             $config->values['email-messages']['newsite-help-file']);
     }
 
-    public function enroll($user) {
+    public function signUp($user) {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];

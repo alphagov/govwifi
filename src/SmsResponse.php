@@ -59,12 +59,12 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendCredentials($user) {
+    public function sendCredentials($user, $message ="") {
+        $this->setTemplateForOs($message); 
         $config = Config::getInstance();
 	    $this->personalisation['LOGIN'] = $user->login;
         $this->personalisation['PASS'] = $user->password;
 	    $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
-        $this->template=$config->values['notify']['wifi-details'];
         $this->send();
     }
 
@@ -80,6 +80,12 @@ class SmsResponse {
         $config = Config::getInstance();
         $this->personalisation['ADDRESS'] = $site->name;
         $this->template = $config->values['notify']['restricted-site-email-set'];
+        $this->send();
+    }
+    public function sendHelp() {
+        $config = Config::getInstance();
+        $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
+        $this->template = $config->values['notify']['help'];
         $this->send();
     }
 
@@ -103,29 +109,29 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendHelpForOs($os) {
+    public function setTemplateForOs($os) {
         $config = Config::getInstance();
         switch ($os) {
-            case (preg_match("/OSX/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-osx'];
+            case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
+                $this->template = $config->values['notify']['creds-osx'];
                 break;
-            case (preg_match("/win.*(XP|7|8)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-windows'];
+            case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
+                $this->template = $config->values['notify']['creds-windows'];
                 break;
-            case (preg_match("/win.*10/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-windows10'];
+            case (preg_match("/(win|windows)\s?10/i", $os) ? true : false):
+                $this->template = $config->values['notify']['creds-windows10'];
                 break;
-            case (preg_match("/android/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-android'];
+            case (preg_match("/(android|samsung|galaxy|htc|huawei)/i", $os) ? true : false):
+                $this->template = $config->values['notify']['creds-android'];
                 break;
             case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-iphone'];
+                $this->template = $config->values['notify']['creds-iphone'];
                 break;
             case (preg_match("/blackberry/i", $os) ? true : false):
-                $this->template = $config->values['notify']['help-blackberry'];
+                $this->template = $config->values['notify']['creds-blackberry'];
                 break;
             default:
-                $this->template = $config->values['notify']['help'];
+                $this->template = $config->values['notify']['creds-unknown'];
                 break;
         }
         $this->send();

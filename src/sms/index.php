@@ -33,6 +33,10 @@ if ($smsReq->sender->validMobile)
             $smsReq->help();
             break;
 
+	case "agree":
+            $smsReq->signUp();
+            break;
+
         default:
             if (preg_match('/^[0-9]{4}$/', $firstword)) {
                 $smsReq->dailyCode();

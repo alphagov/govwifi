@@ -12,14 +12,14 @@ class User {
     public $sponsor;
     public $email;
 
-    public function enroll($force = false) {
+    public function signUp($message = "", $force = false) {
         $this->setUsername();
         $this->loadRecord();
         if ($force) {
             $this->newPassword();
         }
         $this->radiusDbWrite();
-        $this->sendCredentials();
+        $this->sendCredentials($message);
     }
 
     public function kioskActivate($site_id) {
@@ -70,15 +70,15 @@ class User {
         }
     }
 
-    private function sendCredentials() {
+    private function sendCredentials($message = "") {
         if ($this->identifier->validMobile) {
             $sms = new SmsResponse($this->identifier->text);
             $sms->setReply();
-            $sms->sendCredentials($this);
+            $sms->sendCredentials($this, $message);
         } else if ($this->identifier->validEmail) {
             $email = new EmailResponse();
             $email->to = $this->identifier->text;
-            $email->enroll($this);
+            $email->signUp($this);
         }
     }
 
