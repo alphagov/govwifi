@@ -59,7 +59,7 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendCredentials($user, $message ="") {
+    public function sendCredentials($user, $message = "") {
         $this->setTemplateForOs($message); 
         $config = Config::getInstance();
 	    $this->personalisation['LOGIN'] = $user->login;
@@ -134,7 +134,6 @@ class SmsResponse {
                 $this->template = $config->values['notify']['creds-unknown'];
                 break;
         }
-        $this->send();
     }
 }
 
