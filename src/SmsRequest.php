@@ -90,9 +90,9 @@ class SmsRequest {
         } else {
             $sms = new SmsResponse($this->sender->text);
             $sms->setReply();
-            $sms->sendTerms();
             error_log(
                 "SMS: Initial request, sending terms to ".$this->sender->text);
+            $sms->sendTerms();
         }
     }
 }

@@ -38,8 +38,9 @@ class SmsResponse {
                     $this->destinationNumber,
                     $this->template,
                     $this->personalisation);
+            error_log("SMS sent. " . var_export($response, true));
         } catch (NotifyException $e) {
-            // TODO(afoldesi-gds): Handle failure, $response.
+            error_log("Exception from Notify: " . var_export($e, true));
         }
     }
 
