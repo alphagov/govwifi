@@ -52,7 +52,7 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendLogrequestPassword($pdf) {
+    public function sendLogRequestPassword($pdf) {
         $config = Config::getInstance();
 	    $this->personalisation['PASSWORD'] = $pdf->password;
         $this->personalisation['FILENAME'] = $pdf->filename;
@@ -61,11 +61,11 @@ class SmsResponse {
     }
 
     public function sendCredentials($user, $message = "") {
-        $this->template = $this->getTemplateForOs($message);
-        $config = Config::getInstance();
+        $template = $this->getTemplateForOs($message);
+        error_log("Using template [" . $template . "] for message [" . $message . "]");
+        $this->template = $template;
 	    $this->personalisation['LOGIN'] = $user->login;
         $this->personalisation['PASS'] = $user->password;
-	    $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
         $this->send();
     }
 
@@ -114,13 +114,16 @@ class SmsResponse {
         $config = Config::getInstance();
         switch ($os) {
             case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
-                return $config->values['notify']['creds-osx'];
+                return $config->values['notify']['creds-mac'];
                 break;
             case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
-                return $config->values['notify']['creds-windows'];
+                return $config->values['notify']['creds-windows7'];
                 break;
             case (preg_match("/(win|windows)\s?10/i", $os) ? true : false):
                 return $config->values['notify']['creds-windows10'];
+                break;
+            case (preg_match("/(win|windows)\s?/i", $os) ? true : false):
+                return $config->values['notify']['creds-windows'];
                 break;
             case (preg_match("/(android|samsung|galaxy|htc|huawei)/i", $os) ? true : false):
                 return $config->values['notify']['creds-android'];

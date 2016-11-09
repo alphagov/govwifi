@@ -167,7 +167,7 @@ class EmailRequest {
             $email->send();
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
-            $sms->sendLogrequestPassword($pdf);
+            $sms->sendLogRequestPassword($pdf);
         }
     }
 
