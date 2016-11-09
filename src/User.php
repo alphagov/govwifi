@@ -195,7 +195,6 @@ class User {
         }
 
         if ($userRecord) {
-            $this->login = strtoupper($userRecord['username']);
             $this->password = $userRecord['password'];
             $this->identifier = new Identifier($userRecord['contact']);
             $this->sponsor = new Identifier($userRecord['sponsor']);
@@ -247,7 +246,7 @@ class User {
         $pass = preg_replace(
                 $pattern, "",
                 base64_encode($this->strongRandomBytes($length * 4)));
-        return substr($pass, 0, $length);
+        return strtoupper(substr($pass, 0, $length));
     }
 
     function generateRandomWifiPassword() {
