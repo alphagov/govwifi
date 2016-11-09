@@ -60,7 +60,7 @@ class SmsResponse {
     }
 
     public function sendCredentials($user, $message = "") {
-        $this->setTemplateForOs($message); 
+        $this->template = $this->getTemplateForOs($message);
         $config = Config::getInstance();
 	    $this->personalisation['LOGIN'] = $user->login;
         $this->personalisation['PASS'] = $user->password;
@@ -109,29 +109,29 @@ class SmsResponse {
         $this->send();
     }
 
-    public function setTemplateForOs($os) {
+    public function getTemplateForOs($os) {
         $config = Config::getInstance();
         switch ($os) {
             case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-osx'];
+                return $config->values['notify']['creds-osx'];
                 break;
             case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-windows'];
+                return $config->values['notify']['creds-windows'];
                 break;
             case (preg_match("/(win|windows)\s?10/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-windows10'];
+                return $config->values['notify']['creds-windows10'];
                 break;
             case (preg_match("/(android|samsung|galaxy|htc|huawei)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-android'];
+                return $config->values['notify']['creds-android'];
                 break;
             case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-iphone'];
+                return $config->values['notify']['creds-iphone'];
                 break;
             case (preg_match("/blackberry/i", $os) ? true : false):
-                $this->template = $config->values['notify']['creds-blackberry'];
+                return $config->values['notify']['creds-blackberry'];
                 break;
             default:
-                $this->template = $config->values['notify']['creds-unknown'];
+                return $config->values['notify']['creds-unknown'];
                 break;
         }
     }
