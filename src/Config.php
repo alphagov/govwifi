@@ -3,6 +3,7 @@ namespace Alphagov\GovWifi;
 
 class Config {
     const HEALTH_CHECK_USER = "HEALTH";
+    const FIRETEXT_EMPTY_KEYWORD = "NON-SPECIFIED";
     private static $instance;
     public $values;
 
