@@ -69,7 +69,7 @@ if (isset($data['SubscribeURL'])) {
         case "enroll":
         case "enrol":
         case "signup":
-            $emailreq->enroll();
+            $emailreq->signUp();
         break;
         case "verify":
             $emailreq->verify();
@@ -78,10 +78,10 @@ if (isset($data['SubscribeURL'])) {
             $emailreq->sponsor();
         break;
         case "newsite":
-            $emailreq->newsite();
+            $emailreq->newSite();
         break;
         case "logrequest":
-            $emailreq->logrequest();
+            $emailreq->logRequest();
         break;
     }
 }
