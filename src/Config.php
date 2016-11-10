@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
+
 class Config {
     const HEALTH_CHECK_USER = "HEALTH";
     const FIRETEXT_EMPTY_KEYWORD = "NON-SPECIFIED";
@@ -15,11 +17,19 @@ class Config {
     }
 
     private function __construct() {
-        $this->values = parse_ini_file("/etc/enrollment.cfg", "TRUE");
-        foreach ($this->values as $key => $value) {
-            $envValue = getenv($key);
-            if ($envValue) {
-                $this->values[$key] = $envValue;
+        $environment = getenv("ENVIRONMENT_NAME");
+        if ($environment) {
+            $this->values = parse_ini_file("/etc/enrollment." . $environment . ".cfg", "TRUE");
+        } else {
+            throw new Exception("Environment name is required.");
+        }
+        $radiusIPs = getenv("RADIUS_SERVER_IPS");
+        if ($radiusIPs) {
+            $this->values['radiusIPs'] = $radiusIPs;
+            $this->values['radiusServerCount'] = count(explode(",", $radiusIPs));
+            $radiusHostname = getenv('RADIUS_HOSTNAME');
+            if ($radiusHostname) {
+                $this->values['radiusHostnameTemplate'] = $radiusHostname;
             }
         }
     }

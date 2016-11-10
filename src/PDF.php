@@ -23,6 +23,18 @@ class PDF {
                 "%DESCRIPTION%", $site->name, $this->message);
         $this->message = str_replace(
                 "%KIOSKKEY%", $site->kioskKey, $this->message);
+        $this->message = str_replace(
+            "%RADIUS_IP_LIST%",
+            str_replace(",","\n",
+                str_replace("/32", "", $config->values['radiusIPs'])),
+            $this->message);
+        $radiusServerList = "";
+        for ($i = 1; $i <= $config->values['radiusServerCount']; $i++) {
+            $radiusServerList .= str_replace(
+                "*n*", $i, $config->values['radiusHostnameTemplate']) . "\n";
+        }
+        $this->message = str_replace(
+            "%RADIUS_SERVER_LIST%", $radiusServerList, $this->message);
         $this->filename = $site->org_name . "-" . $site->name;
         $this->filename = preg_replace("/[^a-zA-Z0-9]/", "_", $this->filename);
         $this->filename .= ".pdf";
