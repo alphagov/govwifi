@@ -44,7 +44,7 @@ class PDF {
                 $config->values['pdf-contents']['logrequest-file']);
     }
 
-    public function generatePDF($report = null) {
+    public function generatePDF(Report $report = null) {
         // Generate PDF with the site details
         // Encrypts the file then returns the password
         $un_filename = $this->filepath . "-unencrypted";
@@ -89,7 +89,7 @@ class PDF {
         unlink($filename);
     }
 
-    private function PdfSqlTable($pdf, $report) {
+    private function PdfSqlTable($pdf, Report $report) {
         $totalrows = 0;
         $w = array(
             0,

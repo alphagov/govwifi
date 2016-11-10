@@ -276,7 +276,6 @@ class EmailRequest {
 
     private function ipList() {
         $list = array();
-
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
             $ipAddr = preg_replace('/[^0-9.]/', '', $ipAddr);

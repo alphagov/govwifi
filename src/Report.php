@@ -9,22 +9,21 @@ class Report {
     public $subject;
     public $columns;
 
-    public function getIPList($site) {
+    public function getIPList(Site $site) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $sql = "select ip, site.address, site.radkey from site, siteip " .
-               "where site.id = siteip.site_id " .
-               "and org_id = ? " .
-               "and site.address = ?";
-        $handle = $dblink->prepare($sql);
+        $dbLink = $db->getConnection();
+        $sql = "select ip, site.radkey from site, siteip "
+                . "where site.id = siteip.site_id "
+                . "and org_id = ? "
+                . "and site.address = ?";
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $site->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site->name, PDO::PARAM_STR);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
-        $this->subject = "List of IP Addresses configured for" . $site->name;
+        $this->subject = "List of IP Addresses configured for " . $site->name;
         $this->columns = array(
             "IP Address",
-            "Site Name",
             "RADIUS Secret");
 
     }
@@ -124,6 +123,7 @@ class Report {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
 
+        $sitesql = "";
         if ($site) {
             $sitesql = 'and shortname = ?';
         }
