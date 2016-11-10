@@ -3,7 +3,8 @@
         "php-http/guzzle6-adapter": "^1.1",
         "alphagov/notifications-php-client": "dev-master",
         "aws/aws-sdk-php": "^3.19",
-        "swiftmailer/swiftmailer": "@stable"
+        "swiftmailer/swiftmailer": "@stable",
+        "setasign/fpdf": "1.8.1"
     },
     "config": {
         "vendor-dir": "src/vendor",
