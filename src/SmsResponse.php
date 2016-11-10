@@ -125,7 +125,7 @@ class SmsResponse {
             case (preg_match("/(win|windows)\s?/i", $os) ? true : false):
                 return $config->values['notify']['creds-windows'];
                 break;
-            case (preg_match("/(android|samsung|galaxy|htc|huawei)/i", $os) ? true : false):
+            case (preg_match("/(android|samsung|galaxy|htc|huawei|sony|motorola|lg|nexus)/i", $os) ? true : false):
                 return $config->values['notify']['creds-android'];
                 break;
             case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
