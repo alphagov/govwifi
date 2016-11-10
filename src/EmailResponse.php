@@ -107,10 +107,10 @@ class EmailResponse {
                 )
             ));
             $messageId = $result->get('MessageId');
-            error_log("Email sent! Message ID: $messageId"."\n");
+            error_log("Email sent! Message ID: " . $messageId);
         } catch (Exception $e) {
             error_log(
-                "The email was not sent. Error message: ".$e->getMessage());
+                "The email was not sent. Error message: " . $e->getMessage());
         }
     }
 }

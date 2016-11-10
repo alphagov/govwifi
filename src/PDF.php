@@ -68,7 +68,7 @@ class PDF {
                 $pdf->Write(5, $line . "\n");
             }
         }
-        $pdf->Output($un_filename);
+        $pdf->Output("F", $un_filename);
         if ($this->encrypt) {
             $this->encryptPdf($un_filename);
         } else {
