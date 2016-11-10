@@ -1,6 +1,8 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use PDO;
+
 class AAA {
     public $user;
     public $mac;
