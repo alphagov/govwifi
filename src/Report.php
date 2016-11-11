@@ -64,9 +64,9 @@ class Report {
     function byOrgId() {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start,username,shortname,InMB, OutMB "
-                . "from logs "
-                . "where org_id = ?";
+        $sql = "select start, username, shortname, InMB, OutMB
+                from logs
+                where org_id = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         $handle->execute();
@@ -85,8 +85,8 @@ class Report {
     function bySite($siteShortName) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start,stop,username, InMB,OutMB,mac,ap "
-                . "from logs where org_id = ? and shortname = ?";
+        $sql = "select start, stop, username, InMB, OutMB, mac, ap
+                from logs where org_id = ? and shortname = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         $handle->bindValue(2, $siteShortName, PDO::PARAM_INT);
@@ -103,16 +103,15 @@ class Report {
             "AP");
     }
 
-    function byUser($userId) {
+    function byUser($userName) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start,stop,contact,sponsor from logs where username = ?";
+        $sql = "select start, stop, contact, sponsor from logs where username = ?";
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $userId, PDO::PARAM_INT);
+        $handle->bindValue(1, $userName, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
-        // TODO: Use proper username instead of id.
-        $this->subject = "All authentications by the user " . $userId;
+        $this->subject = "All authentications by the user " . $userName;
         $this->columns = array(
             "Start",
             "Stop",
@@ -129,12 +128,12 @@ class Report {
         if (!empty($site)) {
             $siteSql = 'and shortname = ?';
         }
-        $sql = 'select count(distinct(username)) as Users, '
-                . 'date(start) as Date  '
-                . 'from logs where org_id = ? '
+        $sql = 'select count(distinct(username)) as Users,
+                date(start) as Date
+                from logs where org_id = ? '
                 . $siteSql
-                . ' and start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
-                . 'group by Date order by Date desc';
+                . ' and start > DATE_SUB(NOW(), INTERVAL 30 DAY)
+                group by Date order by Date desc';
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         if (!empty($site)) {

@@ -72,7 +72,7 @@ class Session {
                 . "where siteIP=:siteIP and username=:username "
                 . "and stop is null and mac=:mac and ap=:ap "
                 . "and start between :startmin and :startmax");
-
+        // TODO (afoldesi-gds): Validate this logic.
         $startmin = strftime('%Y-%m-%d %H:%M:%S',$this->startTime-$window);
         $startmax = strftime('%Y-%m-%d %H:%M:%S',$this->startTime+$window);
         error_log(

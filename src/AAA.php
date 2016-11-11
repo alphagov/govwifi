@@ -181,21 +181,20 @@ class AAA {
             if ($this->user->login != "HEALTH") {
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
-                $dblink = $db->getConnection();
-                $handle = $dblink->prepare(
-                        'insert into sessions ' .
-                        '(start,siteIP,username,mac,ap) '.
-                        'values (now(),:siteIP,:username,:mac,:ap)');
-                $handle->bindValue(':siteIP', $this->siteIP, PDO::PARAM_STR);
+                $dbLink = $db->getConnection();
+                $handle = $dbLink->prepare(
+                        'insert into session ' .
+                        '(start, siteIP, username, mac, ap) ' .
+                        'values (now(), :siteIP, :username, :mac, :ap)');
                 $handle->bindValue(
-                        ':username', $this->user->login, PDO::PARAM_STR);
+                    ':siteIP', $this->siteIP, PDO::PARAM_STR);
                 $handle->bindValue(
-                        ':mac', strtoupper($this->mac), PDO::PARAM_STR);
+                    ':username', $this->user->login, PDO::PARAM_STR);
                 $handle->bindValue(
-                        ':ap', strtoupper($this->ap), PDO::PARAM_STR);
+                    ':mac', strtoupper($this->mac), PDO::PARAM_STR);
+                $handle->bindValue(
+                    ':ap', strtoupper($this->ap), PDO::PARAM_STR);
                 $handle->execute();
-                // TODO(afoldesi-gds): Investigate the below comment.
-                // Code to do per site actions is here
             }
         }
     }

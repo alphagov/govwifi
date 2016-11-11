@@ -101,7 +101,7 @@ class PDF {
         unlink($filename);
     }
 
-    private function PdfSqlTable($pdf, Report $report) {
+    private function PdfSqlTable(FPDF $pdf, Report $report) {
         $totalrows = 0;
         $w = array(
             0,

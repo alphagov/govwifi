@@ -23,6 +23,7 @@ class Site {
     public function writeRecord() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
+        // TODO: dailycode and dailycodedate only populated on update.
         $handle = $dblink->prepare('insert into site (id, radkey, kioskkey, datacontroller, address, postcode, activation_regex, activation_days, org_id)
          VALUES (:id, :radkey, :kioskkey, :datacontroller, :address, :postcode, :activation_regex, :activation_days, :org_id)
                 on duplicate key update radkey=:radkey, kioskkey=:kioskkey, datacontroller=:datacontroller, address=:address
@@ -89,7 +90,6 @@ class Site {
         return $attributes;
     }
 
-    // TODO (afoldesi-gds): This should be the job of the servicedesk. Probably.
     public function updateFromEmail($emailBody) {
         $updated = FALSE;
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $emailBody) as $line) {
@@ -239,8 +239,8 @@ class Site {
 
     public function setRadKey() {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare('select secret, kioskkey from nas WHERE shortname=? and org_id=?');
+        $dbLink = $db->getConnection();
+        $handle = $dbLink->prepare('select radkey, kioskkey from site WHERE address=? and org_id=?');
         $handle->bindValue(1, $this->name, PDO::PARAM_STR);
         $handle->bindValue(2, $this->org_id, PDO::PARAM_INT);
         $handle->execute();

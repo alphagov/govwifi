@@ -87,13 +87,13 @@ class User {
             $db = DB::getInstance();
             $dblink = $db->getConnection();
             $handle = $dblink->prepare(
-                    'SELECT IF ((date(now()) - max(date(`activated`)))'
-                    . '<site.activation_days,"YES","NO") as valid, '
-                    . 'IF (count(1)=0,"YES","NO") as firstvisit '
-                    . 'from activation,site '
-                    . 'WHERE (activation.site_id = site.id '
-                    . 'OR activation.dailycode = site.dailycode) '
-                    . 'AND site_id = ? AND contact = ?');
+                    'SELECT IF ((date(now()) - max(date(`activated`)))
+                    <site.activation_days,"YES","NO") as valid,
+                    IF (count(1)=0,"YES","NO") as firstvisit
+                    from activation,site
+                    WHERE (activation.site_id = site.id
+                    OR activation.dailycode = site.dailycode)
+                    AND site_id = ? AND contact = ?');
             $handle->bindValue(1, $site->id, PDO::PARAM_INT);
             $handle->bindValue(2, $this->identifier->text, PDO::PARAM_STR);
             $handle->execute();
@@ -131,25 +131,25 @@ class User {
 
     private function radiusDbWrite() {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
 
         // Insert user record
-        // TODO(afoldesi-gds): Discuss handling of sponsor - update this after
-        // the db schema has changed.
-        $handle = $dblink->prepare(
-                'insert into userdetails (username, contact, email,password) '
-                . 'VALUES (:login,:contact,:email,:password) '
+        $handle = $dbLink->prepare(
+                'insert into userdetails (username, contact, sponsor, password, email) '
+                . 'VALUES (:login, :contact, :sponsor, :password, :email) '
                 . 'ON DUPLICATE KEY UPDATE email=:email, password=:password');
-        $handle->bindValue(':login', $this->login, PDO::PARAM_STR);
-        $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
-        $handle->bindValue(':email', $this->email, PDO::PARAM_STR);
-        $handle->bindValue(':password', $this->password, PDO::PARAM_STR);
+        $handle->bindValue(':login',    $this->login,            PDO::PARAM_STR);
+        $handle->bindValue(':contact',  $this->identifier->text, PDO::PARAM_STR);
+        $handle->bindValue(':sponsor',  $this->sponsor,          PDO::PARAM_STR);
+        $handle->bindValue(':password', $this->password,         PDO::PARAM_STR);
+        $handle->bindValue(':email',    $this->email,            PDO::PARAM_STR);
+
         $handle->execute();
 
         // Populate the record for the cache
-        $userRecord['contact'] = $this->identifier->text;
-        $userRecord['email'] = $this->email;
-        $userRecord['sponsor'] = $this->sponsor->text;
+        $userRecord['contact']  = $this->identifier->text;
+        $userRecord['email']    = $this->email;
+        $userRecord['sponsor']  = $this->sponsor->text;
         $userRecord['password'] = $this->password;
 
         // Write to memcache - we need to do this to flush old entries
@@ -204,7 +204,7 @@ class User {
         }
     }
 
-    private function UsernameIsUnique($uname) {
+    private function usernameIsUnique($uname) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select count(username) as unamecount '

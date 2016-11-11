@@ -86,9 +86,9 @@ class EmailRequest {
                 "EMAIL: Sponsored request from: "
                 . $this->emailFrom->text);
 
-            $signupcount = 0;
+            $signUpCount = 0;
             foreach ($this->contactList() as $identifier) {
-                $signupcount++;
+                $signUpCount++;
                 $user = new User;
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
@@ -96,7 +96,7 @@ class EmailRequest {
             }
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
-            $email->sponsor($signUpcount);
+            $email->sponsor($signUpCount);
             $email->send();
         } else {
             error_log(
@@ -176,9 +176,6 @@ class EmailRequest {
 
     public function newSite() {
         $this->emailSubject = str_ireplace("re: ", "", $this->emailSubject);
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
-
         $orgAdmin = new OrgAdmin($this->emailFrom->text);
         if ($orgAdmin->authorised) {
             error_log(
@@ -203,7 +200,7 @@ class EmailRequest {
                 $action = "created";
             } else if ($site->updateFromEmail($this->emailBody)) {
                 error_log(
-                    "EMAIL: updating site atributes : " . $site->name);
+                    "EMAIL: updating site attributes : " . $site->name);
                 $outcome .= "Site attributes updated\n";
                 $site->writeRecord();
             }
