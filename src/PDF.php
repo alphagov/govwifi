@@ -42,10 +42,10 @@ class PDF {
         $this->subject = "New Site";
     }
 
-    public function populateLogRequest($org_admin) {
+    public function populateLogRequest(OrgAdmin $org_admin) {
         $config = Config::getInstance();
         $this->filename = date("Ymd") .
-                $org_admin->org_name . "-" . $org_admin->name . "-Logs";
+                $org_admin->orgName . "-" . $org_admin->name . "-Logs";
         $this->filename = preg_replace("/[^a-zA-Z0-9]/", "_", $this->filename);
         $this->filename .= ".pdf";
         $this->filepath = $config->values['pdftemp-path'] . $this->filename;

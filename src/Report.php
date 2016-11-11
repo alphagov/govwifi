@@ -68,11 +68,11 @@ class Report {
                 . "from logs "
                 . "where org_id = ?";
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
+        $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "All authentications for "
-                . $this->orgAdmin->org_name
+                . $this->orgAdmin->orgName
                 . " sites";
         $this->columns = array(
             "Date/Time",
@@ -88,7 +88,7 @@ class Report {
         $sql = "select start,stop,username, InMB,OutMB,mac,ap "
                 . "from logs where org_id = ? and shortname = ?";
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
+        $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         $handle->bindValue(2, $siteShortName, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
@@ -136,7 +136,7 @@ class Report {
                 . ' and start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
                 . 'group by Date order by Date desc';
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
+        $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         if (!empty($site)) {
             $handle->bindValue(2, $site, PDO::PARAM_INT);
         }
