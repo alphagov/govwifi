@@ -113,7 +113,7 @@ class EmailRequest {
             $report->orgAdmin = $orgAdmin;
             error_log(
                 "EMAIL: processing log request from : " . $this->emailFrom->text
-                . " representing " . $orgAdmin->org_name);
+                . " representing " . $orgAdmin->orgName);
             $subjectArray = explode(":", $this->emailSubject, 2);
             $reportType = strtolower(trim($subjectArray[0]));
             $pdf = new PDF();
@@ -161,9 +161,9 @@ class EmailRequest {
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
-            $email->logrequest();
-            $email->filename = $pdf->filename;
+            $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
+            $email->logRequest();
             $email->send();
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
@@ -187,8 +187,8 @@ class EmailRequest {
             $site->loadByAddress($this->emailSubject);
             $action = "updated";
             if (!$site->id) {
-                $site->org_id = $orgAdmin->org_id;
-                $site->org_name = $orgAdmin->org_name;
+                $site->org_id = $orgAdmin->orgId;
+                $site->org_name = $orgAdmin->orgName;
                 $site->name = $this->emailSubject;
                 error_log(
                     "EMAIL: creating new site : " . $site->name);
@@ -237,7 +237,7 @@ class EmailRequest {
             } else {
                 $email->newSiteBlank($site);
             }
-            $email->filename = $pdf->filename;
+            $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
             $email->send();
             // Create sms response for the code

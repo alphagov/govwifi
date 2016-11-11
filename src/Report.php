@@ -30,12 +30,14 @@ class Report {
 
     function siteList() {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $sql = "select organisation.name, site.address from "
-                . "site, organisation "
-                . "where organisation.id=site.org_id "
-                . "order by organisation.name, site.address";
-        $handle = $dblink->prepare($sql);
+        $dbLink = $db->getConnection();
+        $sql = "select t2.name, t1.address from
+                site t1 left join organisation t2
+                on t1.org_id = t2.id
+                where t1.org_id = ?
+                order by t2.name, t1.address";
+        $handle = $dbLink->prepare($sql);
+        $handle->bindValue(1, $this->orgAdmin->orgId);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "List of sites subscribed to GovWifi";
@@ -44,13 +46,13 @@ class Report {
 
     function topSites() {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
         $sql = 'select name, count(distinct username) as usercount '
                 . 'from logs '
                 . 'where start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
                 . 'group by shortname '
                 . 'having usercount > 2 order by usercount desc';
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "Sites by number of unique users in the last 30 days";
@@ -58,13 +60,12 @@ class Report {
     }
 
     function byOrgId() {
-
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
         $sql = "select start,username,shortname,InMB, OutMB "
                 . "from logs "
                 . "where org_id = ?";
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
@@ -81,10 +82,10 @@ class Report {
 
     function bySite($site) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
         $sql = "select start,stop,username, InMB,OutMB,mac,ap "
                 . "from logs where org_id = ? and shortname = ?";
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
@@ -102,10 +103,10 @@ class Report {
 
     function byUser($user) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
         // TODO(afoldesi-gds): This won't work...
         $sql = "select start,stop,contact,sponsor from logs where username = ?";
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
@@ -121,7 +122,7 @@ class Report {
 
     function statsUsersPerDay($orgAdmin, $site = null) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dbLink = $db->getConnection();
 
         $sitesql = "";
         if ($site) {
@@ -133,7 +134,7 @@ class Report {
                 . $sitesql
                 . '  and start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
                 . 'group by Date order by Date desc';
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();
@@ -147,11 +148,11 @@ class Report {
     }
 
     function userIdentifier($orgAdmin, $user) {
-        // TODO(afoldesi-gds): This won't work either. Merge error?
-        $dblink = $db->getConnection();
+        $db = DB::getInstance();
+        $dbLink = $db->getConnection();
         $sql = "select start,username,reply,contact,sponsor "
                 . "from logs where username = ?";
-        $handle = $dblink->prepare($sql);
+        $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
         $handle->bindValue(2, $site, PDO::PARAM_INT);
         $handle->execute();

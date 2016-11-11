@@ -11,7 +11,7 @@ class EmailResponse {
     public $to;
     public $subject;
     public $message;
-    public $filename;
+    public $fileName;
     public $filepath;
 
     public function __construct() {
@@ -71,12 +71,14 @@ class EmailResponse {
         $this->send();
     }
 
-    public function logrequest() {
+    public function logRequest() {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['logrequest-subject'];
         $this->message = file_get_contents(
                 $config->values['email-messages']['logrequest-file']);
+        $this->message = str_replace(
+            "%FILENAME%", $this->fileName, $this->message);
     }
 
     public function send() {
