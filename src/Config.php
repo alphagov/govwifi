@@ -17,20 +17,45 @@ class Config {
     }
 
     private function __construct() {
+        // Set up default values
+        $this->loadValuesFromConfig("default-values");
+        // Extend / overwrite with environment specific ones
         $environment = getenv("ENVIRONMENT_NAME");
         if ($environment) {
-            $this->values = parse_ini_file("/etc/enrollment." . $environment . ".cfg", "TRUE");
+            $this->loadValuesFromConfig($environment);
         } else {
             throw new Exception("Environment name is required.");
         }
+
+        // By default the values below are passed from terraform, and the
+        // IP(ranges) should match with the firewall settings.
         $radiusIPs = getenv("RADIUS_SERVER_IPS");
         if ($radiusIPs) {
+            // Expecting a comma-separated list of IP ranges here.
             $this->values['radiusIPs'] = $radiusIPs;
             $this->values['radiusServerCount'] = count(explode(",", $radiusIPs));
             $radiusHostname = getenv('RADIUS_HOSTNAME');
             if ($radiusHostname) {
                 $this->values['radiusHostnameTemplate'] = $radiusHostname;
             }
+        }
+    }
+
+    /**
+     * Load configuration values from an ini file identified by the configLabel
+     * parameter. Can be called multiple times. Subsequent calls will overwrite
+     * configuration values with the same name.
+     *
+     * Expects the ini files to be located at /etc/enrollment.[configLabel].cfg
+     *
+     * @param $configLabel String The name of the environment or the literal
+     * "default-values" for loading the default configuration.
+     */
+    private function loadValuesFromConfig($configLabel) {
+        $configValues = parse_ini_file(
+            "/etc/enrollment." . $configLabel . ".cfg", "TRUE");
+        foreach ($configValues as $key => $configValue) {
+            $this->values[$key] = $configValue;
         }
     }
 }
