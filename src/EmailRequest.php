@@ -117,6 +117,7 @@ class EmailRequest {
             $subjectArray = explode(":", $this->emailSubject, 2);
             $reportType = strtolower(trim($subjectArray[0]));
             $pdf = new PDF();
+            $criteria = "";
             if (count($subjectArray) > 1) {
                 $criteria = trim($subjectArray[1]);
             }
@@ -135,12 +136,14 @@ class EmailRequest {
                         . count($report->result));
                     break;
                 case "site":
+                    // TODO: Error handling if criteria is empty.
                     $report->bySite($criteria);
                     error_log(
                         "Site list generated records: "
                         . count($report->result));
                     break;
                 case "user":
+                    // TODO: Error handling if criteria is empty.
                     $report->byUser($criteria);
                     error_log(
                         "User report generated records: "

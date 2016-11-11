@@ -47,12 +47,14 @@ class Report {
     function topSites() {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = 'select name, count(distinct username) as usercount '
-                . 'from logs '
-                . 'where start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
-                . 'group by shortname '
-                . 'having usercount > 2 order by usercount desc';
+        $sql = "select name, count(distinct username) as usercount
+                from logs
+                where start > DATE_SUB(NOW(), INTERVAL 30 DAY)
+                group by shortname
+                having usercount > 2 order by usercount desc";
         $handle = $dbLink->prepare($sql);
+        // TODO: We should restrict this functionality.
+        //$handle->bindValue(1, $this->orgAdmin->orgId);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->subject = "Sites by number of unique users in the last 30 days";
@@ -80,17 +82,17 @@ class Report {
             "Down MB");
     }
 
-    function bySite($site) {
+    function bySite($siteShortName) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
         $sql = "select start,stop,username, InMB,OutMB,mac,ap "
                 . "from logs where org_id = ? and shortname = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
-        $handle->bindValue(2, $site, PDO::PARAM_INT);
+        $handle->bindValue(2, $siteShortName, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
-        $this->subject = "All authentications for " . $site;
+        $this->subject = "All authentications for " . $siteShortName;
         $this->columns = array(
             "Start",
             "Stop",
@@ -101,17 +103,16 @@ class Report {
             "AP");
     }
 
-    function byUser($user) {
+    function byUser($userId) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        // TODO(afoldesi-gds): This won't work...
         $sql = "select start,stop,contact,sponsor from logs where username = ?";
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
-        $handle->bindValue(2, $site, PDO::PARAM_INT);
+        $handle->bindValue(1, $userId, PDO::PARAM_INT);
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
-        $this->subject = "All authentications by the user " . $user;
+        // TODO: Use proper username instead of id.
+        $this->subject = "All authentications by the user " . $userId;
         $this->columns = array(
             "Start",
             "Stop",
@@ -120,23 +121,25 @@ class Report {
 
     }
 
-    function statsUsersPerDay($orgAdmin, $site = null) {
+    function statsUsersPerDay($site = null) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
 
-        $sitesql = "";
-        if ($site) {
-            $sitesql = 'and shortname = ?';
+        $siteSql = "";
+        if (!empty($site)) {
+            $siteSql = 'and shortname = ?';
         }
         $sql = 'select count(distinct(username)) as Users, '
                 . 'date(start) as Date  '
-                . 'from logs where org_id = ' . $this->orgAdmin->org_id . ' '
-                . $sitesql
-                . '  and start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
+                . 'from logs where org_id = ? '
+                . $siteSql
+                . ' and start > DATE_SUB(NOW(), INTERVAL 30 DAY) '
                 . 'group by Date order by Date desc';
         $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
-        $handle->bindValue(2, $site, PDO::PARAM_INT);
+        $handle->bindValue(1, $this->orgAdmin->org_id, PDO::PARAM_INT);
+        if (!empty($site)) {
+            $handle->bindValue(2, $site, PDO::PARAM_INT);
+        }
         $handle->execute();
         $this->result = $handle->fetchAll(PDO::FETCH_NUM);
         $this->columns = array(
@@ -146,17 +149,4 @@ class Report {
             "Identity",
             "Sponsor");
     }
-
-    function userIdentifier($orgAdmin, $user) {
-        $db = DB::getInstance();
-        $dbLink = $db->getConnection();
-        $sql = "select start,username,reply,contact,sponsor "
-                . "from logs where username = ?";
-        $handle = $dbLink->prepare($sql);
-        $handle->bindValue(1, $orgAdmin->org_id, PDO::PARAM_INT);
-        $handle->bindValue(2, $site, PDO::PARAM_INT);
-        $handle->execute();
-        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
-    }
 }
-
