@@ -168,9 +168,11 @@ class EmailRequest {
             $email->filepath = $pdf->filepath;
             $email->logRequest();
             $email->send();
-            // Create sms response for the code
-            $sms = new SmsResponse($orgAdmin->mobile);
-            $sms->sendLogRequestPassword($pdf);
+            // Create sms response for the code if the pdf is encrypted
+            if ($pdf->encrypt) {
+                $sms = new SmsResponse($orgAdmin->mobile);
+                $sms->sendLogRequestPassword($pdf);
+            }
         }
     }
 
