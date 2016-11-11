@@ -7,6 +7,7 @@ class Identifier {
     public $validMobile;
 
     public function __construct($identifier) {
+        $identifier = preg_replace("/\s+/", "", $identifier);
         if ($this->isValidMobileNumber($identifier)) {
             $this->validMobile = true;
             $this->text = $this->fixUpMobileNumber($identifier);
