@@ -140,7 +140,7 @@ class User {
                 . 'ON DUPLICATE KEY UPDATE email=:email, password=:password');
         $handle->bindValue(':login',    $this->login,            PDO::PARAM_STR);
         $handle->bindValue(':contact',  $this->identifier->text, PDO::PARAM_STR);
-        $handle->bindValue(':sponsor',  $this->sponsor,          PDO::PARAM_STR);
+        $handle->bindValue(':sponsor',  $this->sponsor->text,    PDO::PARAM_STR);
         $handle->bindValue(':password', $this->password,         PDO::PARAM_STR);
         $handle->bindValue(':email',    $this->email,            PDO::PARAM_STR);
 
