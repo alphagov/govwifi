@@ -39,6 +39,8 @@ class Config {
                 $this->values['radiusHostnameTemplate'] = $radiusHostname;
             }
         }
+        // Shared key for the frontend init script to grab the clients list
+        $this->values["frontendApiKey"] = getenv("FRONTEND_API_KEY");
     }
 
     /**

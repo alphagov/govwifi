@@ -1,15 +1,16 @@
 <?php
 namespace Alphagov\GovWifi;
 
+require "../common.php";
+
 use PDO;
 
-if ($_REQUEST['key'] == "xp93rDXY65DKQ5IiKlUC0sN0WDwj0v") {
-
-    require "../common.php";
-
+if (Config::getInstance()->values["frontendApiKey"] == $_REQUEST['key']) {
     $db = DB::getInstance();
-    $dblink = $db->getConnection();
-    $handle = $dblink->prepare('select ip, radkey from siteip left join site on (siteip.site_id = site.id)');
+    $dbLink = $db->getConnection();
+    $handle = $dbLink->prepare(
+        'select ip, radkey from siteip 
+         left join site on (siteip.site_id = site.id)');
     $handle->execute();
 
     while ($result = $handle->fetch(PDO::FETCH_ASSOC)) {
