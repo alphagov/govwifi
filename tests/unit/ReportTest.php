@@ -5,6 +5,6 @@ use PHPUnit_Framework_TestCase;
 
 class ReportTest extends PHPUnit_Framework_TestCase {
     function testClassInstantiates() {
-        self::assertInstanceOf(Report::class, new Report());
+        $this->assertInstanceOf(Report::class, new Report());
     }
 }
