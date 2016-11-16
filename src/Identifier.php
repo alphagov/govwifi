@@ -3,7 +3,7 @@ namespace Alphagov\GovWifi;
 
 /**
  * Class Identifier
- * 
+ *
  * Stores and validates a user identifier, the supported formats are
  * either a UK mobile number, or an email address. Also has a special
  * case for health checks.
