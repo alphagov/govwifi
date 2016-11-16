@@ -6,6 +6,9 @@ use Memcached;
 use PDO;
 
 class User {
+    /**
+     * @var Identifier
+     */
     public $identifier;
     public $login;
     public $password;

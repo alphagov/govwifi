@@ -4,6 +4,9 @@ namespace Alphagov\GovWifi;
 use PDO;
 
 class AAA {
+    /**
+     * @var User
+     */
     public $user;
     public $mac;
     public $siteIP;

@@ -37,7 +37,8 @@ class EmailRequest {
         if ($success) {
             $email = new EmailResponse;
             $email->to = $this->emailFrom->text;
-            $email->verify($code);
+            // TODO: There's no verify() in EmailResponse.
+            //$email->verify($code);
             $email->send();
         }
     }
@@ -253,23 +254,12 @@ class EmailRequest {
         }
     }
 
-    // TODO(afoldesi-gds): Unused.
-    private function extractMobileNo() {
-        foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
-                as $contact) {
-            $contact = new Identifier(trim($contact));
-            if ($contact->validMobile) {
-                return $contact;
-            }
-        }
-    }
-
     private function contactList() {
         $list = [];
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
-                as $contact) {
-            $contact = new Identifier(trim($contact));
-            if ($contact->validEmail or $contact->validMobile) {
+                as $line) {
+            $contact = new Identifier(trim($line));
+            if ($contact->validEmail || $contact->validMobile) {
                 $list[] = $contact;
             }
         }
