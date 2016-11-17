@@ -10,7 +10,7 @@ class IdentifierTest extends PHPUnit_Framework_TestCase {
     const ITL_MOBILE_WITH_SPACES = "+44 7766 554 433";
     const UK_MOBILE_WITH_SPACES = "077 6655 4433";
     const EMAIL = "test.EMAILaddress@test.DOMAIN.com";
-    const EMAIL_LOWERCASE = "test.EMAILaddress@test.domain.com";
+    const EMAIL_LOWERCASE = "test.emailaddress@test.domain.com";
 
     function testClassInstantiates() {
         $this->assertInstanceOf(Identifier::class, new Identifier(self::ITL_MOBILE));
@@ -62,9 +62,15 @@ class IdentifierTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($identifier->validMobile);
     }
 
-    // TODO: ask Alistair about this one.
-    function testEmailAddressIsLowerCasedProperly() {
+    function testEmailAddressIsLowerCased() {
         $identifier = new Identifier(self::EMAIL);
         $this->assertEquals(self::EMAIL_LOWERCASE, $identifier->text);
+    }
+
+    function testHealthCheckIdentifier() {
+        $identifier = new Identifier(Config::HEALTH_CHECK_USER);
+        $this->assertFalse($identifier->validMobile);
+        $this->assertFalse($identifier->validEmail);
+        $this->assertEquals(Config::HEALTH_CHECK_USER, $identifier->text);
     }
 }
