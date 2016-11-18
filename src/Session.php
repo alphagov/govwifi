@@ -20,14 +20,21 @@ class Session {
         $this->loadFromCache();
     }
 
+    /**
+     * Build an associative array of the current field names => values,
+     * ready to be saved to the Cache.
+     *
+     * @return array
+     */
     public function sessionRecord() {
-        $sessionRecord['login'] = $this->login;
-        $sessionRecord['InO'] = $this->inOctets;
-        $sessionRecord['OutO'] = $this->outOctets;
-        $sessionRecord['Start'] = $this->startTime;
+        $sessionRecord = array();
+        $sessionRecord['login']  = $this->login;
+        $sessionRecord['InO']    = $this->inOctets;
+        $sessionRecord['OutO']   = $this->outOctets;
+        $sessionRecord['Start']  = $this->startTime;
         $sessionRecord['siteIP'] = $this->siteIP;
-        $sessionRecord['mac'] = $this->mac;
-        $sessionRecord['ap'] = $this->ap;
+        $sessionRecord['mac']    = $this->mac;
+        $sessionRecord['ap']     = $this->ap;
         return $sessionRecord;
     }
 
@@ -39,28 +46,40 @@ class Session {
         return round($this->outOctets / 1000000);
     }
 
+    /**
+     * Load a record corresponding to the current ID from
+     * the cache.
+     */
     public function loadFromCache() {
         $m = Cache::getInstance();
-        $sessionRecord = $m->m->get($this->id);
+        $sessionRecord = $m->memcached->get($this->id);
         if ($sessionRecord) {
-            $this->login = $sessionRecord['login'];
-            $this->inOctets = $sessionRecord['InO'];
+            $this->login     = $sessionRecord['login'];
+            $this->inOctets  = $sessionRecord['InO'];
             $this->outOctets = $sessionRecord['OutO'];
             $this->startTime = $sessionRecord['Start'];
-            $this->siteIP = $sessionRecord['siteIP'];
-            $this->mac = $sessionRecord['mac'];
-            $this->ap = $sessionRecord['ap'];
+            $this->siteIP    = $sessionRecord['siteIP'];
+            $this->mac       = $sessionRecord['mac'];
+            $this->ap        = $sessionRecord['ap'];
         }
     }
 
+    /**
+     * Remove the record corresponding to the current ID from
+     * the cache, if exists.
+     */
     public function deleteFromCache() {
-        $m = Cache::getInstance();
-        $m->m->delete($this->id);
+        $cache = Cache::getInstance();
+        $cache->memcached->delete($this->id);
     }
 
+    /**
+     * Write the current fields' value to the cache, using the
+     * current ID as the key.
+     */
     public function writeToCache() {
         $m = Cache::getInstance();
-        $m->m->set($this->id, $this->SessionRecord());
+        $m->memcached->set($this->id, $this->sessionRecord());
     }
 
     public function writeToDB() {

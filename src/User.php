@@ -157,7 +157,7 @@ class User {
 
         // Write to memcache - we need to do this to flush old entries
         $m = Cache::getInstance();
-        $m->m->set($this->login, $userRecord);
+        $m->memcached->set($this->login, $userRecord);
     }
 
     public function newPassword() {
@@ -174,7 +174,7 @@ class User {
 
         if ($this->login) {
             $m = Cache::getInstance();
-            $userRecord = $m->m->get($this->login);
+            $userRecord = $m->memcached->get($this->login);
 
             if (!$userRecord) {
                 $handle = $dblink->prepare(
@@ -183,10 +183,10 @@ class User {
                 $handle->execute();
                 $userRecord = $handle->fetch(PDO::FETCH_ASSOC);
 
-                if ($m->m->getResultCode() == Memcached::RES_NOTFOUND
+                if ($m->memcached->getResultCode() == Memcached::RES_NOTFOUND
                     && $userRecord) {
                     // Not in cache but in the database - let's cache it for next time
-                    $m->m->set($this->login, $userRecord);
+                    $m->memcached->set($this->login, $userRecord);
                 }
             }
         } else if ($this->identifier->validMobile) {
