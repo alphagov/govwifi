@@ -114,7 +114,8 @@ class AAA {
     public function accounting() {
         $acct = json_decode($this->requestJson, true);
         $this->session = new Session(
-                $this->user->login . $acct['Acct-Session-Id']['value'][0]);
+                $this->user->login . $acct['Acct-Session-Id']['value'][0],
+                Cache::getInstance());
 
         switch ($acct['Acct-Status-Type']['value'][0]) {
             case 1:

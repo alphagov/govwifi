@@ -12,9 +12,21 @@ use PDOException;
  * @package Alphagov\GovWifi
  */
 class Cache {
-    private static $instance; //The single instance
-    public $memcached;
-    public $hostname;
+    /**
+     * @var Cache The static instance.
+     */
+    private static $instance;
+
+    /**
+     * The Memcached instance to wrap.
+     * @var Memcached
+     */
+    private $memcached;
+
+    /**
+     * @var string The hostname of the Memcached server.
+     */
+    private $hostname;
 
     /**
      * @return Cache The single instance.

@@ -7,11 +7,13 @@ class SessionTest extends PHPUnit_Framework_TestCase {
     const SESSION_ID = "sessionID";
 
     function testClassInstantiates() {
-        $this->assertInstanceOf(Session::class, new Session(self::SESSION_ID));
+        $this->assertInstanceOf(
+            Session::class,
+            new Session(self::SESSION_ID, Cache::getInstance()));
     }
 
     function testSessionCache() {
-        $session = new Session("NoIdLikeThis");
+        $session = new Session("NoIdLikeThis", Cache::getInstance());
         $sessionRecord = $session->sessionRecord();
         $session->writeToCache();
         $session->loadFromCache();

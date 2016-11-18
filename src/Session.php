@@ -15,8 +15,14 @@ class Session {
     public $ap;
     public $siteIP;
 
-    public function __construct($id) {
+    /**
+     * @var Cache The cache for retrieving initial session data.
+     */
+    private $cache;
+
+    public function __construct($id, Cache $cache) {
         $this->id = $id;
+        $this->cache = $cache;
         $this->loadFromCache();
     }
 
@@ -51,8 +57,7 @@ class Session {
      * the cache.
      */
     public function loadFromCache() {
-        $m = Cache::getInstance();
-        $sessionRecord = $m->memcached->get($this->id);
+        $sessionRecord = $this->cache->get($this->id);
         if ($sessionRecord) {
             $this->login     = $sessionRecord['login'];
             $this->inOctets  = $sessionRecord['InO'];
@@ -69,8 +74,7 @@ class Session {
      * the cache, if exists.
      */
     public function deleteFromCache() {
-        $cache = Cache::getInstance();
-        $cache->memcached->delete($this->id);
+        $this->cache->delete($this->id);
     }
 
     /**
@@ -78,8 +82,7 @@ class Session {
      * current ID as the key.
      */
     public function writeToCache() {
-        $m = Cache::getInstance();
-        $m->memcached->set($this->id, $this->sessionRecord());
+        $this->cache->set($this->id, $this->sessionRecord());
     }
 
     public function writeToDB() {
