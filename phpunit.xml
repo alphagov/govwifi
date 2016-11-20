@@ -8,4 +8,16 @@
             <directory>./tests/unit</directory>
         </testsuite>
     </testsuites>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">./src</directory>
+            <exclude>
+                <directory suffix=".php">./src/vendor</directory>
+                <directory suffix=".php">./src/api</directory>
+                <directory suffix=".php">./src/clients</directory>
+                <directory suffix=".php">./src/sns</directory>
+                <directory suffix=".php">./src/sms</directory>
+            </exclude>
+        </whitelist>
+    </filter>
 </phpunit>
