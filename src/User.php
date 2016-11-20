@@ -2,7 +2,6 @@
 namespace Alphagov\GovWifi;
 
 use Exception;
-use Memcached;
 use PDO;
 
 class User {
@@ -155,9 +154,9 @@ class User {
         $userRecord['sponsor']  = $this->sponsor->text;
         $userRecord['password'] = $this->password;
 
-        // Write to memcache - we need to do this to flush old entries
-        $m = Cache::getInstance();
-        $m->memcached->set($this->login, $userRecord);
+        // Write to cache - we need to do this to flush old entries
+        $cache = Cache::getInstance();
+        $cache->set($this->login, $userRecord);
     }
 
     public function newPassword() {
@@ -173,8 +172,8 @@ class User {
         $dblink = $db->getConnection();
 
         if ($this->login) {
-            $m = Cache::getInstance();
-            $userRecord = $m->memcached->get($this->login);
+            $cache = Cache::getInstance();
+            $userRecord = $cache->get($this->login);
 
             if (!$userRecord) {
                 $handle = $dblink->prepare(
@@ -183,10 +182,9 @@ class User {
                 $handle->execute();
                 $userRecord = $handle->fetch(PDO::FETCH_ASSOC);
 
-                if ($m->memcached->getResultCode() == Memcached::RES_NOTFOUND
-                    && $userRecord) {
+                if ($cache->itemWasNotFound() && $userRecord) {
                     // Not in cache but in the database - let's cache it for next time
-                    $m->memcached->set($this->login, $userRecord);
+                    $cache->set($this->login, $userRecord);
                 }
             }
         } else if ($this->identifier->validMobile) {
