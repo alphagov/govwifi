@@ -14,6 +14,15 @@ class User {
     public $sponsor;
     public $email;
 
+    /**
+     * @var Cache
+     */
+    private $cache;
+
+    public function __construct(Cache $cache) {
+        $this->cache = $cache;
+    }
+
     public function signUp($message = "", $force = false) {
         $this->setUsername();
         $this->loadRecord();
@@ -155,8 +164,7 @@ class User {
         $userRecord['password'] = $this->password;
 
         // Write to cache - we need to do this to flush old entries
-        $cache = Cache::getInstance();
-        $cache->set($this->login, $userRecord);
+        $this->cache->set($this->login, $userRecord);
     }
 
     public function newPassword() {
@@ -172,8 +180,7 @@ class User {
         $dblink = $db->getConnection();
 
         if ($this->login) {
-            $cache = Cache::getInstance();
-            $userRecord = $cache->get($this->login);
+            $userRecord = $this->cache->get($this->login);
 
             if (!$userRecord) {
                 $handle = $dblink->prepare(
@@ -182,9 +189,9 @@ class User {
                 $handle->execute();
                 $userRecord = $handle->fetch(PDO::FETCH_ASSOC);
 
-                if ($cache->itemWasNotFound() && $userRecord) {
+                if ($this->cache->itemWasNotFound() && $userRecord) {
                     // Not in cache but in the database - let's cache it for next time
-                    $cache->set($this->login, $userRecord);
+                    $this->cache->set($this->login, $userRecord);
                 }
             }
         } else if ($this->identifier->validMobile) {

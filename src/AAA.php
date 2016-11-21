@@ -28,7 +28,7 @@ class AAA {
                     $this->type = $parts[$x + 1];
                     break;
                 case "user":
-                    $this->user = new User;
+                    $this->user = new User(Cache::getInstance());
                     $this->user->login = strtoupper($parts[$x + 1]);
                     $this->user->loadRecord();
                     break;
@@ -51,7 +51,7 @@ class AAA {
                     $this->result = $parts[$x + 1];
                     break;
                 case "phone":
-                    $this->user = new User;
+                    $this->user = new User(Cache::getInstance());
                     $this->user->identifier = new Identifier($parts[$x + 1]);
                     break;
                 case "code":

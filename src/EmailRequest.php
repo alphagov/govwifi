@@ -70,7 +70,7 @@ class EmailRequest {
         // Self service signup request
         if ($this->fromAuthDomain()) {
             error_log("EMAIL: signup : " . $this->emailFrom->text);
-            $user = new User;
+            $user = new User(Cache::getInstance());
             $user->identifier = $this->emailFrom;
             $user->sponsor = $this->emailFrom;
             $user->signUp();
@@ -90,7 +90,7 @@ class EmailRequest {
             $signUpCount = 0;
             foreach ($this->contactList() as $identifier) {
                 $signUpCount++;
-                $user = new User;
+                $user = new User(Cache::getInstance());
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
                 $user->signUp();

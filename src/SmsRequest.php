@@ -26,13 +26,13 @@ class SmsRequest {
         error_log(
                 "SMS: Received an email verification code from " .
                 $this->sender->text);
-        $user = new User();
+        $user = new User(Cache::getInstance());
         $user->identifier = $this->sender;
         $user->codeVerify($this->messageWords[0]);
     }
 
     public function dailyCode() {
-        $user = new User();
+        $user = new User(Cache::getInstance());
         $user->identifier = $this->sender;
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
@@ -68,7 +68,7 @@ class SmsRequest {
 
     public function newPassword() {
         error_log("SMS: Creating new password for ".$this->sender->text);
-        $user = new User();
+        $user = new User(Cache::getInstance());
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
         $user->signUp(true);
@@ -76,7 +76,7 @@ class SmsRequest {
 
     public function signUp() {
         error_log("SMS: Creating new account for ".$this->sender->text);
-        $user = new User();
+        $user = new User(Cache::getInstance());
         $user->identifier = $this->sender;
         $user->sponsor = $this->sender;
         $user->signUp($this->message);
