@@ -47,4 +47,13 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
 
         $this->assertEquals("SUCCESS", exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
     }
+
+    /**
+     * @coversNothing
+     */
+    public function testRadiusHealthCheckUrl() {
+        $frontendContainer = getenv("FRONTEND_CONTAINER");
+        @file_get_contents("http://" . $frontendContainer . "/");
+        $this->assertEquals("HTTP/1.1 200 OK", $http_response_header[0]);
+    }
 }
