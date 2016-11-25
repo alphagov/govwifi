@@ -1,38 +1,30 @@
 <?php
+namespace Alphagov\GovWifi;
+require_once "TestConstants.php";
 
-use Alphagov\GovWifi\Config;
+use PHPUnit_Framework_TestCase;
 
 class RadiusServerTest extends PHPUnit_Framework_TestCase {
     const PEAP_MSCHAP_V2_CONFIG_TEMPLATE = "tests/acceptance/config/peap-mschapv2.conf";
     const CONFIG_FILE                    = "tests/acceptance/config/currentconfig.conf";
     const EAPOL_TEST_RUNNER              = "tests/acceptance/config/run-eapol-test.sh";
-    const HEALTH_CHECK_USER_PASSWORD     = 'GS3EWA64EshRD8I0XdVl$dko';
-    /**
-     * @var string The user name to authenticate with.
-     */
-    private $userName;
-
-    /**
-     * @var string The password to authenticate with.
-     */
-    private $password;
-
-    public function setUp() {
-        $this->userName  = getenv("TEST_USER_NAME");
-        $this->password  = getenv("TEST_USER_PASSWORD");
-    }
+    const PASSWORD_PLACEHOLDER           = "#PASSWORD#";
+    const USERNAME_PLACEHOLDER           = "#USERNAME#";
+    const SUCCESS_LINE                   = "SUCCESS";
 
     /**
      * @coversNothing Do not count acceptance tests in code coverage analysis.
      */
     public function testRadiusPEAPMsChapV2Authentication() {
         $template = file_get_contents(self::PEAP_MSCHAP_V2_CONFIG_TEMPLATE);
-        $configuration = str_replace("#PASSWORD#", $this->password,
-            str_replace("#USERNAME#", $this->userName, $template)
+        $configuration = str_replace(
+            self::PASSWORD_PLACEHOLDER, TestConstants::getInstance()->getTestUserPassword(),
+            str_replace(
+                self::USERNAME_PLACEHOLDER, TestConstants::getInstance()->getTestUserName(), $template)
         );
         file_put_contents(self::CONFIG_FILE, $configuration);
 
-        $this->assertEquals("SUCCESS", exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
+        $this->assertEquals(self::SUCCESS_LINE, exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
     }
 
     /**
@@ -40,20 +32,22 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
      */
     public function testRadiusHealthCheckAuthentication() {
         $template = file_get_contents(self::PEAP_MSCHAP_V2_CONFIG_TEMPLATE);
-        $configuration = str_replace("#PASSWORD#", self::HEALTH_CHECK_USER_PASSWORD,
-            str_replace("#USERNAME#", Config::HEALTH_CHECK_USER, $template)
+        $configuration = str_replace(
+            self::PASSWORD_PLACEHOLDER, TestConstants::HEALTH_CHECK_USER_PASSWORD,
+            str_replace(
+                self::USERNAME_PLACEHOLDER, Config::HEALTH_CHECK_USER, $template)
         );
         file_put_contents(self::CONFIG_FILE, $configuration);
 
-        $this->assertEquals("SUCCESS", exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
+        $this->assertEquals(self::SUCCESS_LINE, exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
     }
 
     /**
      * @coversNothing
      */
     public function testRadiusHealthCheckUrl() {
-        $frontendContainer = getenv("FRONTEND_CONTAINER");
-        @file_get_contents("http://" . $frontendContainer . "/");
-        $this->assertEquals("HTTP/1.1 200 OK", $http_response_header[0]);
+        @file_get_contents(TestConstants::REQUEST_PROTOCOL
+            . TestConstants::getInstance()->getFrontendContainer() . "/");
+        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
     }
 }

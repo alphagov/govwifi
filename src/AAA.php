@@ -1,9 +1,30 @@
 <?php
 namespace Alphagov\GovWifi;
 
+use Exception;
 use PDO;
 
 class AAA {
+    const URL_API      = "api";
+    const URL_USER     = "user";
+    const URL_MAC      = "mac";
+    const URL_AP       = "ap";
+    const URL_SITE     = "site";
+    const URL_KIOSK_IP = "kioskip";
+    const URL_RESULT   = "result";
+    const URL_PHONE    = "phone";
+    const URL_CODE     = "code";
+    const TYPE_AUTHORIZE  = "authorize";
+    const TYPE_POST_AUTH  = "post-auth";
+    const TYPE_ACCOUNTING = "accounting";
+    const TYPE_ACTIVATE   = "activate";
+    const ACCEPTED_REQUEST_TYPES = [
+        self::TYPE_AUTHORIZE,
+        self::TYPE_ACCOUNTING,
+        self::TYPE_POST_AUTH,
+        self::TYPE_ACTIVATE
+    ];
+
     /**
      * @var User
      */
@@ -20,62 +41,79 @@ class AAA {
     public $result;
     public $kioskKey;
 
+    /**
+     * AAA constructor.
+     *
+     * Parses the provided request url.
+     *
+     * @param $request string The request url.
+     * @throws Exception When the request type is not recognized.
+     */
     public function __construct($request) {
         $parts = explode('/', $request);
         for ($x = 0; $x < count($parts); $x++) {
             switch ($parts[$x]) {
-                case "api":
+                case self::URL_API:
                     $this->type = $parts[$x + 1];
+                    if (! in_array($this->type, self::ACCEPTED_REQUEST_TYPES)) {
+                        throw new Exception("Request type [" . $this->type . "] is not recognized.");
+                    }
                     break;
-                case "user":
+                case self::URL_USER:
                     $this->user = new User(Cache::getInstance());
                     $this->user->login = strtoupper($parts[$x + 1]);
                     $this->user->loadRecord();
                     break;
-                case "mac":
+                case self::URL_MAC:
                     $this->setMac($parts[$x + 1]);
                     break;
-                case "ap":
+                case self::URL_AP:
                     $this->setAp($parts[$x + 1]);
                     break;
-                case "site":
+                case self::URL_SITE:
                     $this->siteIP = $parts[$x + 1];
                     $this->site = new Site;
                     $this->site->loadByIp($this->siteIP);
                     break;
-                case "kioskip":
+                case self::URL_KIOSK_IP:
                     $this->site = new Site;
                     $this->site->loadByKioskIp($parts[$x + 1]);
                     break;
-                case "result":
+                case self::URL_RESULT:
                     $this->result = $parts[$x + 1];
                     break;
-                case "phone":
+                case self::URL_PHONE:
                     $this->user = new User(Cache::getInstance());
                     $this->user->identifier = new Identifier($parts[$x + 1]);
                     break;
-                case "code":
+                case self::URL_CODE:
                     $this->kioskKey = $parts[$x + 1];
                     break;
             }
         }
     }
 
+    /**
+     * Process the request provided in the constructor based
+     * on the type of the request.
+     *
+     * Supported request types are: authorize, post-auth, accounting
+     * and activate.
+     */
     public function processRequest() {
         switch ($this->type) {
-            case "authorize":
+            case self::TYPE_AUTHORIZE:
                 $this->authorize();
                 break;
-            case "post-auth":
+            case self::TYPE_POST_AUTH:
                 $this->postAuth();
                 break;
-            case "accounting":
+            case self::TYPE_ACCOUNTING:
                 $this->accounting();
                 break;
-            case "activate":
+            case self::TYPE_ACTIVATE:
                 $this->activate();
                 break;
-
         }
     }
 
@@ -180,6 +218,12 @@ class AAA {
         }
     }
 
+    /**
+     * Handle the post authentication request from the Radius REST API.
+     *
+     * If the authentication was successful, and it's not the health check user,
+     * start a new session. (Insert a new session record into the database.)
+     */
     public function postAuth() {
         if ($this->result == "Access-Accept") {
             if ($this->user->login != "HEALTH") {
