@@ -21,8 +21,8 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(AAA::TYPE_AUTHORIZE,       $aaa->type);
         $this->assertInstanceOf(User::class,           $aaa->user);
         $this->assertEquals(Config::HEALTH_CHECK_USER, $aaa->user->login);
-        $this->assertEquals("02-00-00-00-00-01",       $aaa->mac);
-        $this->assertEquals("02-00-00-42-00-01",       $aaa->ap);
+        $this->assertEquals("02-00-00-00-00-01",       $aaa->getMac());
+        $this->assertEquals("02-00-00-42-00-01",       $aaa->getAp());
         $this->assertInstanceOf(Site::class,           $aaa->site);
     }
 
@@ -31,8 +31,8 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(AAA::TYPE_POST_AUTH,       $aaa->type);
         $this->assertInstanceOf(User::class,           $aaa->user);
         $this->assertEquals(Config::HEALTH_CHECK_USER, $aaa->user->login);
-        $this->assertEquals("02-00-00-00-00-01",       $aaa->mac);
-        $this->assertEquals("02-00-00-42-00-01",       $aaa->ap);
+        $this->assertEquals("02-00-00-00-00-01",       $aaa->getMac());
+        $this->assertEquals("02-00-00-42-00-01",       $aaa->getAp());
         $this->assertInstanceOf(Site::class,           $aaa->site);
         $this->assertEquals("Access-Accept",           $aaa->result);
     }

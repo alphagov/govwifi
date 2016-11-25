@@ -29,10 +29,8 @@ class AAA {
      * @var User
      */
     public $user;
-    public $mac;
     public $siteIP;
     public $site;
-    public $ap;
     public $type;
     public $responseHeader;
     public $responseBody;
@@ -40,6 +38,16 @@ class AAA {
     public $session;
     public $result;
     public $kioskKey;
+
+    /**
+     * @var string MAC address of the client.
+     */
+    private $mac;
+
+    /**
+     * @var string MAC address of the AP.
+     */
+    private $ap;
 
     /**
      * AAA constructor.
@@ -162,8 +170,8 @@ class AAA {
                 $this->session->startTime = time();
                 $this->setMac($acct['Calling-Station-Id']['value'][0]);
                 $this->setAp($acct['Called-Station-Id']['value'][0]);
-                $this->session->mac = $this->mac;
-                $this->session->ap = $this->ap;
+                $this->session->mac = $this->getMac();
+                $this->session->ap = $this->getAp();
                 $this->session->siteIP = $this->siteIP;
                 $this->session->writeToCache();
                 error_log(
@@ -239,9 +247,9 @@ class AAA {
                 $handle->bindValue(
                     ':username', $this->user->login, PDO::PARAM_STR);
                 $handle->bindValue(
-                    ':mac', strtoupper($this->mac), PDO::PARAM_STR);
+                    ':mac', strtoupper($this->getMac()), PDO::PARAM_STR);
                 $handle->bindValue(
-                    ':ap', strtoupper($this->ap), PDO::PARAM_STR);
+                    ':ap', strtoupper($this->getAp()), PDO::PARAM_STR);
                 $handle->execute();
             }
         }
@@ -259,12 +267,32 @@ class AAA {
         return $mac;
     }
 
-    public function setMac($mac) {
-        $this->mac=$this->fixMac($mac);
+    /**
+     * @return string
+     */
+    public function getMac() {
+        return $this->mac;
     }
 
-    public function setAp($mac) {
-        $this->ap=$this->fixMac($mac);
+    /**
+     * @param $mac string
+     */
+    public function setMac($mac) {
+        $this->mac = $this->fixMac($mac);
+    }
+
+    /**
+     * @return string
+     */
+    public function getAp() {
+        return $this->ap;
+    }
+
+    /**
+     * @param $apMac string
+     */
+    public function setAp($apMac) {
+        $this->ap = $this->fixMac($apMac);
     }
 
     /**
