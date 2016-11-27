@@ -40,6 +40,11 @@ class AAA {
     public $kioskKey;
 
     /**
+     * @var string The request url.
+     */
+    private $requestUrl;
+
+    /**
      * @var string MAC address of the client.
      */
     private $mac;
@@ -52,13 +57,24 @@ class AAA {
     /**
      * AAA constructor.
      *
-     * Parses the provided request url.
-     *
-     * @param $request string The request url.
+     * @param $requestUrl string The request url.
+     * @param $jsonData string The json data POSTed to us,
+     * only required for accounting requests.
      * @throws Exception When the request type is not recognized.
      */
-    public function __construct($request) {
-        $parts = explode('/', $request);
+    public function __construct($requestUrl, $jsonData) {
+        $this->requestUrl     = $requestUrl;
+        $this->requestJson    = $jsonData;
+        $this->parseRequest();
+    }
+
+    /**
+     * Parses the request url.
+     *
+     * @throws Exception When the request type is not recognized.
+     */
+    public function parseRequest() {
+        $parts = explode('/', $this->requestUrl);
         for ($x = 0; $x < count($parts); $x++) {
             switch ($parts[$x]) {
                 case self::URL_API:

@@ -12,17 +12,14 @@ class TestConstants {
     const HTTP_OK                    = "HTTP/1.1 200 OK";
     const HEALTH_CHECK_USER_PASSWORD = 'GS3EWA64EshRD8I0XdVl$dko';
     const BACKEND_API_PORT           = "8080";
-    const HEALTH_CHECK_AUTHORIZATION_URL =
-        "/api/authorize/user/HEALTH/mac/02-00-00-00-00-01/ap//site/172.17.0.6";
     const CLEARTEXT_PASSWORD_PLACEHOLDER = "#CLEARTEXT_PASSWORD#";
     const AUTHORIZATION_RESPONSE_TEMPLATE =
         "{\"control:Cleartext-Password\":\"" . self::CLEARTEXT_PASSWORD_PLACEHOLDER . "\"}";
-    const HEALTH_CHECK_POST_AUTH_URL =
-        "/api/post-auth/user/HEALTH/mac/02-00-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
-    const USER_AUTHORIZATION_URL =
-        "/api/authorize/user/GQDMK/mac/02-00-00-00-00-01/ap//site/172.17.0.6";
-    const USER_POST_AUTH_URL =
-        "/api/post-auth/user/GQDMK/mac/02-00-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
+    const USERNAME_PLACEHOLDER = "#USERNAME#";
+    const AUTHORIZATION_URL_TEMPLATE =
+        "/api/authorize/user/#USERNAME#/mac/02-11-00-00-00-01/ap//site/172.17.0.6";
+    const POST_AUTH_URL_TEMPLATE =
+        "/api/post-auth/user/#USERNAME#/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
 
     /**
      * @var TestConstants
@@ -76,6 +73,48 @@ class TestConstants {
             self::$instance = new self();
         }
         return self::$instance;
+    }
+
+    /**
+     * Builds and authorisation url for the username provided.
+     *
+     * @param $username string
+     * @return string
+     */
+    public static function authorisationUrlForUser($username) {
+        return str_replace(
+            self::USERNAME_PLACEHOLDER,
+            $username,
+            self::AUTHORIZATION_URL_TEMPLATE
+        );
+    }
+
+    /**
+     * Builds a post-auth url for the username provided.
+     *
+     * @param $username string
+     * @return string
+     */
+    public static function postAuthUrlForUser($username) {
+        return str_replace(
+            self::USERNAME_PLACEHOLDER,
+            $username,
+            self::POST_AUTH_URL_TEMPLATE
+        );
+    }
+
+    /**
+     * Builds an authorisation response JSON containing the password.
+     *
+     * @param $password string
+     * @return string
+     */
+    public static function authorisationResponseForPassword($password) {
+        return str_replace(
+            self::CLEARTEXT_PASSWORD_PLACEHOLDER,
+            $password,
+            self::AUTHORIZATION_RESPONSE_TEMPLATE
+        );
     }
 
     /**
