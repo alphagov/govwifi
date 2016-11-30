@@ -8,18 +8,20 @@ namespace Alphagov\GovWifi;
  * @package Alphagov\GovWifi
  */
 class TestConstants {
-    const REQUEST_PROTOCOL           = "http://";
-    const HTTP_OK                    = "HTTP/1.1 200 OK";
-    const HEALTH_CHECK_USER_PASSWORD = 'GS3EWA64EshRD8I0XdVl$dko';
-    const BACKEND_API_PORT           = "8080";
-    const CLEARTEXT_PASSWORD_PLACEHOLDER = "#CLEARTEXT_PASSWORD#";
+    const REQUEST_PROTOCOL                = "http://";
+    const HTTP_OK                         = "HTTP/1.1 200 OK";
+    const HEALTH_CHECK_USER_PASSWORD      = 'GS3EWA64EshRD8I0XdVl$dko';
+    const BACKEND_API_PORT                = "8080";
+    const CLEARTEXT_PASSWORD_PLACEHOLDER  = "#CLEARTEXT_PASSWORD#";
     const AUTHORIZATION_RESPONSE_TEMPLATE =
         "{\"control:Cleartext-Password\":\"" . self::CLEARTEXT_PASSWORD_PLACEHOLDER . "\"}";
-    const USERNAME_PLACEHOLDER = "#USERNAME#";
-    const AUTHORIZATION_URL_TEMPLATE =
-        "/api/authorize/user/#USERNAME#/mac/02-11-00-00-00-01/ap//site/172.17.0.6";
-    const POST_AUTH_URL_TEMPLATE =
-        "/api/post-auth/user/#USERNAME#/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
+    const USERNAME_PLACEHOLDER            = "#USERNAME#";
+    const AUTHORIZATION_URL_TEMPLATE      = "/api/authorize/user/" . self::USERNAME_PLACEHOLDER
+        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6";
+    const POST_AUTH_URL_TEMPLATE          = "/api/post-auth/user/" . self::USERNAME_PLACEHOLDER
+        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
+    const ACCOUNTING_URL_TEMPLATE         = "/api/accounting/user/" . self::USERNAME_PLACEHOLDER
+        . "/site/172.17.0.6";
 
     /**
      * @var TestConstants
@@ -115,6 +117,29 @@ class TestConstants {
             $password,
             self::AUTHORIZATION_RESPONSE_TEMPLATE
         );
+    }
+
+    /**
+     * Builds an accounting url for the username provided.
+     *
+     * @param $username string
+     * @return string
+     */
+    public static function accountingUrlForUser($username) {
+        return str_replace(
+            self::USERNAME_PLACEHOLDER,
+            $username,
+            self::ACCOUNTING_URL_TEMPLATE
+        );
+    }
+
+    /**
+     * Builds a backend base url
+     */
+    public static function getBackendBaseUrl() {
+        return self::REQUEST_PROTOCOL
+        . self::getInstance()->getBackendContainer()
+        . ":" . self::BACKEND_API_PORT;
     }
 
     /**

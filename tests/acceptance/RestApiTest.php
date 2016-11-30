@@ -6,14 +6,13 @@ use PDO;
 use PHPUnit_Framework_TestCase;
 
 class RestApiTest extends PHPUnit_Framework_TestCase {
+    const ACCOUNTING_DATA_FILE = "tests/acceptance/config/radius-accounding.json";
     /**
      * @coversNothing
      */
     public function testHealthCheckAuthorisation() {
         $response = file_get_contents(
-            TestConstants::REQUEST_PROTOCOL
-            . TestConstants::getInstance()->getBackendContainer()
-            . ":" . TestConstants::BACKEND_API_PORT
+            TestConstants::getBackendBaseUrl()
             . TestConstants::authorisationUrlForUser(Config::HEALTH_CHECK_USER),
             false,
             TestConstants::getInstance()->getHttpContext()
@@ -32,9 +31,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
      */
     public function testHealthCheckPostAuth() {
         $response = file_get_contents(
-            TestConstants::REQUEST_PROTOCOL
-            . TestConstants::getInstance()->getBackendContainer()
-            . ":" . TestConstants::BACKEND_API_PORT
+            TestConstants::getBackendBaseUrl()
             . TestConstants::postAuthUrlForUser(Config::HEALTH_CHECK_USER),
             false,
             TestConstants::getInstance()->getHttpContext()
@@ -48,9 +45,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
      */
     public function testUserAuthorization() {
         $response = file_get_contents(
-            TestConstants::REQUEST_PROTOCOL
-            . TestConstants::getInstance()->getBackendContainer()
-            . ":" . TestConstants::BACKEND_API_PORT
+            TestConstants::getBackendBaseUrl()
             . TestConstants::authorisationUrlForUser(
                 TestConstants::getInstance()->getTestUserName()
             ),
@@ -71,9 +66,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
      */
     public function testUserPostAuth() {
         $response = file_get_contents(
-            TestConstants::REQUEST_PROTOCOL
-            . TestConstants::getInstance()->getBackendContainer()
-            . ":" . TestConstants::BACKEND_API_PORT
+            TestConstants::getBackendBaseUrl()
             . TestConstants::postAuthUrlForUser(
                 TestConstants::getInstance()->getTestUserName()
             ),
@@ -82,6 +75,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         );
         $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
         $this->assertEquals("", $response);
+
         $statement = DB::getInstance()->getConnection()->prepare(
             "SELECT * FROM session WHERE username = :username ORDER BY start DESC LIMIT 1");
         $statement->bindValue(
@@ -96,5 +90,25 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("172.17.0.6",                                    $result[0]['siteIP']);
     }
 
-    //TODO: Accounting.
+    /**
+     * @coversNothing
+     */
+    public function testAccounting() {
+        $response = file_get_contents(
+            TestConstants::getBackendBaseUrl()
+            . TestConstants::accountingUrlForUser(
+                TestConstants::getInstance()->getTestUserName()
+            ),
+            false,
+            stream_context_create(array(
+                'http' => array(
+                    'method'  => 'POST',
+                    'header'  => 'Content-type: application/json',
+                    'content' => file_get_contents(self::ACCOUNTING_DATA_FILE)
+                )
+            ))
+        );
+        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
+        $this->assertEquals("", $response);
+    }
 }
