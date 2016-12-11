@@ -1,0 +1,152 @@
+{
+    "User-Name": {
+        "type": "string",
+        "value": [
+            "#USERNAME#"
+        ]
+    },
+    "NAS-IP-Address": {
+        "type": "ipaddr",
+        "value": [
+            "10.1.4.80"
+        ]
+    },
+    "NAS-Port": {
+        "type": "integer",
+        "value": [
+            1
+        ]
+    },
+    "Framed-IP-Address": {
+        "type": "ipaddr",
+        "value": [
+            "192.168.20.20"
+        ]
+    },
+    "Called-Station-Id": {
+        "type": "string",
+        "value": [
+            "00-0c-29-89-85-d9"
+        ]
+    },
+    "Calling-Station-Id": {
+        "type": "string",
+        "value": [
+            "8c-3a-e3-6c-65-d9"
+        ]
+    },
+    "NAS-Identifier": {
+        "type": "string",
+        "value": [
+            "ah-wlan-t-01.dmz.gds"
+        ]
+    },
+    "NAS-Port-Type": {
+        "type": "integer",
+        "value": [
+            19
+        ]
+    },
+    "Acct-Status-Type": {
+        "type": "integer",
+        "value": [
+            2
+        ]
+    },
+    "Acct-Delay-Time": {
+        "type": "integer",
+        "value": [
+            0
+        ]
+    },
+    "Acct-Input-Octets": {
+        "type": "integer",
+        "value": [
+            48194
+        ]
+    },
+    "Acct-Output-Octets": {
+        "type": "integer",
+        "value": [
+            505538
+        ]
+    },
+    "Acct-Session-Id": {
+        "type": "string",
+        "value": [
+            "583e9346\\/8c:3a:e3:6c:65:d9\\/35"
+        ]
+    },
+    "Acct-Authentic": {
+        "type": "integer",
+        "value": [
+            1
+        ]
+    },
+    "Acct-Session-Time": {
+        "type": "integer",
+        "value": [
+            301
+        ]
+    },
+    "Acct-Input-Packets": {
+        "type": "integer",
+        "value": [
+            496
+        ]
+    },
+    "Acct-Output-Packets": {
+        "type": "integer",
+        "value": [
+            561
+        ]
+    },
+    "Tunnel-Type": {
+        "type": "integer",
+        "value": [
+            "VLAN"
+        ]
+    },
+    "Tunnel-Medium-Type": {
+        "type": "integer",
+        "value": [
+            "IEEE-802"
+        ]
+    },
+    "Tunnel-Private-Group-Id": {
+        "type": "string",
+        "value": [
+            "61"
+        ]
+    },
+    "Acct-Input-Gigawords": {
+        "type": "integer",
+        "value": [
+            0
+        ]
+    },
+    "Acct-Output-Gigawords": {
+        "type": "integer",
+        "value": [
+            0
+        ]
+    },
+    "Event-Timestamp": {
+        "type": "date",
+        "value": [
+            "#TIMESTAMP#"
+        ]
+    },
+    "Airespace-Wlan-Id": {
+        "type": "integer",
+        "value": [
+            1
+        ]
+    },
+    "Cisco-AVPair": {
+        "type": "string",
+        "value": [
+            "audit-session-id=5004010a0000001f46933e58"
+        ]
+    }
+}

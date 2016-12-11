@@ -2,7 +2,7 @@
     "User-Name": {
         "type": "string",
         "value": [
-            "SOVBF"
+            "#USERNAME#"
         ]
     },
     "NAS-IP-Address": {
@@ -134,7 +134,7 @@
     "Event-Timestamp": {
         "type": "date",
         "value": [
-            "Nov 30 2016 08:57:24 UTC"
+            "#TIMESTAMP#"
         ]
     },
     "Airespace-Wlan-Id": {

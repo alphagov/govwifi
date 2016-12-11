@@ -6,7 +6,6 @@ use PDO;
 use PHPUnit_Framework_TestCase;
 
 class RestApiTest extends PHPUnit_Framework_TestCase {
-    const ACCOUNTING_DATA_FILE = "tests/acceptance/config/radius-accounding.json";
     /**
      * @coversNothing
      */
@@ -93,22 +92,69 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
     /**
      * @coversNothing
      */
-    public function testAccounting() {
+    public function testAccountingStart() {
+        $userName = TestConstants::getInstance()->getTestUserName();
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
-            . TestConstants::accountingUrlForUser(
-                TestConstants::getInstance()->getTestUserName()
-            ),
+            . TestConstants::accountingUrlForUser($userName),
             false,
             stream_context_create(array(
                 'http' => array(
-                    'method'  => 'POST',
-                    'header'  => 'Content-type: application/json',
-                    'content' => file_get_contents(self::ACCOUNTING_DATA_FILE)
+                    'method'           => 'POST',
+                    'protocol_version' => 1.0,
+                    'header'           => 'Content-type: application/json',
+                    'content'          =>
+                        TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_START, $userName)
                 )
             ))
         );
-        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
+        $this->assertEquals(TestConstants::HTTP_NO_DATA, $http_response_header[0]);
+        $this->assertEquals("", $response);
+    }
+
+    /**
+     * @coversNothing
+     */
+    public function testAccountingInterim() {
+        $userName = TestConstants::getInstance()->getTestUserName();
+        $response = file_get_contents(
+            TestConstants::getBackendBaseUrl()
+            . TestConstants::accountingUrlForUser($userName),
+            false,
+            stream_context_create(array(
+                'http' => array(
+                    'method'           => 'POST',
+                    'protocol_version' => 1.0,
+                    'header'           => 'Content-type: application/json',
+                    'content'          =>
+                        TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_INTERIM, $userName)
+                )
+            ))
+        );
+        $this->assertEquals(TestConstants::HTTP_NO_DATA, $http_response_header[0]);
+        $this->assertEquals("", $response);
+    }
+
+    /**
+     * @coversNothing
+     */
+    public function testAccountingStop() {
+        $userName = TestConstants::getInstance()->getTestUserName();
+        $response = file_get_contents(
+            TestConstants::getBackendBaseUrl()
+            . TestConstants::accountingUrlForUser($userName),
+            false,
+            stream_context_create(array(
+                'http' => array(
+                    'method'           => 'POST',
+                    'protocol_version' => 1.0,
+                    'header'           => 'Content-type: application/json',
+                    'content'          =>
+                        TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_STOP, $userName)
+                )
+            ))
+        );
+        $this->assertEquals(TestConstants::HTTP_NO_DATA, $http_response_header[0]);
         $this->assertEquals("", $response);
     }
 }

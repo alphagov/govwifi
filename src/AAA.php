@@ -24,6 +24,17 @@ class AAA {
         self::TYPE_POST_AUTH,
         self::TYPE_ACTIVATE
     ];
+    const ACCOUNTING_TYPE_START   = 1;
+    const ACCOUNTING_TYPE_STOP    = 2;
+    const ACCOUNTING_TYPE_INTERIM = 3;
+    const ACCEPTED_ACCOUNTING_TYPES = [
+        self::ACCOUNTING_TYPE_START,
+        self::ACCOUNTING_TYPE_STOP,
+        self::ACCOUNTING_TYPE_INTERIM
+    ];
+    const HTTP_RESPONSE_OK         = "200 OK";
+    const HTTP_RESPONSE_NO_CONTENT = "204 OK";
+    const HTTP_RESPONSE_NOT_FOUND  = "404 Not Found";
 
     /**
      * @var User
@@ -173,14 +184,33 @@ class AAA {
         }
     }
 
+    /**
+     * Handles the accounting requests.
+     *
+     * There are 3 types recognised: start, stop and interim.
+     *
+     * A start request places an entry in the cache, interim requests update it, while the stop
+     * deletes the session from the cache, takes the data accumulated, and saves it into permanent
+     * storage.
+     */
     public function accounting() {
         $acct = json_decode($this->requestJson, true);
+        $accountingType = $acct['Acct-Status-Type']['value'][0];
+
+        // Default value in case of failure.
+        $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
+
+        if (! in_array($accountingType, self::ACCEPTED_ACCOUNTING_TYPES)) {
+            // Silently fail if the accounting request type is not recognized.
+            error_log("Accounting request type not recognised: [" . $accountingType . "]");
+            return;
+        }
         $this->session = new Session(
                 $this->user->login . $acct['Acct-Session-Id']['value'][0],
                 Cache::getInstance());
 
-        switch ($acct['Acct-Status-Type']['value'][0]) {
-            case 1:
+        switch ($accountingType) {
+            case self::ACCOUNTING_TYPE_START:
                 // Acct Start - Store session in Memcache
                 $this->session->login = $this->user->login;
                 $this->session->startTime = time();
@@ -194,9 +224,9 @@ class AAA {
                         "Accounting start: "
                         . $this->session->login . " "
                         . $this->session->id);
-                    $this->responseHeader = "HTTP/1.0 204 OK";
+                $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 break;
-            case 2:
+            case self::ACCOUNTING_TYPE_STOP:
                 // Acct Stop - store record in DB -
                 // if there is no start record do nothing.
                 if ($this->session->startTime) {
@@ -221,10 +251,10 @@ class AAA {
                             . " mac: " . $this->session->mac
                             . " ap: " . $this->session->ap);
                     $this->session->writeToDB();
-                    $this->responseHeader = "HTTP/1.0 204 OK";
+                    $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 }
                 break;
-            case 3:
+            case self::ACCOUNTING_TYPE_INTERIM:
                 // Acct Interim - if there is no start record do nothing.
                 if ($this->session->startTime) {
                     $this->session->inOctets +=
@@ -236,7 +266,7 @@ class AAA {
                             "Accounting update: "
                             . $this->session->login . " "
                             . $this->session->id);
-                    $this->responseHeader = "HTTP/1.0 204 OK";
+                    $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 }
                 break;
         }
@@ -355,11 +385,11 @@ class AAA {
 
     private function authorizeResponse($accept) {
         if ($accept) {
-            $this->responseHeader = "200 OK";
+            $this->responseHeader = self::HTTP_RESPONSE_OK;
             $response['control:Cleartext-Password'] = $this->user->password;
             $this->responseBody = json_encode($response);
         } else {
-             $this->responseHeader = "404 Not Found";
+             $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
         }
     }
 }

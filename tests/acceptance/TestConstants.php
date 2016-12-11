@@ -1,5 +1,6 @@
 <?php
 namespace Alphagov\GovWifi;
+use Exception;
 
 /**
  * Class TestConstants
@@ -10,6 +11,7 @@ namespace Alphagov\GovWifi;
 class TestConstants {
     const REQUEST_PROTOCOL                = "http://";
     const HTTP_OK                         = "HTTP/1.1 200 OK";
+    const HTTP_NO_DATA                    = "HTTP/1.0 204 OK";
     const HEALTH_CHECK_USER_PASSWORD      = 'GS3EWA64EshRD8I0XdVl$dko';
     const BACKEND_API_PORT                = "8080";
     const CLEARTEXT_PASSWORD_PLACEHOLDER  = "#CLEARTEXT_PASSWORD#";
@@ -22,6 +24,10 @@ class TestConstants {
         . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
     const ACCOUNTING_URL_TEMPLATE         = "/api/accounting/user/" . self::USERNAME_PLACEHOLDER
         . "/site/172.17.0.6";
+    const ACCOUNTING_DATA_FILE_START      = "tests/acceptance/config/radius-accounting-start.json";
+    const ACCOUNTING_DATA_FILE_STOP       = "tests/acceptance/config/radius-accounting-stop.json";
+    const ACCOUNTING_DATA_FILE_INTERIM    = "tests/acceptance/config/radius-accounting-interim.json";
+    const TIMESTAMP_PLACEHOLDER           = "#TIMESTAMP#";
 
     /**
      * @var TestConstants
@@ -140,6 +146,45 @@ class TestConstants {
         return self::REQUEST_PROTOCOL
         . self::getInstance()->getBackendContainer()
         . ":" . self::BACKEND_API_PORT;
+    }
+
+    /**
+     * Builds the json data for the accounting request type and username provided.
+     *
+     * @param $accountingType string
+     * @param $username string
+     * @return string the json data
+     * @throws Exception if the accounting type is not in the list defined in class AAA,
+     * or there's no file for the given type
+     */
+    public static function getAccountingJsonForType($accountingType, $username) {
+        if (!in_array($accountingType, AAA::ACCEPTED_ACCOUNTING_TYPES)) {
+            throw new Exception("Accounting type not recognised. [" . $accountingType . "]");
+        }
+        $jsonData = "";
+        switch ($accountingType) {
+            case AAA::ACCOUNTING_TYPE_START:
+                $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_START);
+                break;
+            case AAA::ACCOUNTING_TYPE_STOP:
+                $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_STOP);
+                break;
+            case AAA::ACCOUNTING_TYPE_INTERIM:
+                $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_INTERIM);
+                break;
+        }
+        if (empty($jsonData)) {
+            throw new Exception("Data file not found for the accounting type provided. [" . $accountingType . "]");
+        }
+        return str_replace(
+            self::USERNAME_PLACEHOLDER,
+            $username,
+            str_replace(
+                self::TIMESTAMP_PLACEHOLDER,
+                date('M d Y H:i:s T', time()),
+                $jsonData
+            )
+        );
     }
 
     /**
