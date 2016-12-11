@@ -1,6 +1,6 @@
 <?php
 namespace Alphagov\GovWifi;
-require_once "TestConstants.php";
+require_once "tests/TestConstants.php";
 
 use PHPUnit_Framework_TestCase;
 
@@ -18,9 +18,9 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
     public function testRadiusPEAPMsChapV2Authentication() {
         $template = file_get_contents(self::PEAP_MSCHAP_V2_CONFIG_TEMPLATE);
         $configuration = str_replace(
-            self::PASSWORD_PLACEHOLDER, TestConstants::getInstance()->getTestUserPassword(),
+            self::PASSWORD_PLACEHOLDER, TestConstants::getInstance()->getAcceptanceTestUserPassword(),
             str_replace(
-                self::USERNAME_PLACEHOLDER, TestConstants::getInstance()->getTestUserName(), $template)
+                self::USERNAME_PLACEHOLDER, TestConstants::getInstance()->getAcceptanceTestUserName(), $template)
         );
         file_put_contents(self::CONFIG_FILE, $configuration);
 

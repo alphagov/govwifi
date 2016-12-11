@@ -1,6 +1,6 @@
 <?php
 namespace Alphagov\GovWifi;
-require_once "TestConstants.php";
+require_once "tests/TestConstants.php";
 
 use PDO;
 use PHPUnit_Framework_TestCase;
@@ -35,7 +35,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
             false,
             TestConstants::getInstance()->getHttpContext()
         );
-        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
+        $this->assertEquals(TestConstants::HTTP_11_NO_DATA, $http_response_header[0]);
         $this->assertEquals("", $response);
     }
 
@@ -46,7 +46,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
             . TestConstants::authorisationUrlForUser(
-                TestConstants::getInstance()->getTestUserName()
+                TestConstants::getInstance()->getAcceptanceTestUserName()
             ),
             false,
             TestConstants::getInstance()->getHttpContext()
@@ -54,7 +54,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
         $this->assertEquals(
             TestConstants::authorisationResponseForPassword(
-                TestConstants::getInstance()->getTestUserPassword()
+                TestConstants::getInstance()->getAcceptanceTestUserPassword()
             ),
             $response
         );
@@ -67,33 +67,35 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
             . TestConstants::postAuthUrlForUser(
-                TestConstants::getInstance()->getTestUserName()
+                TestConstants::getInstance()->getAcceptanceTestUserName()
             ),
             false,
             TestConstants::getInstance()->getHttpContext()
         );
-        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
+        $this->assertEquals(TestConstants::HTTP_11_NO_DATA, $http_response_header[0]);
         $this->assertEquals("", $response);
 
         $statement = DB::getInstance()->getConnection()->prepare(
             "SELECT * FROM session WHERE username = :username ORDER BY start DESC LIMIT 1");
         $statement->bindValue(
             ":username",
-            TestConstants::getInstance()->getTestUserName(),
+            TestConstants::getInstance()->getAcceptanceTestUserName(),
             PDO::PARAM_STR
         );
         $statement->execute();
         $result = $statement->fetchAll(PDO::FETCH_ASSOC);
-        $this->assertEquals(TestConstants::getInstance()->getTestUserName(), $result[0]['username']);
-        $this->assertEquals("02-11-00-00-00-01",                             $result[0]['mac']);
-        $this->assertEquals("172.17.0.6",                                    $result[0]['siteIP']);
+        $this->assertEquals(
+            TestConstants::getInstance()->getAcceptanceTestUserName(),
+            $result[0]['username']);
+        $this->assertEquals("02-11-00-00-00-01", $result[0]['mac']);
+        $this->assertEquals("172.17.0.6",        $result[0]['siteIP']);
     }
 
     /**
      * @coversNothing
      */
     public function testAccountingStart() {
-        $userName = TestConstants::getInstance()->getTestUserName();
+        $userName = TestConstants::getInstance()->getAcceptanceTestUserName();
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
             . TestConstants::accountingUrlForUser($userName),
@@ -116,7 +118,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
      * @coversNothing
      */
     public function testAccountingInterim() {
-        $userName = TestConstants::getInstance()->getTestUserName();
+        $userName = TestConstants::getInstance()->getAcceptanceTestUserName();
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
             . TestConstants::accountingUrlForUser($userName),
@@ -139,7 +141,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
      * @coversNothing
      */
     public function testAccountingStop() {
-        $userName = TestConstants::getInstance()->getTestUserName();
+        $userName = TestConstants::getInstance()->getAcceptanceTestUserName();
         $response = file_get_contents(
             TestConstants::getBackendBaseUrl()
             . TestConstants::accountingUrlForUser($userName),

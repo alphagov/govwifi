@@ -12,16 +12,20 @@ class TestConstants {
     const REQUEST_PROTOCOL                = "http://";
     const HTTP_OK                         = "HTTP/1.1 200 OK";
     const HTTP_NO_DATA                    = "HTTP/1.0 204 OK";
+    const HTTP_11_NO_DATA                 = "HTTP/1.1 204 OK";
     const HEALTH_CHECK_USER_PASSWORD      = 'GS3EWA64EshRD8I0XdVl$dko';
     const BACKEND_API_PORT                = "8080";
     const CLEARTEXT_PASSWORD_PLACEHOLDER  = "#CLEARTEXT_PASSWORD#";
+    const RESULT_PLACEHOLDER              = "#RESULT#";
+    const AUTH_RESULT_ACCEPT              = "Access-Accept";
+    const AUTH_RESULT_REJECT              = "Access-Reject";
     const AUTHORIZATION_RESPONSE_TEMPLATE =
         "{\"control:Cleartext-Password\":\"" . self::CLEARTEXT_PASSWORD_PLACEHOLDER . "\"}";
     const USERNAME_PLACEHOLDER            = "#USERNAME#";
     const AUTHORIZATION_URL_TEMPLATE      = "/api/authorize/user/" . self::USERNAME_PLACEHOLDER
         . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6";
     const POST_AUTH_URL_TEMPLATE          = "/api/post-auth/user/" . self::USERNAME_PLACEHOLDER
-        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/Access-Accept";
+        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/#RESULT#";
     const ACCOUNTING_URL_TEMPLATE         = "/api/accounting/user/" . self::USERNAME_PLACEHOLDER
         . "/site/172.17.0.6";
     const ACCOUNTING_DATA_FILE_START      = "tests/acceptance/config/radius-accounting-start.json";
@@ -86,7 +90,7 @@ class TestConstants {
     /**
      * Builds and authorisation url for the username provided.
      *
-     * @param $username string
+     * @param string $username
      * @return string
      */
     public static function authorisationUrlForUser($username) {
@@ -100,21 +104,26 @@ class TestConstants {
     /**
      * Builds a post-auth url for the username provided.
      *
-     * @param $username string
+     * @param string $username
+     * @param string $result one of: Access-Accept or Access-Reject
      * @return string
      */
-    public static function postAuthUrlForUser($username) {
+    public static function postAuthUrlForUser($username, $result = TestConstants::AUTH_RESULT_ACCEPT) {
         return str_replace(
             self::USERNAME_PLACEHOLDER,
             $username,
-            self::POST_AUTH_URL_TEMPLATE
+            str_replace(
+                self::RESULT_PLACEHOLDER,
+                $result,
+                self::POST_AUTH_URL_TEMPLATE
+            )
         );
     }
 
     /**
      * Builds an authorisation response JSON containing the password.
      *
-     * @param $password string
+     * @param string $password
      * @return string
      */
     public static function authorisationResponseForPassword($password) {
@@ -128,7 +137,7 @@ class TestConstants {
     /**
      * Builds an accounting url for the username provided.
      *
-     * @param $username string
+     * @param string $username
      * @return string
      */
     public static function accountingUrlForUser($username) {
@@ -151,8 +160,8 @@ class TestConstants {
     /**
      * Builds the json data for the accounting request type and username provided.
      *
-     * @param $accountingType string
-     * @param $username string
+     * @param string $accountingType
+     * @param string $username
      * @return string the json data
      * @throws Exception if the accounting type is not in the list defined in class AAA,
      * or there's no file for the given type
@@ -190,14 +199,28 @@ class TestConstants {
     /**
      * @return string
      */
-    public function getTestUserName() {
+    public function getAcceptanceTestUserName() {
         return $this->testUserName;
     }
 
     /**
      * @return string
      */
-    public function getTestUserPassword() {
+    public function getAcceptanceTestUserPassword() {
+        return $this->testUserPassword;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUnitTestUserName() {
+        return $this->testUserName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUnitTestUserPassword() {
         return $this->testUserPassword;
     }
 

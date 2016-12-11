@@ -5,37 +5,43 @@ use Exception;
 use PDO;
 
 class AAA {
-    const URL_API      = "api";
-    const URL_USER     = "user";
-    const URL_MAC      = "mac";
-    const URL_AP       = "ap";
-    const URL_SITE     = "site";
-    const URL_KIOSK_IP = "kioskip";
-    const URL_RESULT   = "result";
-    const URL_PHONE    = "phone";
-    const URL_CODE     = "code";
-    const TYPE_AUTHORIZE  = "authorize";
-    const TYPE_POST_AUTH  = "post-auth";
-    const TYPE_ACCOUNTING = "accounting";
-    const TYPE_ACTIVATE   = "activate";
-    const ACCEPTED_REQUEST_TYPES = [
+    const URL_API                   = "api";
+    const URL_USER                  = "user";
+    const URL_MAC                   = "mac";
+    const URL_AP                    = "ap";
+    const URL_SITE                  = "site";
+    const URL_KIOSK_IP              = "kioskip";
+    const URL_RESULT                = "result";
+    const URL_PHONE                 = "phone";
+    const URL_CODE                  = "code";
+    const TYPE_AUTHORIZE            = "authorize";
+    const TYPE_POST_AUTH            = "post-auth";
+    const TYPE_ACCOUNTING           = "accounting";
+    const TYPE_ACTIVATE             = "activate";
+    const ACCEPTED_REQUEST_TYPES    = [
         self::TYPE_AUTHORIZE,
         self::TYPE_ACCOUNTING,
         self::TYPE_POST_AUTH,
         self::TYPE_ACTIVATE
     ];
-    const ACCOUNTING_TYPE_START   = 1;
-    const ACCOUNTING_TYPE_STOP    = 2;
-    const ACCOUNTING_TYPE_INTERIM = 3;
+    const AUTH_RESULT_ACCEPT        = "Access-Accept";
+    const AUTH_RESULT_REJECT        = "Access-Reject";
+    const ACCEPTED_AUTH_RESULTS     = [
+        self::AUTH_RESULT_ACCEPT,
+        self::AUTH_RESULT_REJECT
+    ];
+    const ACCOUNTING_TYPE_START     = 1;
+    const ACCOUNTING_TYPE_STOP      = 2;
+    const ACCOUNTING_TYPE_INTERIM   = 3;
     const ACCEPTED_ACCOUNTING_TYPES = [
         self::ACCOUNTING_TYPE_START,
         self::ACCOUNTING_TYPE_STOP,
         self::ACCOUNTING_TYPE_INTERIM
     ];
-    const HTTP_RESPONSE_OK         = "200 OK";
-    const HTTP_RESPONSE_NO_CONTENT = "204 OK";
-    const HTTP_RESPONSE_NOT_FOUND  = "404 Not Found";
-
+    const HTTP_RESPONSE_OK          = "200 OK";
+    const HTTP_RESPONSE_NO_CONTENT  = "204 OK";
+    const HTTP_RESPONSE_NOT_FOUND   = "404 Not Found";
+    const DEFAULT_HTTP_PROTOCOL     = "HTTP/1.1";
     /**
      * @var User
      */
@@ -43,10 +49,13 @@ class AAA {
     public $siteIP;
     public $site;
     public $type;
-    public $responseHeader;
-    public $responseBody;
-    public $requestJson;
-    public $session;
+    private $responseHeader;
+    private $responseBody;
+    private $requestJson;
+    /**
+     * @var Session
+     */
+    private $session;
     public $result;
     public $kioskKey;
 
@@ -76,16 +85,18 @@ class AAA {
     public function __construct($requestUrl, $jsonData) {
         $this->requestUrl     = $requestUrl;
         $this->requestJson    = $jsonData;
-        $this->parseRequest();
+
+        $this->parseRequest($requestUrl);
     }
 
     /**
      * Parses the request url.
      *
-     * @throws Exception When the request type is not recognized.
+     * @param string $requestUrl
+     * @throws Exception When the request type or the auth result is not recognized.
      */
-    public function parseRequest() {
-        $parts = explode('/', $this->requestUrl);
+    public function parseRequest($requestUrl) {
+        $parts = explode('/', $requestUrl);
         for ($x = 0; $x < count($parts); $x++) {
             switch ($parts[$x]) {
                 case self::URL_API:
@@ -116,6 +127,9 @@ class AAA {
                     break;
                 case self::URL_RESULT:
                     $this->result = $parts[$x + 1];
+                    if (! in_array($this->result, self::ACCEPTED_AUTH_RESULTS)) {
+                        throw new Exception("Auth result [" . $this->result . "] is not recognized.");
+                    }
                     break;
                 case self::URL_PHONE:
                     $this->user = new User(Cache::getInstance());
@@ -134,6 +148,11 @@ class AAA {
      *
      * Supported request types are: authorize, post-auth, accounting
      * and activate.
+     *
+     * @return array the response headers and body to be returned for the request
+     * format:
+     * 'headers' => array(string, string, ...),
+     * 'body' => string
      */
     public function processRequest() {
         switch ($this->type) {
@@ -150,6 +169,19 @@ class AAA {
                 $this->activate();
                 break;
         }
+
+        $httpProtocol = self::DEFAULT_HTTP_PROTOCOL;
+        if (!empty($_SERVER["SERVER_PROTOCOL"])){
+            $httpProtocol = $_SERVER["SERVER_PROTOCOL"];
+        }
+
+        return [
+            'headers' => [
+                $httpProtocol . " " . $this->responseHeader,
+                "Content-Type: application/json",
+            ],
+            'body'    => $this->responseBody
+        ];
     }
 
     public function kioskKeyValid() {
@@ -279,7 +311,8 @@ class AAA {
      * start a new session. (Insert a new session record into the database.)
      */
     public function postAuth() {
-        if ($this->result == "Access-Accept") {
+        if (self::AUTH_RESULT_ACCEPT == $this->result) {
+            $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
             if ($this->user->login != "HEALTH") {
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
@@ -298,6 +331,10 @@ class AAA {
                     ':ap', strtoupper($this->getAp()), PDO::PARAM_STR);
                 $handle->execute();
             }
+        } else if (self::AUTH_RESULT_REJECT == $this->result) {
+            $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
+        } else {
+            $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
         }
     }
 
