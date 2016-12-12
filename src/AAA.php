@@ -106,7 +106,7 @@ class AAA {
                     }
                     break;
                 case self::URL_USER:
-                    $this->user = new User(Cache::getInstance());
+                    $this->user = new User(Cache::getInstance(), Config::getInstance());
                     $this->user->login = strtoupper($parts[$x + 1]);
                     $this->user->loadRecord();
                     break;
@@ -132,7 +132,7 @@ class AAA {
                     }
                     break;
                 case self::URL_PHONE:
-                    $this->user = new User(Cache::getInstance());
+                    $this->user = new User(Cache::getInstance(), Config::getInstance());
                     $this->user->identifier = new Identifier($parts[$x + 1]);
                     break;
                 case self::URL_CODE:

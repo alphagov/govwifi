@@ -19,9 +19,14 @@ class User {
      * @var Cache
      */
     private $cache;
+    /**
+     * @var Config
+     */
+    private $config;
 
-    public function __construct(Cache $cache) {
-        $this->cache = $cache;
+    public function __construct(Cache $cache, Config $config) {
+        $this->cache  = $cache;
+        $this->config = $config;
     }
 
     public function signUp($message = "", $force = false) {
@@ -251,9 +256,8 @@ class User {
 
 
     private function generateRandomUsername() {
-        $config = Config::getInstance();
-        $length = $config->values['wifi-username']['length'];
-        $pattern = $config->values['wifi-username']['regex'];
+        $length = $this->config->values['wifi-username']['length'];
+        $pattern = $this->config->values['wifi-username']['regex'];
 
         $userName = $this->getRandomCharacters($pattern, $length);
         return strtoupper($userName);
@@ -271,23 +275,22 @@ class User {
      * @return string
      */
     public function generateRandomWifiPassword() {
-        $config = Config::getInstance();
         $password = "";
-        if ($config->values['wifi-password']['random-words']) {
+        if ($this->config->values['wifi-password']['random-words']) {
             $f_contents = file(
-                    $config->values['wifi-password']['wordlist-file']);
-            for ($x = 1; $x <= $config->values['wifi-password']['word-count'];
+                    $this->config->values['wifi-password']['wordlist-file']);
+            for ($x = 1; $x <= $this->config->values['wifi-password']['word-count'];
                     $x++) {
                 $word = trim($f_contents[array_rand($f_contents)]);
-                if ($config->values['wifi-password']['uppercase'])
+                if ($this->config->values['wifi-password']['uppercase'])
                     $word = ucfirst($word);
                 $password .= $word;
             }
         }
 
-        if ($config->values['wifi-password']['random-chars']) {
-            $length = $config->values['wifi-password']['length'];
-            $pattern = $config->values['wifi-password']['regex'];
+        if ($this->config->values['wifi-password']['random-chars']) {
+            $length = $this->config->values['wifi-password']['length'];
+            $pattern = $this->config->values['wifi-password']['regex'];
 
             $password = $this->getRandomCharacters($pattern, $length);
         }
