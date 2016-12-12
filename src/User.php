@@ -5,6 +5,7 @@ use Exception;
 use PDO;
 
 class User {
+    const RANDOM_BYTES_LENGTH_MULTIPLIER = 4;
     /**
      * @var Identifier
      */
@@ -167,8 +168,10 @@ class User {
         $this->cache->set($this->login, $userRecord);
     }
 
+    /**
+     * Forces the generation of a new password for the user.
+     */
     public function newPassword() {
-        # This will force the generation of a new password for the user
         $this->password = $this->generateRandomWifiPassword();
     }
 
@@ -251,13 +254,23 @@ class User {
         $config = Config::getInstance();
         $length = $config->values['wifi-username']['length'];
         $pattern = $config->values['wifi-username']['regex'];
-        $pass = preg_replace(
-                $pattern, "",
-                base64_encode($this->strongRandomBytes($length * 4)));
-        return strtoupper(substr($pass, 0, $length));
+
+        $userName = $this->getRandomCharacters($pattern, $length);
+        return strtoupper($userName);
     }
 
-    function generateRandomWifiPassword() {
+    /**
+     * Generates a random password for the user.
+     *
+     * There are 2 versions, depending on configuration:
+     * - Random words: words randomly chosen from a configuration-defined word list file,
+     * the actual count of words used comes from the config too.
+     * - Random chars: Randomly generated characters derived from a base64-encoded string,
+     * with length and exclusion regex set in the config.
+     *
+     * @return string
+     */
+    public function generateRandomWifiPassword() {
         $config = Config::getInstance();
         $password = "";
         if ($config->values['wifi-password']['random-words']) {
@@ -275,14 +288,56 @@ class User {
         if ($config->values['wifi-password']['random-chars']) {
             $length = $config->values['wifi-password']['length'];
             $pattern = $config->values['wifi-password']['regex'];
-            $pass = preg_replace(
-                    $pattern, "",
-                    base64_encode($this->strongRandomBytes($length * 4)));
-            $password = substr($pass, 0, $length);
+
+            $password = $this->getRandomCharacters($pattern, $length);
         }
         return $password;
     }
 
+    /**
+     * Generate a set of random characters based on the base64 encoded random bytes provided
+     * by the openssl_random_pseudo_bytes function.
+     *
+     * @param string $exclusionPattern Regex pattern to exclude certain characters from the result.
+     * @param integer $length The character length of the resulting string.
+     * @return string
+     * @throws Exception If we tried 100 times to generate an appropriate-length string and failed.
+     */
+    public function getRandomCharacters($exclusionPattern, $length) {
+        $randomChars = preg_replace(
+            $exclusionPattern,
+            "",
+            $this->strongRandomBytes(
+                $length * self::RANDOM_BYTES_LENGTH_MULTIPLIER
+            )
+        );
+        // Need to retry as we can't guarantee that the exclusion regex will not cut too many characters.
+        $tries = 0;
+        while ($tries < 100 && strlen($randomChars) < $length) {
+            $randomChars = preg_replace(
+                $exclusionPattern,
+                "",
+                $this->strongRandomBytes(
+                    $length * self::RANDOM_BYTES_LENGTH_MULTIPLIER
+                )
+            );
+            $tries++;
+        }
+        if (100 == $tries) {
+            throw new Exception("Tried too many times, exiting random char generation.");
+        }
+        return substr($randomChars, 0, $length);
+    }
+
+    /**
+     * Generates a base64 encoded string derived from random bytes provided by
+     * the openssl_random_pseudo_bytes function.
+     *
+     * @param integer $length The number of bytes.
+     * @return string The base64-encoded representation of the bytes generated.
+     * @throws Exception If the system did not use a cryptographically strong algorithm
+     * to generate the random bytes.
+     */
     private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
@@ -290,6 +345,6 @@ class User {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }
-        return $bytes;
+        return base64_encode($bytes);
     }
 }
