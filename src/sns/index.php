@@ -32,7 +32,7 @@ if (isset($data['SubscribeURL'])) {
 } else {
     error_log("EMAIL original message metadata: " . $data['Message']);
     $message = json_decode($data['Message'], true);
-    $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
+    $pattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
     preg_match(
         $pattern,
         reset($message['mail']['commonHeaders']['from']),
