@@ -30,6 +30,7 @@ if (isset($data['SubscribeURL'])) {
 } else if (!isset($data['Message'])) {
     error_log("AWS SNS - empty data received.");
 } else {
+    error_log("EMAIL original message metadata: " . $data['Message']);
     $message = json_decode($data['Message'], true);
     $pattern = "/([a-zA-Z\.\-]+@[a-zA-Z\.\-]+)/";
     preg_match(
@@ -62,7 +63,7 @@ if (isset($data['SubscribeURL'])) {
     ));
 
     $body = $result['Body'] . "\n";
-    error_log($body);
+    error_log("EMAIL body: " . $body);
     $emailreq->setEmailBody($body);
 
     switch ($emailreq->emailToCMD) {
