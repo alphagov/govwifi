@@ -3,7 +3,6 @@ namespace Alphagov\GovWifi;
 
 use Aws\Ses\SesClient;
 use Exception;
-use phpDocumentor\Reflection\Types\Null_;
 use Swift_Attachment;
 use Swift_Message;
 
