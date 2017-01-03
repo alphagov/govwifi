@@ -168,7 +168,7 @@ class EmailRequest {
             $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
             $email->logRequest();
-            $email->send();
+            $email->send($orgAdmin->emailManagerAddress);
             // Create sms response for the code if the pdf is encrypted
             if ($pdf->encrypt) {
                 $sms = new SmsResponse($orgAdmin->mobile);
