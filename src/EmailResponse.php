@@ -3,6 +3,7 @@ namespace Alphagov\GovWifi;
 
 use Aws\Ses\SesClient;
 use Exception;
+use phpDocumentor\Reflection\Types\Null_;
 use Swift_Attachment;
 use Swift_Message;
 
@@ -81,7 +82,7 @@ class EmailResponse {
             "%FILENAME%", $this->fileName, $this->message);
     }
 
-    public function send() {
+    public function send($emailManagerAddress = NULL) {
         $config = Config::getInstance();
         // TODO(afoldesi-gds): (Low)Refactor out deprecated factory method.
 	    $client = SesClient::factory(array(
@@ -94,9 +95,16 @@ class EmailResponse {
         ));
 
         $email = Swift_Message::newInstance();
-        $email->setTo($this->to);
+        $recipient = $this->to;
+        $subject   = $this->subject;
+        if (!empty($emailManagerAddress)) {
+            $recipient = $emailManagerAddress;
+            $subject   = $this->to;
+        }
+
+        $email->setTo($recipient);
+        $email->setSubject($subject);
         $email->setFrom($this->from);
-        $email->setSubject($this->subject);
         $email->setBody($this->message);
         if (!empty($this->filepath)) {
            $email->attach(Swift_Attachment::fromPath($this->filepath));
@@ -109,7 +117,7 @@ class EmailResponse {
                 )
             ));
             $messageId = $result->get('MessageId');
-            error_log("Email sent! Message ID: " . $messageId);
+            error_log("Email sent! To: " . $recipient . ", Subject: " . $subject . ", Message ID: " . $messageId);
         } catch (Exception $e) {
             error_log(
                 "The email was not sent. Error message: " . $e->getMessage());

@@ -242,7 +242,7 @@ class EmailRequest {
             }
             $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
-            $email->send();
+            $email->send($orgAdmin->emailManagerAddress);
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
             $sms->sendNewsitePassword($pdf);
