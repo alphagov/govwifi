@@ -19,12 +19,13 @@ class SmsRequest {
             return false;
         } else {
             $firstWord = $this->messageWords[0];
-            error_log("*".$firstWord."*");
+            error_log("SMS first word:*" . $firstWord . "*");
             switch ($firstWord) {
                 case "security":
                     $this->security();
                     break;
                 case "new":
+                case "newpassword":
                     $this->newPassword();
                     break;
                 case "help":
@@ -48,9 +49,20 @@ class SmsRequest {
     }
 
     public function setSender($sender) {
+        error_log("Sender: " . $sender);
         $this->sender = new Identifier($sender);
+        error_log("Sender Obj:" . var_export($this->sender, true));
     }
 
+    /**
+     * Sets the message property based on the string provided.
+     *
+     * For normal mobile number end points (not short numbers), keywords are not necessary; however if they are
+     * sent, the message still needs to be recognized. In this case the keyword is stripped based on a regex defined
+     * in the environment-specific configuration.
+     *
+     * @param string $message
+     */
     public function setMessage($message) {
         $config = Config::getInstance();
         // remove whitespace and convert to lower case

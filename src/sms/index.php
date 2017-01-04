@@ -9,11 +9,11 @@ $smsReq = new SmsRequest();
 // for short numbers keyword is set to the keyword entered,
 // otherwise it's a string constant.
 error_log(var_export($_REQUEST, true));
+$sender = $_REQUEST['sender'];
 if (isset($_REQUEST['source'])) {
-    $smsReq->setSender($_REQUEST['source']);
-} else {
-    $smsReq->setSender($_REQUEST['sender']);
+    $sender = $_REQUEST['source'];
 }
+$smsReq->setSender($sender);
 
 if (isset($_REQUEST["message"])) {
     $keyword = "";
@@ -27,5 +27,5 @@ if (isset($_REQUEST["message"])) {
 }
 
 if (!$smsReq->processRequest()) {
-    error_log("SMS: Invalid number " . $smsReq->sender->text);
+    error_log("SMS: Invalid number " . $sender);
 }
