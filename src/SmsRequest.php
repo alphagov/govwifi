@@ -6,6 +6,47 @@ class SmsRequest {
     public $message;
     public $messageWords;
 
+    /**
+     * Processes an incoming SMS request based on the first word of the text sent.
+     *
+     * Note that messages sent to short numbers do not contain the keyword, so the "first word" here actually means the
+     * second in the actual text message - first being the keyword itself. The keyword is sent separately.
+     *
+     * @return bool To indicate success or failure - only dependent on the validity of the number.
+     */
+    public function processRequest() {
+        if (! $this->sender->validMobile) {
+            return false;
+        } else {
+            $firstWord = $this->messageWords[0];
+            error_log("*".$firstWord."*");
+            switch ($firstWord) {
+                case "security":
+                    $this->security();
+                    break;
+                case "new":
+                    $this->newPassword();
+                    break;
+                case "help":
+                    $this->help();
+                    break;
+                case "agree":
+                    $this->signUp();
+                    break;
+                default:
+                    if (preg_match('/^[0-9]{4}$/', $firstWord)) {
+                        $this->dailyCode();
+                    } else if (preg_match('/^[0-9]{6}$/', $firstWord)) {
+                        $this->verify();
+                    } else {
+                        $this->other();
+                    }
+                    break;
+            }
+            return true;
+        }
+    }
+
     public function setSender($sender) {
         $this->sender = new Identifier($sender);
     }
@@ -71,7 +112,7 @@ class SmsRequest {
         $user = new User(Cache::getInstance(), Config::getInstance());
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
-        $user->signUp(true);
+        $user->signUp("", true);
     }
 
     public function signUp() {

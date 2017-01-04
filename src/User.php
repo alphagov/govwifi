@@ -12,6 +12,9 @@ class User {
     public $identifier;
     public $login;
     public $password;
+    /**
+     * @var Identifier
+     */
     public $sponsor;
     public $email;
 
