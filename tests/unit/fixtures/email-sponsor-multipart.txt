@@ -1,0 +1,205 @@
+Return-Path: <testuser@example.gov.uk>
+Received: from mail1.example.com (mail1.example.com [1.2.3.1])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id 78pjsdfseww43222234sadf0di6ug39mvj0l2ro1
+ for sponsor@wifi.service.gov.uk;
+ Wed, 04 Jan 2017 19:24:46 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: none (spfCheck: 1.2.3.1 is neither permitted nor denied by domain of example.gov.uk) client-ip=1.2.3.1; envelope-from=testuser@example.gov.uk; helo=mail1.example.com;
+Authentication-Results: amazonses.com;
+ spf=none (spfCheck: 1.2.3.1 is neither permitted nor denied by domain of example.gov.uk) client-ip=1.2.3.1; envelope-from=testuser@example.gov.uk; helo=mail1.example.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFIY0J1Q2o2aDBOd0SDFsdSDfsdfSDFsdfKdXBPbld0MFQrZ3ErOVF2WHlJUFlpdXFnTm42bzlSNjJlVWlkZ3hMZXRXcmdJMHcvTEkvM2crQlRTWmpzcHRXbVBEV2xYNEtyaks3eDk1RHZaalpaTmpqaUNJZk5ENWlrbUJNRmlwRmJ2QUpYKzFLajlVQktuQnNISy82Q0k1NURXbkhPUzFKZUY0NUU5Zmx2TnZiaURRY1JZYzFrajZnN0RZY0NJell2WXB6NXY0cG94Tk5MUTFNR1lTSEZ4ZThBWnpiUnBGcm5PL2V0QVhhNG9QakdRaEN1RFpUTE5sY3FqbnlYc3VuVDRaM2x3TmxrbUl5Z0hSNGk2dFE4VnlHZTdIQ2J2alE9PQ==
+X-SES-DKIM-SIGNATURE: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubasdasdssdssfvqohv7z3u4hn; d=amazonses.com; t=1483557880;
+	h=X-SES-RECEIPT:From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	bh=ZSk+Pn3csL4SG+GqASdSASDaRb1FfPop1L5mNbfRzeaE=;
+	b=VzpCASDASDA5KVhPh5p/wqu8ofI8ASDASDas9gdrehUyn4PKcmQJCX6DRyGt1xOkYa2
+	KI9qI22JAZiIIQyOasdsSSDmcfqWwi15JqDjoNJO/NqT2K0weE/V3/6/vLQQJbISzwaa
+	B2DasdSSjIzhS+4D6BmSFeT6JpauNEaoJX7QinA=
+Return-Path: <testuser@example.gov.uk>
+Received: from [1.2.3.2] by server-13.example.com id A6/C1-18129-DFB4D685; Wed, 04 Jan 2017 19:24:45 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrLIsWRWlGSWpSXmKPExsViJ5l1Qfevd26
+  Ewax2cYt/F56yOTB6NG67zB7AGMWamZeUX5HAmjHj0He2gj7jiiU901kaGPv0uxg5OdgEbCX2
+  Pp7BCmKLCNhLPHv+mB3EFhbgkNh3cB4TRFxPYkHLJLAaFgEViWvvVzGC2LwCYRIfz+5gAbEZB
+  WQlvjSuZgaxmQXEJW49mQ/WKyEgSDFSD£3sdFtU4uXjf6wQtrzEmee72SDqiyQO/+tng5gpKH
+  Fy5hOWCYy8s5CMmoWkbBaSMoi4jsSC3Z/YIGxtiWULXzPD2GcOPGZCFl/AyL6KUaM4tagstUj
+  X2EAvqSgzPaMkNzEzR9fQwFQvN7W4ODE9NScxqVgvOT93EyMwaOsZGBh3ME5Y5XeIUZKDSUmU
+  t689J0KILyk/pTIjsTgjvqg0J7X4EKMMB4eSBO9Cr9wIIcGi1PTUirTMHGD8wKQlOHiURHg3g
+  aR5iwsSc4sz0yFSpxh1OU68uPecSYglLz8vVUqc9wNIkQBIUUZpHtwIWCxfYpSVEuZlZGBgEO
+  IpSC3KzSxBlX/FKM7BqCTM6wcyhSczrwRu0yeeASiAjtgekA1yREkiQkqqgTHjU1LNpL/ME2I
+  vlDTLvX2efCd0e9ZV65UrZU6wBa+76b0045HOH15e8QXT1OeWr+rb8zzE/VvX4b/CVyovL8hz
+  +Kyfv+OLmdSr7/8WcDO/nJccfd/9vf26q5UrGBcZ5Wyw8PAVuSxrymJqx5Dq/d7g8dkDu1yiK
+  i4sbrsRf+B+jdjWF/OFr5opsRRnJBpqMRcVJwIA+gZ9heACAAA=
+X-Env-Sender: testuser@example.gov.uk
+X-Msg-Ref: server-14.example.com!1483557885!78602317!1
+X-Originating-IP: [1.2.3.4]
+X-StarScan-Received:
+X-StarScan-Version: 9.1.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 13822 invoked from network); 4 Jan 2017 19:24:45 -0000
+Received: from example.gov.uk (HELO mailgate.gsi.gov.uk) (1.2.3.4)
+  by server-14.example.com with DHE-RSA-AES128-SHA encrypted SMTP; 4 Jan 2017 19:24:45 -0000
+From: "Test User" <testuser@example.gov.uk>
+To: "sponsor@wifi.service.gov.uk" <sponsor@wifi.service.gov.uk>
+Subject:
+Thread-Index: AdJmwDHq6TbgdsfTR+967J5b6gVJQ==
+Date: Wed, 4 Jan 2017 19:24:40 +0000
+Message-ID: <DBBA336F598ASDSDDD23CFF2EE59@SDCCMM8035.Poise.Example.Local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [10.1.2.3]
+Content-Type: multipart/alternative;
+    boundary="_000_DBBA336F598D1041B495EEEE7AD589CFF2EE59SDCCMM8035PoiseHo_"
+MIME-Version: 1.0
+
+--_000_DBBA336F598D1041B495EEEE7AD589CFF2EE59SDCCMM8035PoiseHo_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+07123456789
+
+Test User
+Test Position
+Test Design & Consultancy Services
+Example Technology
+
+4th Floor | Peel : SW Quarter | 42 Example Street | London AA11 A1B
+M: 07987 654321
+E: testuser@example.gov.uk<mailto:testuser@example.gov.=
+uk>
+www.example.gov.uk<http://www.example.gov.uk/>
+P Please don't print this e-mail unless you really need to
+
+
+
+**********************************************************************
+This email and any files transmitted with it are private and intended
+solely for the use of the individual or entity to whom they are addressed.
+If you have received this email in error please return it to the address
+it came from telling them it is not for you and then delete it from your sy=
+stem.
+This email message has been swept for computer viruses.
+
+**********************************************************************
+
+
+--_000_DBBA336F598D1041B495EEEE7AD589CFF2EE59SDCCMM8035PoiseHo_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
+<meta name=3D"Generator" content=3D"Microsoft Word 15 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Webdings;
+	panose-1:5 3 1 2 1 5 9 6 7 3;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Calibri",sans-serif;
+	color:windowtext;}
+.MsoChpDefault
+	{mso-style-type:export-only;
+	font-family:"Calibri",sans-serif;
+	mso-fareast-language:EN-US;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-GB" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">07123456789<o:p></o:p></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+<p class=3D"MsoNormal"><b><span style=3D"font-size:12.0pt;font-family:&quot=
+;Times New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">Test=
+ User</span></b><span style=3D"font-size:12.0pt;font-family:&quot;Times N=
+ew Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB"><o:p></o:p><=
+/span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">QAT Del=
+ivery Owner
+<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">Test De=
+sign &amp; Consultancy&nbsp;Services<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">Example=
+Technology<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">&nbsp;<=
+o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">4th Flo=
+or | Peel : SW Quarter | 42 Example Street | London AA11 A1B<br>
+M: 07987 654321<o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;color:#1F497D;mso-fareast-language:EN-GB">E:
+</span><span style=3D"font-size:12.0pt;font-family:&quot;Times New Roman&qu=
+ot;,serif;mso-fareast-language:EN-GB"><a href=3D"mailto:testuser@example=
+.gov.uk"><span style=3D"color:#0563C1">testuser@example.go=
+v.uk</span></a><span style=3D"color:#1F497D"><o:p></o:p></span></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:12.0pt;font-family:&quot;Ti=
+mes New Roman&quot;,serif;mso-fareast-language:EN-GB"><a href=3D"http://www=
+.example.gov.uk/"><span style=3D"color:blue">www.example.gov.uk</span=
+></a><span style=3D"color:gray"><o:p></o:p></span></span></p>
+<p class=3D"MsoNormal"><span style=3D"font-size:18.0pt;font-family:Webdings=
+;color:green;mso-fareast-language:EN-GB">P</span><span style=3D"font-size:1=
+0.0pt;font-family:&quot;Times New Roman&quot;,serif;color:navy;mso-fareast-=
+language:EN-GB">&nbsp;</span><span style=3D"font-size:8.0pt;font-family:&qu=
+ot;Times New Roman&quot;,serif;color:green;mso-fareast-language:EN-GB">Plea=
+se
+ don't print this e-mail unless you really need to</span><span style=3D"fon=
+t-size:12.0pt;font-family:&quot;Times New Roman&quot;,serif;color:#1F497D;m=
+so-fareast-language:EN-GB"><o:p></o:p></span></p>
+<p class=3D"MsoNormal"><span style=3D"color:#1F497D"><o:p>&nbsp;</o:p></spa=
+n></p>
+<p class=3D"MsoNormal"><o:p>&nbsp;</o:p></p>
+</div>
+<p>**********************************************************************<b=
+r />This email and any files transmitted with it are private and intended<b=
+r />solely for the use of the individual or entity to whom they are address=
+ed.<br />If you have received this email in error please return it to the a=
+ddress<br />it came from telling them it is not for you and then delete it =
+from your system.<br />This email message has been swept for computer virus=
+es.</p><p>*****************************************************************=
+*****<br /></p><p>*********************************************************=
+*************</p>=0A</body>
+</html>
+
+--_000_DBBA336F598D1041B495EEEE7AD589CFF2EE59SDCCMM8035PoiseHo_--
