@@ -47,6 +47,15 @@ class Identifier {
     }
 
     /**
+     * Define class behaviour when it's treated as, or forced to, a string.
+     *
+     * @return string
+     */
+    public function __toString() {
+        return $this->text;
+    }
+
+    /**
      * Check if the supplied string is a valid mobile number.
      * @param $identifier string
      * @return int

@@ -31,6 +31,7 @@ class TestConstants {
     const ACCOUNTING_DATA_FILE_START      = "tests/acceptance/config/radius-accounting-start.json";
     const ACCOUNTING_DATA_FILE_STOP       = "tests/acceptance/config/radius-accounting-stop.json";
     const ACCOUNTING_DATA_FILE_INTERIM    = "tests/acceptance/config/radius-accounting-interim.json";
+    const FIXTURE_EMAIL_SPONSOR_MULTIPART = "tests/unit/fixtures/email-sponsor-multipart.txt";
     const TIMESTAMP_PLACEHOLDER           = "#TIMESTAMP#";
 
     /**

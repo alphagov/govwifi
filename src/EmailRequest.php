@@ -88,7 +88,7 @@ class EmailRequest {
                 . $this->emailFrom->text);
 
             $signUpCount = 0;
-            foreach ($this->contactList() as $identifier) {
+            foreach ($this->uniqueContactList() as $identifier) {
                 $signUpCount++;
                 $user = new User(Cache::getInstance(), Config::getInstance());
                 $user->identifier = $identifier;
@@ -101,7 +101,7 @@ class EmailRequest {
             $email->send();
         } else {
             error_log(
-                "EMAIL: Ignoring sponsored reqeust from : "
+                "EMAIL: Ignoring sponsored request from : "
                 . $this->emailFrom->text);
         }
     }
@@ -254,7 +254,13 @@ class EmailRequest {
         }
     }
 
-    private function contactList() {
+    /**
+     * Extracts the unique list of contacts (mobile number or email address) from
+     * the body of the email.
+     *
+     * @return array Identifier instances.
+     */
+    public function uniqueContactList() {
         $list = [];
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $line) {
@@ -263,7 +269,7 @@ class EmailRequest {
                 $list[] = $contact;
             }
         }
-        return $list;
+        return array_unique($list);
     }
 
     private function ipList() {
