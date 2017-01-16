@@ -21,16 +21,19 @@ class EmailResponse {
         $this->message = "";
     }
 
-    public function sponsor($count) {
+    public function sponsor($count, $uniqueContactList) {
         $config = Config::getInstance();
         $this->subject = $config->values['email-messages']['sponsor-subject'];
-        if ($count>0) {
-            $this->message = file_get_contents(
-                    $config->values['email-messages']['sponsor-file']);
+        if ($count > 0) {
+            $this->message = file_get_contents($config->values['email-messages']['sponsor-file']);
+            if ($count > 1) {
+                $this->message = file_get_contents($config->values['email-messages']['sponsor-plural-file']);
+            }
+            // TODO: Remove when the count placeholder gets fully deprecated.
             $this->message = str_replace("%X%", $count, $this->message);
+            $this->message = str_replace("%CONTACTS%", implode("\n", $uniqueContactList), $this->message);
         } else {
-            $this->message = file_get_contents(
-                    $config->values['email-messages']['sponsor-help-file']);
+            $this->message = file_get_contents($config->values['email-messages']['sponsor-help-file']);
         }
     }
 

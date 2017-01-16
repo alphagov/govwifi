@@ -97,7 +97,7 @@ class EmailRequest {
             }
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
-            $email->sponsor($signUpCount);
+            $email->sponsor($signUpCount, $this->uniqueContactList());
             $email->send();
         } else {
             error_log(
