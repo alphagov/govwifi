@@ -61,6 +61,25 @@ class Report {
         $this->columns = array("Site Name", "Users");
     }
 
+    function topSitesAllTime() {
+        $db = DB::getInstance();
+        $dbLink = $db->getConnection();
+        $sql = "select org.name, sum(total) as usercount 
+                from 
+                (select siteIP, count(distinct(username)) as total from session group by siteIP) t1 
+                left join siteip on (siteip.ip = t1.siteIP) 
+                left join site on (siteip.site_id = site.id) 
+                left join organisation org on (site.org_id = org.id) 
+                where org.name is not null group by org.name order by usercount desc";
+        $handle = $dbLink->prepare($sql);
+        // TODO: We should restrict this functionality.
+        //$handle->bindValue(1, $this->orgAdmin->orgId);
+        $handle->execute();
+        $this->result = $handle->fetchAll(PDO::FETCH_NUM);
+        $this->subject = "Sites by number of unique users";
+        $this->columns = array("Site Name", "Users");
+    }
+
     function byOrgId() {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
