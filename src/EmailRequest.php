@@ -130,6 +130,13 @@ class EmailRequest {
                         "Top Sites report generated records: "
                         . count($report->result));
                     break;
+                case "topsites-alltime":
+                    $report->topSitesAllTime();
+                    $pdf->encrypt = FALSE;
+                    error_log(
+                        "Top Sites Total report generated records: "
+                        . count($report->result));
+                    break;
                 case "sitelist":
                     $report->siteList();
                     error_log(
