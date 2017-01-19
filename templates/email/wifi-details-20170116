@@ -1,0 +1,71 @@
+You have been signed up to the GovWifi wireless internet service by %SPONSOR%.
+
+Your GovWifi username: %LOGIN%
+Your GovWifi password: %PASS%
+
+When you get to a participating building follow the instructions below depending on the device you want to connect with.
+
+Mac
+1. Select the wifi icon on your Mac.
+2. Select GovWifi.
+3. Enter your GovWifi username and password.
+4. Select Remember this network.
+5. Select Join.
+6. Select Show Certificate.
+7. Check that the certificate is called: staging.wifi.service.gov.uk
+and that it's issued by: GeoTrust DV SSL SHA256 CA.
+8. If so, select Continue.
+9. Enter your computer password to save these settings.
+
+If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+
+You must not use the GovWifi service for any unlawful activities.
+
+
+iphone
+1. Go to wifi settings and select GovWifi. A settings screen appears. You may want to write down the details below.
+2. Enter your GovWifi username and password.
+3. Check that the certificate is called: staging.wifi.service.gov.uk
+and that it's issued by: GeoTrust DV SSL SHA256 CA
+4. Select More Details.
+5. Check the key identifier ends in: b1 3c e8 54 f8
+6. If it does, select Certificate.
+7. Select Trust.
+
+If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+
+You must not use the GovWifi service for any unlawful activities.
+
+
+Android devices
+1. Go to Settings and select Wi-Fi.
+2. Select the GovWifi network. A settings screen appears where you can scroll down.
+3. For EAP method, select PEAP.
+4. For Phase 2 authentication, select MSCHAPV2.
+5. For CA certificate, select either unspecified or do not check.
+6. For Identity, type your GovWifi username.
+7. Leave Anonymous identity blank.
+8. For Password, type your GovWifi password.
+9. Select Connect.
+
+If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+
+You must not use the GovWifi service for any unlawful activities.
+
+
+Windows devices
+1. Select the wifi icon.
+2. Select GovWifi.
+3. Select Connect.
+4. If it says can’t Connect to network, your device may have an incorrect or expired username and password for GovWifi.
+Select Forget and then try again.
+5. Enter your GovWifi username and password.
+6. Select OK.
+7. When you see Continue connecting,
+select Show certificate details.
+8. Check that the thumbprint matches: %THUMBPRINT%
+9. If it does, select Connect.
+
+If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+
+You must not use the GovWifi service for any unlawful activities.

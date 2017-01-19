@@ -1,0 +1,24 @@
+You have added a new site to the GovWifi service on behalf of %ORG%
+
+Please configure your wireless infrastructure with the following radius servers:
+
+%RADIUS_SERVER_LIST%
+As there are several servers for GovWifi, configure your firewall
+to allow RADIUS traffic (ports 1812 and 1813) to these IP addresses:
+
+%RADIUS_IP_LIST%
+
+If your wireless vendor does not support hostnames, configure all IP addresses provided above, or as many as possible.
+
+The site is identified as: %DESCRIPTION%
+
+The following IP Addresses and keys have been configured for this site:
+
+%TABLE%
+
+To add an additonal IP address for this site please resubmit the request with exactly the same subject.
+This change will be applied overnight so please re-test tomorrow.
+
+(Normally, that is. For the duration of the private beta, please send us an email when you are done,
+we are more than happy to restart the servers for you in order to to move the process along.
+The support email address is: govwifi-support@digital.cabinet-office.gov.uk)

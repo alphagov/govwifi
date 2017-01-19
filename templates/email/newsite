@@ -1,0 +1,10 @@
+Your site %NAME% has been %ACTION%, the RADIUS settings are in the attached encrypted PDF. Use the password we’ve sent to your mobile to decrypt the file.
+
+
+Your request has been processed and the following actions taken:
+%OUTCOME%
+
+The site attributes for %NAME% are:
+%ATTRIBUTES%
+
+You can edit these attributes and reply to this email.
