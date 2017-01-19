@@ -106,7 +106,7 @@ class EmailResponse {
 
         $email->setTo($recipient);
         $email->setSubject($subject);
-        $email->setFrom($this->from);
+        $email->setFrom($this->from, Config::SERVICE_NAME);
         $email->setBody($this->message);
         if (!empty($this->filepath)) {
            $email->attach(Swift_Attachment::fromPath($this->filepath));

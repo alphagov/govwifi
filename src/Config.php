@@ -4,8 +4,9 @@ namespace Alphagov\GovWifi;
 use Exception;
 
 class Config {
-    const HEALTH_CHECK_USER = "HEALTH";
+    const HEALTH_CHECK_USER      = "HEALTH";
     const FIRETEXT_EMPTY_KEYWORD = "NON-SPECIFIED";
+    const SERVICE_NAME           = "GovWifi";
     private static $instance;
     public $values;
 
