@@ -43,6 +43,7 @@ if (isset($data['SubscribeURL'])) {
         $pattern,
         reset($message['mail']['commonHeaders']['to']),
         $toMatches);
+    error_log("AWS SNS EMAIL: To : " . $toMatches[0]);
     $emailreq->setEmailTo($toMatches[0]);
     $emailreq->setEmailSubject($message['mail']['commonHeaders']['subject']);
     $bucket = $message['receipt']['action']['bucketName'];
@@ -83,6 +84,9 @@ if (isset($data['SubscribeURL'])) {
         break;
         case "logrequest":
             $emailreq->logRequest();
+        break;
+        default:
+            error_log("AWS SNS EMAIL: No command found. Have we been cc'd?");
         break;
     }
 }
