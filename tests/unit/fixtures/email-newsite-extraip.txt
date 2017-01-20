@@ -1,0 +1,148 @@
+Return-Path: <Example.User3@exampale.gov.uk>
+Received: from mail1.example.com (mail1.example.com [1.1.1.1])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id 6s4l383b49r0p53rh00klqphlt72n3pc6spa5701
+ for newsite@wifi.service.gov.uk;
+ Fri, 23 Dec 2016 11:19:16 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: none (spfCheck: 1.1.1.1 is neither permitted nor denied by domain of example.gov.uk) client-ip=1.1.1.1; envelope-from=Example.User3@example.gov.uk; helo=mail1.example.com;
+Authentication-Results: amazonses.com;
+ spf=none (spfCheck: 1.1.1.1 is neither permitted nor denied by domain of example.gov.uk) client-ip=1.1.1.1; envelope-from=Example.User3@example.gov.uk; helo=mail1.example.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHSExrSW9EbHFHasFFJmT0R2UzZKQ2F0WFZOOXhGelaadc0SVk0Mk9sbkptRbDVWQTNhOFFUbVp1MnhFSExMcTl1bXNBdWlCQlhnbW9ZZFpDMysraXd2T2Nra2ZiSGtOcDJteVM0T2hSeTFJMXF5M2FkclBPbDJlUVc2b2Y0c3dDZE43MG1PSTNnL2s5RksxQy84OFMxQjA0ZzZFTzZhbjZkWDhHMmtCaHNTZ1dRVXN4UktkQjYvbDVXS0ZYQWxYVkU3K0p2UExnT2R6WjVNbFR4TlkrbUQya1plSGErVmZKejlsVEV0RjF4Qm9VRFd4YkcxekFZRGxrUlRpZWh1WU9WWnBFa3poQ29pTUFpYktWK3ovK1FSN2loclJ6QjZ3NVZFeEVhVzJhZk4xdFE9PQ==
+X-SES-DKIM-SIGNATURE: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhs2ssfohv7z3u4hn; d=amazonses.com; t=1482491952;
+	h=X-SES-RECEIPT:From:To:Subject:Date:Message-ID:Content-Type:MIME-Version;
+	bh=YHFaoWEcBU/mxQ0we6zf0cSsH/q4pRhD2I72qfay2eQ=;
+	b=fRoiRhkKdGra76DHfMTOhJp23SmqgbPiBftY4MdnO9pDmQIBIumun2pDjJPlBmb9
+	zTnV4LnXmwG7ai51nNiKoi9bK6sdf7+bjnjyZbSq7S1rQ4vM7SIcca7S7/FzbODiIr
+	8OUvsxusMP+JHIDfNVYHG70wasdfoxux3+KbsytaM=
+Return-Path: <Example.User3@example.gov.uk>
+Received: from [42.42.42.42] by server-8.example.com id 86/7C-31649-3380D585; Fri, 23 Dec 2016 11:19:15 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrBIsWRWlGSWpSXmKPExsVyOEbDQNeYIzb
+  CYP1HHosjH1axOjB6NG67zB7AGMWamZeUX5HAmrF/UjNrwQLJio8znzA2ML4Q62Lk5GATSJC4
+  /P4wI4gtIuAosWzOWXYQW1hAQWLV2iZmiLiqxLvXD6Bq9CRWLz3H2sXIwcECFF/8WwskzCsQJ
+  jHj7VpWEJtRQFbiS+NqsFZmAXGJW0/mM4HYEgICEkv2nGeGsEUlXj7+xwphy0t8W/qUFaK+SO
+  Lg/ONMEDMFJU7OfMIygZFvFpJRs5CUzUJSBhHXkViw+xMbhK0tsWzha2YY+8yBx0zI4gsY2Vc
+  xahSnFpWlFukaGuklFWWmZ5TkJmbm6BoaGOvlphYXJ6an5iQmFesl5+duYgSGMgMQ7GB81e18
+  iFGSg0lJlFdtc0yEEF9SfkplRmJxRnxRaU5q8SFGGQ4OJQleDfbYCCHBotT01Iq0zBxgVMGkJ
+  Th4lER4q0DSvMUFibnFmekQqVOMuhwnXtx7ziTEkpeflyolzqsHUiQAUpRRmgc3AhbhlxhlpY
+  R5GYGOEuIpSC3KzSxBlX/FKM7BqCTMWwEyhSczrwRu0yugI5iAjrBtjgY5oiQRISXVwDjtFtu
+  kxGVzF7DkVqWlb/B0jczXDp0Uc/hz9vfTypMY5plEc7yfqRF7RnpiHM+2ZRtNNk7QWGS57YRs
+  nNnsiet21FhwrDL9KzLjxPuKPWssGJh2zHjvtabwShmz3qxjUtaHtTIDVWq/bdkwISsga7WNw
+  o26A/NOHArWX/jYp2LtV8EDSik7yn4qsRRnJBpqMRcVJwIATlnJi+sCAAA=
+X-Env-Sender: Example.User3@example.gov.uk
+X-Msg-Ref: server-2.example.com!1482491954!29160366!1
+X-Originating-IP: [42.42.42.43]
+X-StarScan-Received:
+X-StarScan-Version: 9.1.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 14818 invoked from network); 23 Dec 2016 11:19:14 -0000
+Received: from gateway-201.example.gov.uk (HELO mailgate.example.gov.uk) (42.42.42.43)
+  by server-2.example.com with DHE-RSA-AES128-SHA encrypted SMTP; 23 Dec 2016 11:19:14 -0000
+From: "User Example (Example Team)" 
+    <Example.User3@example.gov.uk>
+To: "'newsite@wifi.service.gov.uk'" <newsite@wifi.service.gov.uk>
+Subject: Example Site Name
+Thread-Topic: Example Site Name
+Thread-Index: AdJdDmN4e5oB2s+nT8a4IFFMYbJkYw==
+Date: Fri, 23 Dec 2016 11:19:12 +0000
+Message-ID: <ABCD242B2D4B0447BEGWW2A44DC2ECA4ECD2DA@SDCCMM8038.Poise.ExampleOffice.Local>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-originating-ip: [10.42.42.44]
+Content-Type: multipart/alternative; 
+    boundary="_000_ABCD242B2D4B0447BE7957A44DC2ECA4ECD2DASDCCMM8038PoiseHo_"
+MIME-Version: 1.0
+
+--_000_ABCD242B2D4B0447BE7957A44DC2ECA4ECD2DASDCCMM8038PoiseHo_
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+213.42.42.42
+213.42.43.0 - 213.42.43.255
+213.42.42.44
+
+
+**********************************************************************
+This email and any files transmitted with it are private and intended
+solely for the use of the individual or entity to whom they are addressed.
+If you have received this email in error please return it to the address
+it came from telling them it is not for you and then delete it from your sy=
+stem.
+This email message has been swept for computer viruses.
+
+**********************************************************************
+
+
+--_000_ABCD242B2D4B0447BE7957A44DC2ECA4ECD2DASDCCMM8038PoiseHo_
+Content-Type: text/html; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+
+<html xmlns:v=3D"urn:schemas-microsoft-com:vml" xmlns:o=3D"urn:schemas-micr=
+osoft-com:office:office" xmlns:w=3D"urn:schemas-microsoft-com:office:word" =
+xmlns:m=3D"http://schemas.microsoft.com/office/2004/12/omml" xmlns=3D"http:=
+//www.w3.org/TR/REC-html40">
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Dus-ascii">
+<meta name=3D"Generator" content=3D"Microsoft Word 12 (filtered medium)">
+<style><!--
+/* Font Definitions */
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+/* Style Definitions */
+p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0cm;
+	margin-bottom:.0001pt;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";}
+a:link, span.MsoHyperlink
+	{mso-style-priority:99;
+	color:#0563C1;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{mso-style-priority:99;
+	color:#954F72;
+	text-decoration:underline;}
+span.EmailStyle17
+	{mso-style-type:personal-compose;
+	font-family:"Arial","sans-serif";
+	color:windowtext;
+	font-weight:normal;
+	font-style:normal;
+	text-decoration:none none;}
+.MsoChpDefault
+	{mso-style-type:export-only;}
+@page WordSection1
+	{size:612.0pt 792.0pt;
+	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
+div.WordSection1
+	{page:WordSection1;}
+--></style><!--[if gte mso 9]><xml>
+<o:shapedefaults v:ext=3D"edit" spidmax=3D"1026" />
+</xml><![endif]--><!--[if gte mso 9]><xml>
+<o:shapelayout v:ext=3D"edit">
+<o:idmap v:ext=3D"edit" data=3D"1" />
+</o:shapelayout></xml><![endif]-->
+</head>
+<body lang=3D"EN-GB" link=3D"#0563C1" vlink=3D"#954F72">
+<div class=3D"WordSection1">
+<p class=3D"MsoNormal">213.42.42.42<o:p></o:p></p>
+</div>
+<p>**********************************************************************<b=
+r />This email and any files transmitted with it are private and intended<b=
+r />solely for the use of the individual or entity to whom they are address=
+ed.<br />If you have received this email in error please return it to the a=
+ddress<br />it came from telling them it is not for you and then delete it =
+from your system.<br />This email message has been swept for computer virus=
+es.</p><p>*****************************************************************=
+*****<br /></p><p>*********************************************************=
+*************</p>=0A</body>
+</html>
+
+--_000_ABCD242B2D4B0447BE7957A44DC2ECA4ECD2DASDCCMM8038PoiseHo_--

@@ -279,7 +279,7 @@ class EmailRequest {
         return array_unique($list);
     }
 
-    private function ipList() {
+    public function ipList() {
         $list = array();
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
@@ -292,7 +292,7 @@ class EmailRequest {
         return $list;
     }
 
-    private function sourceIpList() {
+    public function sourceIpList() {
         $list = array();
 
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
