@@ -33,6 +33,7 @@ class TestConstants {
     const ACCOUNTING_DATA_FILE_INTERIM    = "tests/acceptance/config/radius-accounting-interim.json";
     const FIXTURE_EMAIL_SPONSOR_MULTIPART = "tests/unit/fixtures/email-sponsor-multipart.txt";
     const FIXTURE_EMAIL_SPONSOR_SHORT     = "tests/unit/fixtures/email-sponsor-shortnumber.txt";
+    const FIXTURE_EMAIL_SPONSOR_SIGNATURE = "tests/unit/fixtures/email-sponsor-signature.txt";
     const FIXTURE_EMAIL_NEW_SITE_IP       = "tests/unit/fixtures/email-newsite-extraip.txt";
     const TIMESTAMP_PLACEHOLDER           = "#TIMESTAMP#";
 

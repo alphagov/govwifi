@@ -6,6 +6,7 @@ use PHPUnit_Framework_TestCase;
 
 class EmailRequestTest extends PHPUnit_Framework_TestCase {
     const CONTACT_NUMBER = "+447123456789";
+    const CONTACT_EMAIL  = "example.user2@example.co.uk";
     const SINGLE_IP1     = "213.42.42.42";
     const SINGLE_IP2     = "213.42.42.44";
     const IP_RANGE_MIN   = "213.42.43.0";
@@ -27,7 +28,19 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
         $emailRequest = new EmailRequest();
         $emailRequest->setEmailBody($body);
         var_dump($emailRequest->uniqueContactList());
-        $this->assertEquals([new Identifier(self::CONTACT_NUMBER)], $emailRequest->uniqueContactList());
+        $this->assertEquals(
+            implode(",", [new Identifier(self::CONTACT_NUMBER)]),
+            implode(",", $emailRequest->uniqueContactList()));
+    }
+
+    function testContactListFromEmailWithSignature() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SIGNATURE) . "\n";
+        $emailRequest = new EmailRequest();
+        $emailRequest->setEmailBody($body);
+        var_dump($emailRequest->uniqueContactList());
+        $this->assertEquals(
+            implode(",", [new Identifier(self::CONTACT_EMAIL)]),
+            implode(",", $emailRequest->uniqueContactList()));
     }
 
     function testNewSiteIpSelection() {

@@ -1,0 +1,111 @@
+Return-Path: <example.user1@example.gov.uk>
+Received: from mail-qt0-f177.google.com (mail-qt0-f177.google.com [1.1.1.1])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id rimpdrqfvm4iajknknb6lfv6574arqf8ogib92g1
+ for signup@wifi.service.gov.uk;
+ Mon, 23 Jan 2017 14:45:45 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of example.gov.uk designates 1.1.1.1 as permitted sender) client-ip=1.1.1.1; envelope-from=example.user1@example.gov.uk; helo=mail-qt0-f177.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of example.gov.uk designates 1.1.1.1 as permitted sender) client-ip=1.1.1.1; envelope-from=example.user1@example.gov.uk; helo=mail-qt0-f177.google.com;
+ dkim=pass header.i=@example.gov.uk;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFHMjJJZFRPdzhuNopRTkJHZmMTwSGJVUt4ZWJaTDVNUjZYQytvN1J2TFZjUllueUdDdTdxazM5Nm9RQ2dOUWtjTXVUQ0NZVk9aNGpaOWNJeUhqME1oalVBajVPR1o0eTVCajVWWTNOSlMwV1IyNUE4bTY2ODh5QmhJNytWcHkyeFpqZVprWU9oM1lrU2FXam1jc2V5QnQxUU95dDhkd3h1UUMzVzltR0x4VlVXTG11YU1XUHN3ejFoV1orNVUxZVVTb0pDNlhoTGZTSTRZcGZzUUMrc24zN25sdzdBSFduVXBUK3FQTlc1emhnTjJtUXhLOFpYZTliTjRqSDJMV2lFdk5TNG5BUEFyckg1blFTZkhRb0tVNjZTRFZzQ2VaTGNsekNLcjZ6ZUFsZmc9PQ==
+X-SES-DKIM-SIGNATURE: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1485182723;
+	h=X-SES-RECEIPT:MIME-Version:From:Date:Message-ID:Subject:To:Content-Type;
+	bh=Vp8N88tFhpAy2kes4BMssZjrYXwykUgDpzaaYEXPRkR0=;
+	b=cagksSZONeCJwIvIDjeBHbvQez2pK/qGzwxq/pwiGzjqp/WcaookOxy6JCsuBdv0
+	djB5YOHWOspd+SCOk3+cKP7Mp/mlH3r0oBZLBWPTbhGQFlyRVaX8kc3EHumoshZqWBs
+	J5Z18rWxHebfZhHQombh4igebq4y8ncFlbcwEdR8=
+Received: by mail-qt0-f177.google.com with SMTP id k15so127988404qtg.3
+        for <signup@wifi.service.gov.uk>; Mon, 23 Jan 2017 06:45:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=example.gov.uk; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=zZb3FdHsv/fgPXSxFgN3GT81Q9d5NzfGykhbvWMwddY=;
+        b=Ws97TsgUJLXbRs8NrGVLjAFknkilS/zIuWPQmJYAwQBX/4H3g/M/gH0J+Gm0syRFlJ
+         OoAXD48buD9F+xSo2ysd2jX7fvl2Cgov1gtvwOS4pr/+UviiIulHa9PFUc6LmSrzNWrI
+         SpiTkeWHvcY4EFQuNoojBcEA9ZIdpeGFBgNXoBRgSdhUNlsbJlw98mbBhM3KuadZ9imw
+         8clk/b9BtaTssncPKGkXgaaDs0x7ZtDWIvyTlVhPcwWt+Os7ETG0i6wBdLAn7ESkKZlU
+         xuNRd5l7eatMEJEASzDtQNeEu33Q29l1S1F0CenQS1/DZx27iGfWQEDjij9dbMn11Gwh
+         tLUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=zZb3FdHsv/fgPXSxFgN3GT81Q9d5NzfGykhbvWMwddY=;
+        b=Jbhc4pZ/DhkHyDRiZRs9tW6ndlgxPVcIrVdElZ4v6Y1C3kFjtPbyWI+GDbQyxrklo6
+         YVKhdipaZWVYV1YQ3T3dBvS2m6pSIrlpgaB0+65G90g1wEiPYk/zJlCWK0edjysbJQY0
+         GV4QcvcdOsExWe/mjHLG2g9mSe7uSQwMK0LLq1hDjdvZRZpBJIyOKMq3RzZq2lZx90R9
+         3g36GysQfDlADXbNRYHX8oP7ORSWFkw9mUSwiuG6JJVZlON+3SDVMvOGGj5n0Sqc60RM
+         5X2UXlNpR6dY1rz4qkprDBjGTBduAJC81C2qOjvXtTZM5GCteDA3skZyYHjiuZPOR0rW
+         RyLA==
+X-Gm-Message-State: AIkVDXKPjnUAUypWQ9Ho+GjR4oJ9YBhuNZv6xZfCrf2DnNKkS9gp901gBPCbQjPhyPBRiVZXJxxUUotb5LYeatLLDHg=
+X-Received: by 1.1.1.2 with SMTP id k54mr24914319qtk.193.1485182744207;
+ Mon, 23 Jan 2017 06:45:44 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.1.1.1 with HTTP; Mon, 23 Jan 2017 06:45:23 -0800 (PST)
+From: Example User <example.user1@example.gov.uk>
+Date: Mon, 23 Jan 2017 14:45:23 +0000
+Message-ID: <CAGnQw2KEsdcUCsPnqH3UbKn3wzkhbBQBcYFZHCUXWYnFuX1NgGA@mail.gmail.com>
+Subject: blah
+To: signup@wifi.service.gov.uk
+Content-Type: multipart/alternative; boundary=001a113fe322e544c20546c40d13
+
+--001a113fe322e544c20546c40d13
+Content-Type: text/plain; charset=UTF-8
+
+example.user2@example.co.uk
+
+--
+
+[image: Cabinet Office - Example Dept 2]
+
+*Example User*
+
+*Blah Position*
+
+Example products
+
+Example Dept
+
+Example Dept 2 <http://example.gov.uk/>
+
+071234 56789
+
+--001a113fe322e544c20546c40d13
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><div><a href=3D"mailto:example.user2@example.=
+co.uk">example.user2@example.co.uk</a><br clear=3D"all"><div=
+><br></div>-- <br><div class=3D"gmail_signature"><div dir=3D"ltr"><div><div=
+ dir=3D"ltr"><div><div dir=3D"ltr"><div><div dir=3D"ltr"><br><table cellspa=
+cing=3D"0" cellpadding=3D"0" border=3D"0" width=3D"100%" style=3D"color:rgb=
+(136,136,136);font-size:13.3333px;font-family:times"><tbody><tr><td width=
+=3D"255" style=3D"vertical-align:top"><img src=3D"http://alphagov.files.wor=
+dpress.com/2013/03/co-gds-logo.gif" width=3D"217" height=3D"71" alt=3D"Cabi=
+net Office - Example Dept 2"></td><td style=3D"border-left:2px =
+solid rgb(0,130,215);padding-left:10px;padding-top:0.85em"><p dir=3D"ltr" s=
+tyle=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><font size=3D"1"=
+><b style=3D"line-height:normal">Example User</b><br></font></p><p dir=3D=
+"ltr" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><font siz=
+e=3D"1"><b style=3D"line-height:normal">Blah Position</b></font>=
+</p><p dir=3D"ltr" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0=
+pt"><font size=3D"1"><span style=3D"line-height:normal">Cross-government wi=
+fi products</span></font></p><p dir=3D"ltr" style=3D"line-height:1.15;margi=
+n-top:0pt;margin-bottom:0pt"><font size=3D"1" face=3D"arial, helvetica, san=
+s-serif"><span style=3D"line-height:normal">Common Technology Services</spa=
+n></font><span style=3D"color:rgb(0,0,0);font-family:arial,helvetica,sans-s=
+erif;font-size:x-small;line-height:normal">=C2=A0</span><br></p><div><p dir=
+=3D"ltr" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><span =
+style=3D"line-height:1.15;vertical-align:baseline;white-space:pre-wrap;font=
+-family:arial"><a href=3D"http://example.gov.uk/" style=3D"co=
+lor:rgb(0,110,196);line-height:1.15;text-decoration:none" target=3D"_blank"=
+><font size=3D"1">Example Dept 2</font></a></span><br></p><p di=
+r=3D"ltr" style=3D"margin-top:0pt;margin-bottom:0pt"><font face=3D"Arial" s=
+ize=3D"1"><span style=3D"white-space:pre-wrap">077066 16099</span></font></=
+p></div></td></tr></tbody></table></div></div></div></div></div></div></div=
+></div>
+</div></div>
+
+--001a113fe322e544c20546c40d13--
