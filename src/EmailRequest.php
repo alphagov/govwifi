@@ -6,6 +6,7 @@ use PDO;
 use PDOException;
 
 class EmailRequest {
+    const CONTENT_MULTIPART = "content-type: multipart";
     public $emailFrom;
     public $emailTo;
     public $emailToCMD;
@@ -325,7 +326,11 @@ class EmailRequest {
     }
 
     public function setEmailBody($body) {
-        $this->emailBody = strip_tags(strtolower($body));
+        $email = strtolower($body);
+        if (! strpos($email, self::CONTENT_MULTIPART) === false) {
+            if (preg_match("/boundary=\"?([a-zA-Z0-9_+\-])\"?/", $email))
+        }
+        $this->emailBody = strip_tags();
     }
 
     public function setEmailTo($to) {
