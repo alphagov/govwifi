@@ -2,76 +2,99 @@ You have been invited to sign up to GovWifi by %SPONSOR%.
 
 GovWifi is a secure wifi service. Signing up takes about 5 minutes, but you only have to do it once. You can then connect in any government building where GovWifi is available.
 
-Your GovWifi username: %LOGIN%
-Your GovWifi password: %PASS%
-
+Your GovWifi username:
+%LOGIN%
+Your GovWifi password:
+%PASS%
 
 When you get to a government building where GovWifi is available, follow the instructions below for the device you want to connect with. Scroll down to find your device.
 
 By connecting to GovWifi, you agree to the terms and conditions:
 https://www.gov.uk/government/publications/terms-and-conditions-for-connecting-to-govwifi/terms-and-conditions-for-connecting-to-govwifi
 
-Mac
-1. Select the wifi icon on your Mac.
-2. Select GovWifi.
-3. Enter your GovWifi username and password.
-4. Select Remember this network.
-5. Select Join.
-6. Select Show Certificate.
-7. Check that the certificate is called: staging.wifi.service.gov.uk
-and that it's issued by: GeoTrust DV SSL SHA256 CA.
-8. If so, select Continue.
-9. Enter your computer password to save these settings.
-
-If you have any problems connecting to GovWifi, contact the helpdesk in your building.
-
-You must not use the GovWifi service for any unlawful activities.
-
-
-iphone
-1. Go to wifi settings and select GovWifi. A settings screen appears. You may want to write down the details below.
-2. Enter your GovWifi username and password.
-3. Check that the certificate is called: staging.wifi.service.gov.uk
-and that it's issued by: GeoTrust DV SSL SHA256 CA
-4. Select More Details.
-5. Check the key identifier ends in: b1 3c e8 54 f8
-6. If it does, select Certificate.
-7. Select Trust.
-
-If you have any problems connecting to GovWifi, contact the helpdesk in your building.
-
-You must not use the GovWifi service for any unlawful activities.
-
-
-Android devices
-1. Go to Settings and select Wi-Fi.
-2. Select the GovWifi network. A settings screen appears where you can scroll down.
+Android devices:
+1. Open your wifi settings. A list of wifi networks appears.
+2. Select GovWifi. A settings menu appears.
 3. For EAP method, select PEAP.
-4. For Phase 2 authentication, select MSCHAPV2.
-5. For CA certificate, select either unspecified or do not check.
-6. For Identity, type your GovWifi username.
-7. Leave Anonymous identity blank.
-8. For Password, type your GovWifi password.
+4. For Phase-2 authentication, select Automatic.
+5. For CA Certificate, select Use system certificates if it’s an option, otherwise select (unspecified).
+6. If your device asks for your Domain, type wifi.service.gov.uk
+7. For Identity, enter the username you received by email or text.
+8. Leave Anonymous identity blank.
+9. For Password, enter the password you received by email or text.
+10. Select Connect.
+
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
+
+iPhone, iPad:
+1. Go to wifi settings and select GovWifi.
+2. Enter the username and password you received by email or text message.
+3. You’ll be asked to confirm that the network presents the correct certificate. This protects you against fake networks which may harm your privacy.
+The correct certificate is shown below. It’s called wifi.service.gov.uk and is issued by GeoTrust DV SSL SHA256 CA.
+4. Select More Details.
+5. Check the key identifier matches 49 ec a7 c8 a9 f7 c5 bb 2c aa 24 e7 f4 43 b3 b1 3c e8 54 f8.
+6. Select Certificate in the top left to go back to the previous screen.
+7. Select Trust in the top right to connect to GovWifi.
+
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
+
+Mac, iMac or Macbook:
+1. Select the wifi symbol on the top right of your screen.
+2. Select GovWifi.
+3. Enter the username and password you received by email or text message.
+4. Select Join. You will be asked to confirm the network is not a fake by checking the certificate.
+5. Select Show Certificate.
+6. Check the certificate is called wifi.service.gov.uk and it’s issued by the GeoTrust DV SSL SHA256 CA.
+7. If so, select Continue.
+8. Your device will ask you for your computer password to save these settings. This is the password you normally use to sign into your computer.
+
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
+
+Chromebook:
+1. Select the wireless symbol in the bottom right of the screen. A list of wifi connections appears.
+2. Select GovWifi. A settings menu appears.
+3. For EAP method, select PEAP.
+4. For Phase-2 authentication, select Automatic.
+5. For Server CA certificate, select Default.
+6. For Identity, enter the username you received by email or text.
+7. For Password, enter the password you received by email or text.
+8. Leave Anonymous identity blank.
 9. Select Connect.
 
-If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
 
-You must not use the GovWifi service for any unlawful activities.
-
-
-Windows devices
-1. Select the wifi icon.
+Windows 8 or 10:
+1. Select the wifi icon in the system tray at the bottom right of your screen. You will see all the nearby wifi networks.
 2. Select GovWifi.
 3. Select Connect.
-4. If it says can’t Connect to network, your device may have an incorrect or expired username and password for GovWifi.
-Select Forget and then try again.
-5. Enter your GovWifi username and password.
-6. Select OK.
-7. When you see Continue connecting,
-select Show certificate details.
-8. Check that the thumbprint matches: %THUMBPRINT%
-9. If it does, select Connect.
+If it says can’t connect to network, your device may have an incorrect or expired username and password for GovWifi. To resolve this issue, tell your device to forget this connection, and then try again.
+4. Enter the username and password that you received via email or text message.
+5. Select OK.
+6. When you see Continue connecting, select Show certificate details.
+7. Check that the Server thumbprint matches:
+%THUMBPRINT%
+8. If it matches, select Connect.
 
-If you have any problems connecting to GovWifi, contact the helpdesk in your building.
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
 
-You must not use the GovWifi service for any unlawful activities.
+Windows 7:
+1. Open the Control Panel, and select Network and Sharing Center.
+2. Select Set up a new connection or network.
+3. Select Manually connect to a wireless network.
+4. For the Network name, enter GovWifi and for the Security type, select WPA2-Enterprise.
+5. Select Next.
+6. Select Change connection settings.
+7. Select the Security tab and select Settings.
+8. Tick the Connect to these servers box. In the text box below it, enter wifi.service.gov.uk.
+9. In the Trusted Root Certification Authorities list, select GeoTrust Primary Certification Authority - G3.
+10. Tick Enable Identity Privacy and enter anonymous to prevent your device from broadcasting your username whenever it connects.
+11. Select Configure.
+12. Untick Automatically use my Windows logon name.
+13. Select OK, then OK again to go back to the GovWifi Wireless Network Properties window.
+14. Select Advanced settings.
+15. Select User authentication from the dropdown menu under Specify authentication mode, then select Save credentials.
+16. Enter your username and password.
+17. Select OK to close all windows.
+18. Select the wifi logo at the bottom right of your screen and select GovWifi.
+
+Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to sign up to GovWifi.
