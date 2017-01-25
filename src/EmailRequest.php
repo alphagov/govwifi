@@ -282,6 +282,11 @@ class EmailRequest {
         return array_unique($list);
     }
 
+    /**
+     * Extracts the list of IP addresses from the emailBody attribute.
+     *
+     * @return array
+     */
     public function ipList() {
         $list = array();
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
@@ -295,6 +300,12 @@ class EmailRequest {
         return $list;
     }
 
+    /**
+     * Extract an IP range from the emailBody attribute.
+     * Expects the range to be in "minIP - maxIP" format.
+     *
+     * @return array
+     */
     public function sourceIpList() {
         $list = array();
 
@@ -327,6 +338,17 @@ class EmailRequest {
         $this->emailSubject = $subject;
     }
 
+    /**
+     * Sets the emailBody attribute based on the input string.
+     *
+     * If the input is a multipart message in MIME format, it takes the last part marked with
+     * plain text or html content type, with the plain text taking precedence if both present.
+     * Otherwise the full input string is used.
+     *
+     * In every case the input string is converted to lowercase and stripped of html tags.
+     *
+     * @param $email
+     */
     public function setEmailBody($email) {
         $email = strtolower($email);
         $body  = $email;
