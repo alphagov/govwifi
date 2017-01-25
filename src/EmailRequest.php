@@ -6,7 +6,9 @@ use PDO;
 use PDOException;
 
 class EmailRequest {
-    const CONTENT_MULTIPART = "content-type: multipart";
+    const CONTENT_MULTIPART  = "content-type: multipart";
+    const CONTENT_PLAIN_TEXT = "content-type: text/plain";
+    const CONTENT_HTML       = "content-type: text/html";
     public $emailFrom;
     public $emailTo;
     public $emailToCMD;
@@ -325,12 +327,43 @@ class EmailRequest {
         $this->emailSubject = $subject;
     }
 
-    public function setEmailBody($body) {
-        $email = strtolower($body);
+    public function setEmailBody($email) {
+        $email = strtolower($email);
+        $body  = $email;
         if (! strpos($email, self::CONTENT_MULTIPART) === false) {
-            if (preg_match("/boundary=\"?([a-zA-Z0-9_+\-])\"?/", $email))
+            $boundary = "";
+            $matches  = [];
+            if (preg_match("/boundary=\"(.*)\"/", $email, $matches)) {
+                $boundary = $matches[1];
+            } else if (preg_match("/boundary=([A-Za-z0-9_\-]+)/", $email, $matches)) {
+                $boundary = $matches[1];
+            }
+
+            if (! empty($boundary)) {
+                $plainTextBody = "";
+                $htmlBody      = "";
+                foreach (explode("--" . $boundary, $email) as $part) {
+                    if (! strpos($part, self::CONTENT_PLAIN_TEXT) === false) {
+                        $plainTextBody = $part;
+                    } else if (! strpos($part, self::CONTENT_HTML) === false) {
+                        $htmlBody = $part;
+                    }
+                }
+                if (! empty($plainTextBody)) {
+                    $body = $this->ignoreSignature($plainTextBody);
+                } else if (! empty($htmlBody)) {
+                    $body = $this->ignoreSignature($htmlBody);
+                }
+            }
         }
-        $this->emailBody = strip_tags();
+        $this->emailBody = strip_tags($body);
+    }
+
+    private function ignoreSignature($emailBody) {
+        if (! strpos($emailBody, "--") === false) {
+            return strstr($emailBody, "--", true);
+        }
+        return $emailBody;
     }
 
     public function setEmailTo($to) {

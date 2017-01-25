@@ -27,7 +27,6 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SHORT) . "\n";
         $emailRequest = new EmailRequest();
         $emailRequest->setEmailBody($body);
-        var_dump($emailRequest->uniqueContactList());
         $this->assertEquals(
             implode(",", [new Identifier(self::CONTACT_NUMBER)]),
             implode(",", $emailRequest->uniqueContactList()));
@@ -37,7 +36,6 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SIGNATURE) . "\n";
         $emailRequest = new EmailRequest();
         $emailRequest->setEmailBody($body);
-        var_dump($emailRequest->uniqueContactList());
         $this->assertEquals(
             implode(",", [new Identifier(self::CONTACT_EMAIL)]),
             implode(",", $emailRequest->uniqueContactList()));
@@ -47,17 +45,14 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_IP) . "\n";
         $emailRequest = new EmailRequest();
         $emailRequest->setEmailBody($body);
-        var_dump($emailRequest->ipList());
         self::assertEquals(
             array(
                 self::SINGLE_IP1,
                 self::SINGLE_IP2),
             $emailRequest->ipList());
-        var_dump($emailRequest->sourceIpList());
-        self::assertEquals(
-            array(
+        self::assertEquals([[
                 "min" => self::IP_RANGE_MIN,
-                "max" => self::IP_RANGE_MAX),
+                "max" => self::IP_RANGE_MAX]],
             $emailRequest->sourceIpList());
     }
 }
