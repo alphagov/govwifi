@@ -112,6 +112,9 @@ class SmsResponse {
 
     public function getTemplateForOs($os) {
         $config = Config::getInstance();
+        if (empty($os)) {
+            return $config->values['notify']['creds-unknown'];
+        }
         switch ($os) {
             case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
                 return $config->values['notify']['creds-mac'];
