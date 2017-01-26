@@ -378,6 +378,7 @@ class EmailRequest {
                 }
             }
         }
+        var_dump($body);
         $this->emailBody = strip_tags($body);
     }
 
