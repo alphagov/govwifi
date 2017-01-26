@@ -105,6 +105,7 @@ class SmsResponse {
 
     public function sendSecurityInfo() {
         $config = Config::getInstance();
+        // TODO: thumbprint is not in the template, however keyword is. Seems half-baked. Remove? Discuss.
         $this->personalisation['THUMBPRINT'] = $config->values['radcert-thumbprint'];
         $this->template = $config->values['notify']['security-details'];
         $this->send();
