@@ -257,13 +257,17 @@ class User {
         $this->login = $username;
     }
 
-
-    private function generateRandomUsername() {
+     /**
+     * Generates a random username. Makes sure that the generated string is lowercase.
+     *
+     * @return string
+     */
+    public function generateRandomUsername() {
         $length = $this->config->values['wifi-username']['length'];
         $pattern = $this->config->values['wifi-username']['regex'];
 
         $userName = $this->getRandomCharacters($pattern, $length);
-        return strtoupper($userName);
+        return strtolower($userName);
     }
 
     /**
