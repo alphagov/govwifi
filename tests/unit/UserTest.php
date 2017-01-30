@@ -26,4 +26,10 @@ class UserTest extends PHPUnit_Framework_TestCase {
         $user = new User(Cache::getInstance(), Config::getInstance());
         $user->getRandomCharacters("/.*/", 6);
     }
+
+    function testUserNameIsLowercase() {
+        $user = new User(Cache::getInstance(), Config::getInstance());
+        $userName = $user->generateRandomUsername();
+        self::assertEquals(strtolower($userName), $userName);
+    }
 }
