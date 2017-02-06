@@ -50,6 +50,15 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             implode(",", $emailRequest->uniqueContactList()));
     }
 
+    function testContactListFromEmptyEmailWithSignature() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_EMPTY) . "\n";
+        $emailRequest = new EmailRequest();
+        $emailRequest->setEmailBody($body);
+        $this->assertEquals(
+            "",
+            implode(",", $emailRequest->uniqueContactList()));
+    }
+
     function testNewSiteIpSelection() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_IP) . "\n";
         $emailRequest = new EmailRequest();

@@ -1,0 +1,108 @@
+Return-Path: <attila.foldesi@digital.cabinet-office.gov.uk>
+Received: from mail-lf0-f54.google.com (mail-lf0-f54.google.com [209.85.215.54])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id 90iisq0a1lvo7fat4v8hi41p3ft9o00rlb0l2ro1
+ for sponsor@staging.wifi.service.gov.uk;
+ Mon, 06 Feb 2017 14:25:24 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of digital.cabinet-office.gov.uk designates 209.85.215.54 as permitted sender) client-ip=209.85.215.54; envelope-from=attila.foldesi@digital.cabinet-office.gov.uk; helo=mail-lf0-f54.google.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of digital.cabinet-office.gov.uk designates 209.85.215.54 as permitted sender) client-ip=209.85.215.54; envelope-from=attila.foldesi@digital.cabinet-office.gov.uk; helo=mail-lf0-f54.google.com;
+ dkim=pass header.i=@digital.cabinet-office.gov.uk;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGdXltdHV6NXE2TVlVd1duTGpXV216dlBkTUZoYUUxVHhqZW11KzZMUHU2ZlhEMHhkV2xwYmltclNEN1hYWHp5a1cxNTFDeFh5QjdTUytQRjU3a0FWRkxaMk80Y1dycURRUTlld0lyVGZhY2hnNjl4YXNjR0lHbDVVSm5NVVhmaE16TjcrQ3FDRG10OHA5azA1b2h4MmJ0dDRvNU1WK3puTVltUmNmdWlwbjdsWnc0cXJxSHdlbDZoSDl4d1laT1BzVUxiWk84OXU3NUZUeGpjZFFpSkhQNlZqa2l3emxjUWZIT0pPYjJ6SDNOU3RleHpVRjhWUklHcHF1S1YvSUR1R2NFWmlQNENqQlI1SEErd1pXNjh3VW52OWI4R3BUcFRuY2NQWmpZNW5FUFE9PQ==
+X-SES-DKIM-SIGNATURE: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+	s=ihchhvubuqgjsxyuhssfvqohv7z3u4hn; d=amazonses.com; t=1486391102;
+	h=X-SES-RECEIPT:MIME-Version:From:Date:Message-ID:Subject:To:Content-Type;
+	bh=l9104nwT/NmVf0zJIKCT1wA2J4BBVuf6n3K1gxF3Bto=;
+	b=btFC4QwqOOULA4aHqoGZwE2T8UGZYtMzBRvXyh2ob7i+WU7gCTo2wyowCrpHyWjU
+	xjWqpu/CBFaQOeY/p9tbqg7b8DcYS5bOc3g8yRCNeBeQNodd4mEOH3118FF0UHzSWI2
+	bs/vA2oFyh14f5dxxqgDKgy+ki+7CeTXzfv3jni0=
+Received: by mail-lf0-f54.google.com with SMTP id n124so45528168lfd.2
+        for <sponsor@staging.wifi.service.gov.uk>; Mon, 06 Feb 2017 06:25:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digital.cabinet-office.gov.uk; s=google;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=a5+jbpJjVf4YAhgwlFHcJdE3d4oe25gYr4NXcZ/AFag=;
+        b=XWXk2LnfH4ctpJOEvO7tSnDjikjoz+91PZ3opqk+nd7QwpZpeEvTtsRnugjWlCx7rH
+         GKyWEhm9Qu7QuTKJUjtizXfSV5f+gGLb/y223vQh1NAJZevePEN9qJwL7LqSU/7aSnom
+         xAUQ993HfwpgvFd7vqMbzff8XW6aiE5WlMLFKeubYH5TUr0fm/oaxD8VrvJSSwdTnK+T
+         V2S/E6mCxNPQ1r1RFjsguoFWWc+uw8cfipSNdoxUkywk5U9YqOkTgw/mTPR6oP9wwhQp
+         X+WgQMPGcZQNgTrLgrPxGGaemcRvmTdtJ+UmXUPznnl9G2FwBkw/ovV7ZUUnE6OuFmWL
+         QPKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=a5+jbpJjVf4YAhgwlFHcJdE3d4oe25gYr4NXcZ/AFag=;
+        b=mfxJWMQFyOY0GVYcYI8ZLEx9m3RIfKn+CGuacWzXkOW+ul1ryMUu0mv3Uhh0jf7Ceo
+         05neljya937cj0RhbOFOdBVUoqjaWomg/rbk5yZwllc64/DUJ8MWcU/I3iFpmGvHzp1D
+         1yMgS8T4NnGYgFWsMHJZzipaBrNtdparNGSDWe6pxPG8mqgmtMnpwAxhG8sathJ+hkPs
+         vwmkjdxXDP9VqYFeqBZNsu3/OARIjekFIATmxhMeMU1Zd6Xoa7A1d4iDd2lfwk5lkxly
+         J/PwSBM5Y/WF3lVLdyuwzMYNyuB1v0QjFwRvC0ULCD5FhgMvBvmZHuWMN425MvwMpUz6
+         avAA==
+X-Gm-Message-State: AMke39mZgIK2TlpUZ4UDLTxVMJlR6Iv5+sR8Dg+Ie5CMwznIjRHO5FgTUDHA8SQMF3HEouTrJCJndIuxKgalBs7eaxY=
+X-Received: by 10.25.99.29 with SMTP id x29mr3938840lfb.104.1486391123098;
+ Mon, 06 Feb 2017 06:25:23 -0800 (PST)
+MIME-Version: 1.0
+Received: by 10.46.83.68 with HTTP; Mon, 6 Feb 2017 06:25:02 -0800 (PST)
+From: Attila Foldesi <attila.foldesi@digital.cabinet-office.gov.uk>
+Date: Mon, 6 Feb 2017 14:25:02 +0000
+Message-ID: <CAGnQw0UKhoWH_C6X9mOBoOh=6KJ3bwgsZa6NwEy-xA_4a8Wseg@mail.gmail.com>
+Subject: 
+To: sponsor@staging.wifi.service.gov.uk
+Content-Type: multipart/alternative; boundary=94eb2c0ec640e3e1a20547dd661a
+
+--94eb2c0ec640e3e1a20547dd661a
+Content-Type: text/plain; charset=UTF-8
+
+-- 
+
+[image: Cabinet Office - Government Digital Service]
+
+*Attila Foldesi*
+
+*Senior Software Engineer*
+
+Cross-government wifi products
+
+Common Technology Services
+
+Government Digital Service <http://digital.cabinetoffice.gov.uk/>
+
+077066 16099
+
+--94eb2c0ec640e3e1a20547dd661a
+Content-Type: text/html; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+<div dir=3D"ltr"><br clear=3D"all"><div><br></div>-- <br><div class=3D"gmai=
+l_signature" data-smartmail=3D"gmail_signature"><div dir=3D"ltr"><div><div =
+dir=3D"ltr"><div><div dir=3D"ltr"><div><div dir=3D"ltr"><br><table cellspac=
+ing=3D"0" cellpadding=3D"0" border=3D"0" width=3D"100%" style=3D"color:rgb(=
+136,136,136);font-size:13.3333px;font-family:times"><tbody><tr><td width=3D=
+"255" style=3D"vertical-align:top"><img src=3D"http://alphagov.files.wordpr=
+ess.com/2013/03/co-gds-logo.gif" width=3D"217" height=3D"71" alt=3D"Cabinet=
+ Office - Government Digital Service"></td><td style=3D"border-left:2px sol=
+id rgb(0,130,215);padding-left:10px;padding-top:0.85em"><p dir=3D"ltr" styl=
+e=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><font size=3D"1"><b=
+ style=3D"line-height:normal">Attila Foldesi</b><br></font></p><p dir=3D"lt=
+r" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><font size=
+=3D"1"><b style=3D"line-height:normal">Senior Software Engineer</b></font><=
+/p><p dir=3D"ltr" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0p=
+t"><font size=3D"1"><span style=3D"line-height:normal">Cross-government wif=
+i products</span></font></p><p dir=3D"ltr" style=3D"line-height:1.15;margin=
+-top:0pt;margin-bottom:0pt"><font size=3D"1" face=3D"arial, helvetica, sans=
+-serif"><span style=3D"line-height:normal">Common Technology Services</span=
+></font><span style=3D"color:rgb(0,0,0);font-family:arial,helvetica,sans-se=
+rif;font-size:x-small;line-height:normal">=C2=A0</span><br></p><div><p dir=
+=3D"ltr" style=3D"line-height:1.15;margin-top:0pt;margin-bottom:0pt"><span =
+style=3D"line-height:1.15;vertical-align:baseline;white-space:pre-wrap;font=
+-family:arial"><a href=3D"http://digital.cabinetoffice.gov.uk/" style=3D"co=
+lor:rgb(0,110,196);line-height:1.15;text-decoration:none" target=3D"_blank"=
+><font size=3D"1">Government Digital Service</font></a></span><br></p><p di=
+r=3D"ltr" style=3D"margin-top:0pt;margin-bottom:0pt"><font face=3D"Arial" s=
+ize=3D"1"><span style=3D"white-space:pre-wrap">077066 16099</span></font></=
+p></div></td></tr></tbody></table></div></div></div></div></div></div></div=
+></div>
+</div>
+
+--94eb2c0ec640e3e1a20547dd661a--
