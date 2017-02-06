@@ -6,7 +6,6 @@ use PDO;
 use PDOException;
 
 class EmailRequest {
-    const CONTENT_MULTIPART  = "content-type: multipart";
     const CONTENT_PLAIN_TEXT = "content-type: text/plain";
     const CONTENT_HTML       = "content-type: text/html";
     public $emailFrom;
@@ -341,7 +340,7 @@ class EmailRequest {
     /**
      * Sets the emailBody attribute based on the input string.
      *
-     * If the input is a multipart message in MIME format, it takes the last part marked with
+     * If the input is a multipart message in MIME format, it takes the first part marked with
      * plain text or html content type, with the plain text taking precedence if both present.
      * Otherwise the full input string is used.
      *
@@ -351,39 +350,51 @@ class EmailRequest {
      */
     public function setEmailBody($email) {
         $email = strtolower($email);
-        $body  = $email;
-        if (! strpos($email, self::CONTENT_MULTIPART) === false) {
-            $boundary = "";
-            $matches  = [];
-            if (preg_match("/boundary=\"(.*)\"/", $email, $matches)) {
-                $boundary = $matches[1];
-            } else if (preg_match("/boundary=([A-Za-z0-9_\-]+)/", $email, $matches)) {
-                $boundary = $matches[1];
-            }
-
-            if (! empty($boundary)) {
-                $plainTextBody = "";
-                $htmlBody      = "";
-                foreach (explode("--" . $boundary, $email) as $part) {
-                    if (! strpos($part, self::CONTENT_PLAIN_TEXT) === false) {
-                        $plainTextBody = $part;
-                    } else if (! strpos($part, self::CONTENT_HTML) === false) {
-                        $htmlBody = $part;
-                    }
-                }
-                if (! empty($plainTextBody)) {
-                    $body = $this->ignoreSignature($plainTextBody);
-                } else if (! empty($htmlBody)) {
-                    $body = $this->ignoreSignature($htmlBody);
-                }
-            }
+        $body  = $this->extractTextBody($email);
+        if (empty($body)) {
+            $body = $email;
         }
-        var_dump($body);
+
         $this->emailBody = strip_tags($body);
     }
 
+    /**
+     * Recursive function to extract plain text or HTML parts of a multipart MIME message.
+     *
+     * @param string $email The full/partial message.
+     * @param string $ignoreBoundary Boundary to ignore - as the first part will contain the current one.
+     * @return string The found plain text or html part of the message, or empty string.
+     */
+    private function extractTextBody($email, $ignoreBoundary = "") {
+        $body          = "";
+        $boundary      = "";
+        $matches       = [];
+
+        if (preg_match("/boundary=\"(.*)\"/", $email, $matches)) {
+            $boundary = $matches[1];
+        } else if (preg_match("/boundary=([A-Za-z0-9_\-]+)/", $email, $matches)) {
+            $boundary = $matches[1];
+        }
+
+        if (! empty($boundary) && $boundary != $ignoreBoundary) {
+            foreach (explode("--" . $boundary, $email) as $part) {
+                $textBody = $this->extractTextBody($part, $boundary);
+                if (!empty($textBody)) {
+                    return $textBody;
+                }
+            }
+        } else {
+            if (! strpos($email, self::CONTENT_PLAIN_TEXT) === false) {
+                $body = $this->ignoreSignature($email);
+            } else if (! strpos($email, self::CONTENT_HTML) === false) {
+                $body = $this->ignoreSignature($email);
+            }
+        }
+        return $body;
+    }
+
     private function ignoreSignature($emailBody) {
-        if (! strpos($emailBody, "--") === false) {
+        if (! strpos($emailBody, "--\n") === false) {
             return strstr($emailBody, "--", true);
         }
         return $emailBody;

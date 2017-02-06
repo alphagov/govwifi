@@ -36,6 +36,7 @@ class TestConstants {
     const FIXTURE_EMAIL_SPONSOR_SHORT2    = "tests/unit/fixtures/email-sponsor-shortnumber2.txt";
     const FIXTURE_EMAIL_SPONSOR_SIGNATURE = "tests/unit/fixtures/email-sponsor-signature.txt";
     const FIXTURE_EMAIL_NEW_SITE_IP       = "tests/unit/fixtures/email-newsite-extraip.txt";
+    const FIXTURE_EMAIL_NEW_SITE_MULTI    = "tests/unit/fixtures/email-newsite-multipart.txt";
     const TIMESTAMP_PLACEHOLDER           = "#TIMESTAMP#";
 
     /**

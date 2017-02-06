@@ -15,7 +15,7 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
     function testClassInstantiates() {
         $this->assertInstanceOf(EmailRequest::class, new EmailRequest());
     }
-/*
+
     function testContactListFromEmail() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_MULTIPART) . "\n";
         $emailRequest = new EmailRequest();
@@ -31,7 +31,7 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             implode(",", [new Identifier(self::CONTACT_NUMBER)]),
             implode(",", $emailRequest->uniqueContactList()));
     }
-*/
+
     function testContactListFromShortNumberEmail2() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SHORT2) . "\n";
         $emailRequest = new EmailRequest();
@@ -40,7 +40,7 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             implode(",", [new Identifier(self::CONTACT_EMAIL)]),
             implode(",", $emailRequest->uniqueContactList()));
     }
-/*
+
     function testContactListFromEmailWithSignature() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SIGNATURE) . "\n";
         $emailRequest = new EmailRequest();
@@ -64,5 +64,14 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
                 "max" => self::IP_RANGE_MAX]],
             $emailRequest->sourceIpList());
     }
-*/
+
+    function testNewSiteMultipart() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_MULTI) . "\n";
+        $emailRequest = new EmailRequest();
+        $emailRequest->setEmailBody($body);
+        self::assertEquals(
+            array(self::SINGLE_IP1),
+            $emailRequest->ipList()
+        );
+    }
 }
