@@ -394,7 +394,7 @@ class EmailRequest {
     }
 
     private function ignoreSignature($emailBody) {
-        if (! strpos($emailBody, "--\n") === false) {
+        if (! strpos($emailBody, "--") === false) {
             return strstr($emailBody, "--", true);
         }
         return $emailBody;
