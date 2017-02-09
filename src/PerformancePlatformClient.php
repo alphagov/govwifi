@@ -121,7 +121,6 @@ class PerformancePlatformClient {
      */
     private function httpPostJson($url, $bearerToken, $payload) {
         $payload = json_encode($payload);
-
         // TODO: Inject http client.
         $httpClient = new Guzzle6Client();
 

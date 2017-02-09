@@ -72,7 +72,7 @@ class ReportVolumetrics extends PerformancePlatformReport {
             " AND date(created_at) <= '" . $date . "'"
         ];
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'email-sign-ups',
+            'categoryValue' => 'sponsor-sign-ups',
             'sql'           => $sql,
         ]));
     }

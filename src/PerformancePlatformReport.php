@@ -78,7 +78,10 @@ abstract class PerformancePlatformReport {
         foreach ($params['sql'] as $sql) {
             if (! empty($sql)) {
                 $results = $this->runQuery($sql);
-                $data = array_merge($data, $results[0]);
+                //TODO: Check if forcing intval here will be applicable in every instance.
+                foreach ($results[0] as $key => $value) {
+                    $data[$key] = intval($value);
+                }
             }
         }
 
