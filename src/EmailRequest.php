@@ -93,7 +93,7 @@ class EmailRequest {
                 $user = new User(Cache::getInstance(), Config::getInstance());
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
-                $user->signUp();
+                $user->signUp("", false, false);
             }
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;

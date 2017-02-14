@@ -59,12 +59,16 @@ class EmailResponse {
             $config->values['email-messages']['newsite-help-file']);
     }
 
-    public function signUp($user) {
+    public function signUp($user, $selfSignup) {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];
         $this->message = file_get_contents(
-                $config->values['email-messages']['enrollment-file']);
+            $config->values['email-messages']['enrollment-file']);
+        if ($selfSignup) {
+            $this->message = file_get_contents(
+                $config->values['email-messages']['enrollment-file-self-signup']);
+        }
         $this->message = str_replace("%LOGIN%", $user->login, $this->message);
         $this->message = str_replace("%PASS%", $user->password, $this->message);
         $this->message = str_replace(
