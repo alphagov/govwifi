@@ -59,6 +59,15 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             implode(",", $emailRequest->uniqueContactList()));
     }
 
+    function testContactListFromAutoConcatEmail() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_CONCAT) . "\n";
+        $emailRequest = new EmailRequest();
+        $emailRequest->setEmailBody($body);
+        $this->assertEquals(
+            self::CONTACT_NUMBER,
+            implode(",", $emailRequest->uniqueContactList()));
+    }
+
     function testNewSiteIpSelection() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_IP) . "\n";
         $emailRequest = new EmailRequest();

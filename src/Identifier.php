@@ -34,7 +34,9 @@ class Identifier {
      * - the health check identifier string literal
      */
     public function __construct($identifier) {
-        $identifier = preg_replace("/\s+/", "", $identifier);
+        if (preg_match("/^\+?[0-9\s]+$/", $identifier)) {
+            $identifier = preg_replace("/\s+/", "", $identifier);
+        }
         if ($this->isValidMobileNumber($identifier)) {
             $this->validMobile = true;
             $this->text = $this->standardizeMobileNumber($identifier);
