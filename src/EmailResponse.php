@@ -73,7 +73,7 @@ class EmailResponse {
         $this->message = str_replace("%PASS%", $user->password, $this->message);
         $sponsor = $user->sponsor->text;
         if (!empty($senderName)) {
-            $sponsor = $senderName . "(" . $sponsor . ")";
+            $sponsor = $senderName . " (" . $sponsor . ")";
         }
         $this->message = str_replace(
                 "%SPONSOR%", $sponsor, $this->message);
