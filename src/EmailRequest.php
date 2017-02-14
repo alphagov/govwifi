@@ -104,7 +104,7 @@ class EmailRequest {
                 $user = new User(Cache::getInstance(), Config::getInstance());
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
-                $user->signUp("", false, false);
+                $user->signUp("", false, false, $this->senderName);
             }
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
