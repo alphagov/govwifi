@@ -1,11 +1,19 @@
 <?php
 namespace Alphagov\GovWifi;
 
-use DateInterval;
-use DateTime;
+//use DateInterval;
+//use DateTime;
 use PHPUnit_Framework_TestCase;
 
 class ReportVolumetricsTest extends PHPUnit_Framework_TestCase {
+    public function testClassInstantiates() {
+        $this->assertInstanceOf(
+            ReportVolumetrics::class,
+            new ReportVolumetrics(Config::getInstance(), DB::getInstance())
+        );
+    }
+
+/* // Manual update
     public function testVolumetrics() {
         $rv = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
 
@@ -13,6 +21,7 @@ class ReportVolumetricsTest extends PHPUnit_Framework_TestCase {
             $dateObject = new DateTime();
             $rv->sendMetrics($dateObject->sub(new DateInterval('P' . $i . 'D'))->format('Y-m-d'));
         }
-
     }
+*/
 }
+

@@ -7,6 +7,8 @@ use DateTime;
 
 /**
  * Sends the volumetric reports to the Performance Platform.
+ * Eg. number of sign-ups per channel and total.
+ *
  * @package Alphagov\GovWifi
  */
 class ReportVolumetrics extends PerformancePlatformReport {
@@ -25,7 +27,7 @@ class ReportVolumetrics extends PerformancePlatformReport {
             'categoryName'  => 'channel',
         ];
 
-        // User sign ups per day and total.
+        // Number of sign ups per day and total.
         $sql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "'",
             "SELECT count(username) AS cumulative_count FROM userdetails WHERE date(created_at) <= '" . $date . "'"
