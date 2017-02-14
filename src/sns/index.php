@@ -32,13 +32,26 @@ if (isset($data['SubscribeURL'])) {
 } else {
     error_log("EMAIL original message metadata: " . $data['Message']);
     $message = json_decode($data['Message'], true);
-    $pattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
+    $emailFrom = $message['mail']['commonHeaders']['returnPath'];
+    if (empty($emailFrom)) {
+        $pattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
+        preg_match(
+            $pattern,
+            reset($message['mail']['commonHeaders']['from']),
+            $fromMatches);
+        $emailFrom = $fromMatches[0];
+    }
+    $emailreq->setEmailFrom($emailFrom);
+
+    $pattern = "/^([^<]+)/";
     preg_match(
         $pattern,
         reset($message['mail']['commonHeaders']['from']),
-        $fromMatches);
-    $emailreq->setEmailFrom($fromMatches[0]);
-    error_log("AWS SNS EMAIL: From : " . $fromMatches[0]);
+        $nameMatches);
+    $senderName = $nameMatches[0];
+    $emailreq->senderName = trim($senderName);
+    error_log("AWS SNS EMAIL: From : " . $emailFrom . ", Sender name: [" . $senderName . "]");
+
     preg_match(
         $pattern,
         reset($message['mail']['commonHeaders']['to']),

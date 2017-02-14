@@ -7,6 +7,11 @@ use PDOException;
 
 class EmailRequest {
     public $emailFrom;
+
+    /**
+     * @var string
+     */
+    public $senderName;
     public $emailTo;
     public $emailToCMD;
     public $emailBody;
