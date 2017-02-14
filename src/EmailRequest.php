@@ -9,6 +9,11 @@ class EmailRequest {
     const CONTENT_PLAIN_TEXT = "content-type: text/plain";
     const CONTENT_HTML       = "content-type: text/html";
     public $emailFrom;
+
+    /**
+     * @var string
+     */
+    public $senderName;
     public $emailTo;
     public $emailToCMD;
     public $emailBody;
