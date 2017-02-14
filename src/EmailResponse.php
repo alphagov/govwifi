@@ -59,7 +59,7 @@ class EmailResponse {
             $config->values['email-messages']['newsite-help-file']);
     }
 
-    public function signUp($user, $selfSignup) {
+    public function signUp($user, $selfSignup, $senderName) {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];
@@ -71,8 +71,12 @@ class EmailResponse {
         }
         $this->message = str_replace("%LOGIN%", $user->login, $this->message);
         $this->message = str_replace("%PASS%", $user->password, $this->message);
+        $sponsor = $user->sponsor->text;
+        if (!empty($senderName)) {
+            $sponsor = $senderName . "(" . $sponsor . ")";
+        }
         $this->message = str_replace(
-                "%SPONSOR%", $user->sponsor->text, $this->message);
+                "%SPONSOR%", $sponsor, $this->message);
         $this->message = str_replace(
                 "%THUMBPRINT%",
                 $config->values['radcert-thumbprint'],

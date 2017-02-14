@@ -8,6 +8,10 @@ use PDOException;
 class EmailRequest {
     const CONTENT_PLAIN_TEXT = "content-type: text/plain";
     const CONTENT_HTML       = "content-type: text/html";
+
+    /**
+     * @var Identifier
+     */
     public $emailFrom;
 
     /**
