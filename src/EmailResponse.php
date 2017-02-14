@@ -23,16 +23,18 @@ class EmailResponse {
 
     public function sponsor($count, $uniqueContactList) {
         $config = Config::getInstance();
-        $this->subject = $config->values['email-messages']['sponsor-subject'];
         if ($count > 0) {
             $this->message = file_get_contents($config->values['email-messages']['sponsor-file']);
+            $this->subject = $config->values['email-messages']['sponsor-subject'];
             if ($count > 1) {
+                $this->subject = $config->values['email-messages']['sponsor-subject-plural'];
                 $this->message = file_get_contents($config->values['email-messages']['sponsor-plural-file']);
             }
             // TODO: Remove when the count placeholder gets fully deprecated.
             $this->message = str_replace("%X%", $count, $this->message);
             $this->message = str_replace("%CONTACTS%", implode("\n", $uniqueContactList), $this->message);
         } else {
+            $this->subject = $config->values['email-messages']['sponsor-subject-help'];
             $this->message = file_get_contents($config->values['email-messages']['sponsor-help-file']);
         }
     }
@@ -57,12 +59,16 @@ class EmailResponse {
             $config->values['email-messages']['newsite-help-file']);
     }
 
-    public function signUp($user) {
+    public function signUp($user, $selfSignup) {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];
         $this->message = file_get_contents(
-                $config->values['email-messages']['enrollment-file']);
+            $config->values['email-messages']['enrollment-file']);
+        if ($selfSignup) {
+            $this->message = file_get_contents(
+                $config->values['email-messages']['enrollment-file-self-signup']);
+        }
         $this->message = str_replace("%LOGIN%", $user->login, $this->message);
         $this->message = str_replace("%PASS%", $user->password, $this->message);
         $this->message = str_replace(

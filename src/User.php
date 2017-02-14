@@ -22,6 +22,7 @@ class User {
      * @var Cache
      */
     private $cache;
+
     /**
      * @var Config
      */
@@ -32,14 +33,22 @@ class User {
         $this->config = $config;
     }
 
-    public function signUp($message = "", $force = false) {
+    /**
+     * Sign up a new user to the service, send email or sms notification based on the user's main contact.
+     *
+     * @param string $message The extra message received in the text to select the appropriate sms template
+     * to respond with.
+     * @param bool $force Force the creation of a new password
+     * @param bool $selfSignup To select self-signup or sponsored email template.
+     */
+    public function signUp($message = "", $force = false, $selfSignup = true) {
         $this->setUsername();
         $this->loadRecord();
         if ($force) {
             $this->newPassword();
         }
         $this->radiusDbWrite();
-        $this->sendCredentials($message);
+        $this->sendCredentials($message, $selfSignup);
     }
 
     public function kioskActivate($site_id) {
@@ -90,7 +99,14 @@ class User {
         }
     }
 
-    private function sendCredentials($message = "") {
+    /**
+     * Send the generated credentials to the user, in an email or text message, based on the user's main contact.
+     *
+     * @param string $message The extra message received in the text to select the appropriate sms template
+     * to respond with.
+     * @param bool $selfSignup To select self-signup or sponsored email template.
+     */
+    private function sendCredentials($message = "", $selfSignup = true) {
         if ($this->identifier->validMobile) {
             $sms = new SmsResponse($this->identifier->text);
             $sms->setReply();
@@ -98,7 +114,7 @@ class User {
         } else if ($this->identifier->validEmail) {
             $email = new EmailResponse();
             $email->to = $this->identifier->text;
-            $email->signUp($this);
+            $email->signUp($this, $selfSignup);
         }
     }
 
