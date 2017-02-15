@@ -33,33 +33,33 @@ if (isset($data['SubscribeURL'])) {
     error_log("EMAIL original message metadata: " . $data['Message']);
     $message = json_decode($data['Message'], true);
     $emailFrom = $message['mail']['commonHeaders']['returnPath'];
+    $emailPattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
     // TODO: extend validation, fail fast, log.
     $emailFromId = new Identifier($emailFrom);
     if (! $emailFromId->validEmail) {
-        $pattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
         preg_match(
-            $pattern,
+            $emailPattern,
             reset($message['mail']['commonHeaders']['from']),
             $fromMatches);
         $emailFrom = $fromMatches[0];
     }
     $emailreq->setEmailFrom($emailFrom);
 
-    $pattern = "/^([^<]+)/";
     preg_match(
-        $pattern,
+        "/^([^<]+)/",
         reset($message['mail']['commonHeaders']['from']),
         $nameMatches);
-    $senderName = $nameMatches[0];
-    $emailreq->senderName = trim($senderName);
+    $senderName = trim($nameMatches[0]);
+    $emailreq->senderName = $senderName;
     error_log("AWS SNS EMAIL: From : " . $emailFrom . ", Sender name: [" . $senderName . "]");
 
     preg_match(
-        $pattern,
+        $emailPattern,
         reset($message['mail']['commonHeaders']['to']),
         $toMatches);
-    error_log("AWS SNS EMAIL: To : " . $toMatches[0]);
-    $emailreq->setEmailTo($toMatches[0]);
+    $destination = $toMatches[0];
+    error_log("AWS SNS EMAIL: To : " . $destination);
+    $emailreq->setEmailTo($destination);
     $emailreq->setEmailSubject($message['mail']['commonHeaders']['subject']);
     $bucket = $message['receipt']['action']['bucketName'];
     $key = $message['receipt']['action']['objectKey'];
