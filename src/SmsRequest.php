@@ -89,11 +89,11 @@ class SmsRequest {
         // remove whitespace and convert to lower case
         $this->message = strtolower(trim($message));
         // remove any instances of wifi from the message
-        $this->message = str_replace(
+        $this->message = trim(str_replace(
                 $this->config->values['strip-keyword'],
                 "",
-                $this->message);
-        $this->messageWords = explode(' ', trim($this->message));
+                $this->message));
+        $this->messageWords = explode(' ', $this->message);
     }
 
     public function verify() {

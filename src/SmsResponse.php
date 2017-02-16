@@ -14,6 +14,7 @@ class SmsResponse {
     public function __construct($destinationNumber) {
         $this->setNoReply();
         $this->destinationNumber = $destinationNumber;
+        $this->personalisation   = array();
     }
 
     public function setReply() {
@@ -116,7 +117,11 @@ class SmsResponse {
     public function getTemplateForOs($os, $journey) {
         $config = Config::getInstance();
         if (empty($os)) {
-            return $config->values['notify'][$journey . 'creds-unknown'];
+            $defaultTemplate = $config->values['notify'][$journey . 'creds-unknown'];
+            if (SmsRequest::SMS_JOURNEY_SPLIT == $journey) {
+                $defaultTemplate = $config->values['notify']['split-wifi-details'];
+            }
+            return $defaultTemplate;
         }
         // TODO: Split per journey, fail and log error if message is mismatched.
         switch ($os) {
