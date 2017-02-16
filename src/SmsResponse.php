@@ -60,8 +60,8 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendCredentials($user, $message = "") {
-        $template = $this->getTemplateForOs($message);
+    public function sendCredentials($user, $message = "", $journey = SmsRequest::SMS_JOURNEY_TERMS) {
+        $template = $this->getTemplateForOs($message, $journey);
         error_log("Using template [" . $template . "] for message [" . $message . "]");
         $this->template = $template;
 	    $this->personalisation['LOGIN'] = $user->login;
@@ -111,35 +111,36 @@ class SmsResponse {
         $this->send();
     }
 
-    public function getTemplateForOs($os) {
+    public function getTemplateForOs($os, $journey) {
         $config = Config::getInstance();
         if (empty($os)) {
-            return $config->values['notify']['creds-unknown'];
+            return $config->values['notify'][$journey . 'creds-unknown'];
         }
+        // TODO: Split per journey, fail and log error if message is mismatched.
         switch ($os) {
-            case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
-                return $config->values['notify']['creds-mac'];
+            case (preg_match("/(5|mac|OSX|apple)/i", $os) ? true : false):
+                return $config->values['notify'][$journey . 'creds-mac'];
                 break;
             case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
-                return $config->values['notify']['creds-windows7'];
+                return $config->values['notify'][$journey . 'creds-windows7'];
                 break;
             case (preg_match("/(win|windows)\s?10/i", $os) ? true : false):
-                return $config->values['notify']['creds-windows10'];
+                return $config->values['notify'][$journey . 'creds-windows10'];
                 break;
-            case (preg_match("/(win|windows)\s?/i", $os) ? true : false):
-                return $config->values['notify']['creds-windows'];
+            case (preg_match("/(4|win|windows)\s?/i", $os) ? true : false):
+                return $config->values['notify'][$journey . 'creds-windows'];
                 break;
-            case (preg_match("/(android|samsung|galaxy|htc|huawei|sony|motorola|lg|nexus)/i", $os) ? true : false):
-                return $config->values['notify']['creds-android'];
+            case (preg_match("/(1|android|samsung|galaxy|htc|huawei|sony|motorola|lg|nexus)/i", $os) ? true : false):
+                return $config->values['notify'][$journey . 'creds-android'];
                 break;
-            case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
-                return $config->values['notify']['creds-iphone'];
+            case (preg_match("/(2|3|ios|ipad|iphone|ipod)/i", $os) ? true : false):
+                return $config->values['notify'][$journey . 'creds-iphone'];
                 break;
             case (preg_match("/blackberry/i", $os) ? true : false):
-                return $config->values['notify']['creds-blackberry'];
+                return $config->values['notify'][$journey . 'creds-blackberry'];
                 break;
             default:
-                return $config->values['notify']['creds-unknown'];
+                return $config->values['notify'][$journey . 'creds-unknown'];
                 break;
         }
     }

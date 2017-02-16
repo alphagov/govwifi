@@ -2,6 +2,12 @@
 namespace Alphagov\GovWifi;
 
 class SmsRequest {
+    const SMS_JOURNEY_TERMS = "";
+    const SMS_JOURNEY_SPLIT = "split-";
+    const SMS_JOURNEY_TYPES = [
+        self::SMS_JOURNEY_TERMS,
+        self::SMS_JOURNEY_SPLIT
+    ];
     public $sender;
     public $message;
     public $messageWords;
@@ -9,9 +15,17 @@ class SmsRequest {
      * @var Config
      */
     private $config;
+    /**
+     * @var int
+     */
+    private $journeyType;
 
     function __construct($config) {
         $this->config = $config;
+        $this->journeyType = self::SMS_JOURNEY_TERMS;
+        if (! $this->config->values['send-terms']) {
+            $this->journeyType = self::SMS_JOURNEY_SPLIT;
+        }
     }
 
     /**
@@ -113,21 +127,21 @@ class SmsRequest {
     }
 
     public function security() {
-        error_log("SMS: Security info request from ".$this->sender->text);
+        error_log("SMS: Security info request from " . $this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $sms->sendSecurityInfo();
     }
 
     public function help() {
-        error_log("SMS: Sending help information to ".$this->sender->text);
+        error_log("SMS: Sending help information to " . $this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $sms->sendHelp();
     }
 
     public function newPassword() {
-        error_log("SMS: Creating new password for ".$this->sender->text);
+        error_log("SMS: Creating new password for " . $this->sender->text);
         $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
@@ -135,15 +149,15 @@ class SmsRequest {
     }
 
     public function signUp() {
-        error_log("SMS: Creating new account for ".$this->sender->text);
+        error_log("SMS: Creating new account for " . $this->sender->text);
         $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $user->sponsor = $this->sender;
-        $user->signUp($this->message);
+        $user->signUp($this->message, false, true, "", $this->journeyType);
     }
 
     public function other() {
-        if (!$this->config->values['send-terms']) {
+        if (self::SMS_JOURNEY_SPLIT == $this->journeyType) {
             $this->signUp();
         } else {
             $sms = new SmsResponse($this->sender->text);

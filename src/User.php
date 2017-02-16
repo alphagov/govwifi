@@ -41,15 +41,21 @@ class User {
      * @param bool $force Force the creation of a new password
      * @param bool $selfSignup To select self-signup or sponsored email template.
      * @param string $senderName The display name of the sender if present in the email's from field.
+     * @param string $journey The SMS journey type to decide the template id to use
      */
-    public function signUp($message = "", $force = false, $selfSignup = true, $senderName = "") {
+
+    public function signUp($message = "",
+                           $force = false,
+                           $selfSignup = true,
+                           $senderName = "",
+                           $journey = SmsRequest::SMS_JOURNEY_TERMS) {
         $this->setUsername();
         $this->loadRecord();
         if ($force) {
             $this->newPassword();
         }
         $this->radiusDbWrite();
-        $this->sendCredentials($message, $selfSignup, $senderName);
+        $this->sendCredentials($message, $selfSignup, $senderName, $journey);
     }
 
     public function kioskActivate($site_id) {
@@ -107,12 +113,16 @@ class User {
      * to respond with.
      * @param bool $selfSignup To select self-signup or sponsored email template.
      * @param string $senderName The display name of the sender if present in the email's from field.
+     * @param string $journey The SMS journey type to decide the template id to use
      */
-    private function sendCredentials($message = "", $selfSignup = true, $senderName = "") {
+    private function sendCredentials($message = "",
+                                     $selfSignup = true,
+                                     $senderName = "",
+                                     $journey = SmsRequest::SMS_JOURNEY_TERMS) {
         if ($this->identifier->validMobile) {
             $sms = new SmsResponse($this->identifier->text);
             $sms->setReply();
-            $sms->sendCredentials($this, $message);
+            $sms->sendCredentials($this, $message, $journey);
         } else if ($this->identifier->validEmail) {
             $email = new EmailResponse();
             $email->to = $this->identifier->text;
