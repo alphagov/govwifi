@@ -7,6 +7,7 @@ use Swift_Attachment;
 use Swift_Message;
 
 class EmailResponse {
+    const STANDARD_PARAGRAPH = '<p style=3D"Margin: 0 0 20px 0; font-size: 19px; line-height: 25px; color:#0B0C0C;">';
     public $from;
     public $to;
     public $subject;
@@ -118,12 +119,13 @@ class EmailResponse {
         $email->setSubject($subject);
         $email->setFrom($this->from, Config::SERVICE_NAME);
         $email->setBody($this->message);
-
-        $htmlTemplate = file_get_contents(
-            $config->values['email-messages']['header-footer']);
-        $email->addPart(
-            str_replace("##CONTENT##", $this->message, $htmlTemplate),
-            'text/html');
+        if ($config->values['email-messages']['use-html']) {
+            $htmlTemplate = file_get_contents(
+                $config->values['email-messages']['header-footer']);
+            $email->addPart(
+                str_replace("##CONTENT##", $this->message, $htmlTemplate),
+                'text/html');
+        }
 
         if (!empty($this->filepath)) {
            $email->attach(Swift_Attachment::fromPath($this->filepath));
