@@ -65,7 +65,7 @@ class SmsResponse {
         $template = $this->getTemplateForOs($message, $journey);
         error_log("Using template [" . $template . "] for message [" . $message . "]");
         $this->template = $template;
-        if (SmsRequest::SMS_JOURNEY_TERMS == $journey) {
+        if (SmsRequest::SMS_JOURNEY_TERMS == $journey || empty($message)) {
             $this->personalisation['LOGIN'] = $user->login;
             $this->personalisation['PASS'] = $user->password;
         }
