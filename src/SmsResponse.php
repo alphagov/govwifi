@@ -64,8 +64,10 @@ class SmsResponse {
         $template = $this->getTemplateForOs($message, $journey);
         error_log("Using template [" . $template . "] for message [" . $message . "]");
         $this->template = $template;
-	    $this->personalisation['LOGIN'] = $user->login;
-        $this->personalisation['PASS'] = $user->password;
+        if (SmsRequest::SMS_JOURNEY_TERMS == $journey) {
+            $this->personalisation['LOGIN'] = $user->login;
+            $this->personalisation['PASS'] = $user->password;
+        }
         $this->send();
     }
 
@@ -83,10 +85,10 @@ class SmsResponse {
         $this->template = $config->values['notify']['restricted-site-email-set'];
         $this->send();
     }
-    public function sendHelp() {
+    public function sendHelp($journey) {
         $config = Config::getInstance();
         $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
-        $this->template = $config->values['notify']['help'];
+        $this->template = $config->values['notify'][$journey . 'help'];
         $this->send();
     }
 

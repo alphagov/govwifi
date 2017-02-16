@@ -40,26 +40,26 @@ class SmsRequest {
         if (! $this->sender->validMobile) {
             return false;
         } else {
-            $firstWord = $this->messageWords[0];
+            $firstWord = "_" . $this->messageWords[0];
             error_log("SMS first word:*" . $firstWord . "*");
             switch ($firstWord) {
-                case "security":
+                case "_security":
                     $this->security();
                     break;
-                case "new":
-                case "newpassword":
+                case "_new":
+                case "_newpassword":
                     $this->newPassword();
                     break;
-                case "help":
+                case "_help":
                     $this->help();
                     break;
-                case "agree":
+                case "_agree":
                     $this->signUp();
                     break;
-                case (preg_match("/^[0-9]{4}$/", $firstWord) ? true : false):
+                case (preg_match("/^_[0-9]{4}$/", $firstWord) ? true : false):
                     $this->dailyCode();
                     break;
-                case (preg_match("/^[0-9]{6}$/", $firstWord) ? true : false):
+                case (preg_match("/^_[0-9]{6}$/", $firstWord) ? true : false):
                     $this->verify();
                     break;
                 default:
@@ -137,7 +137,7 @@ class SmsRequest {
         error_log("SMS: Sending help information to " . $this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
-        $sms->sendHelp();
+        $sms->sendHelp($this->journeyType);
     }
 
     public function newPassword() {
