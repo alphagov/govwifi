@@ -118,6 +118,13 @@ class EmailResponse {
         $email->setSubject($subject);
         $email->setFrom($this->from, Config::SERVICE_NAME);
         $email->setBody($this->message);
+
+        $htmlTemplate = file_get_contents(
+            $config->values['email-messages']['header-footer']);
+        $email->addPart(
+            str_replace("##CONTENT##", $this->message, $htmlTemplate),
+            'text/html');
+
         if (!empty($this->filepath)) {
            $email->attach(Swift_Attachment::fromPath($this->filepath));
         }
