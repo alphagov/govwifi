@@ -2,9 +2,31 @@
 namespace Alphagov\GovWifi;
 
 class SmsRequest {
+    const SMS_JOURNEY_TERMS = "";
+    const SMS_JOURNEY_SPLIT = "split-";
+    const SMS_JOURNEY_TYPES = [
+        self::SMS_JOURNEY_TERMS,
+        self::SMS_JOURNEY_SPLIT
+    ];
     public $sender;
     public $message;
     public $messageWords;
+    /**
+     * @var Config
+     */
+    private $config;
+    /**
+     * @var int
+     */
+    private $journeyType;
+
+    function __construct($config) {
+        $this->config = $config;
+        $this->journeyType = self::SMS_JOURNEY_TERMS;
+        if (! $this->config->values['send-terms']) {
+            $this->journeyType = self::SMS_JOURNEY_SPLIT;
+        }
+    }
 
     /**
      * Processes an incoming SMS request based on the first word of the text sent.
@@ -18,30 +40,30 @@ class SmsRequest {
         if (! $this->sender->validMobile) {
             return false;
         } else {
-            $firstWord = $this->messageWords[0];
+            $firstWord = "_" . $this->messageWords[0];
             error_log("SMS first word:*" . $firstWord . "*");
             switch ($firstWord) {
-                case "security":
+                case "_security":
                     $this->security();
                     break;
-                case "new":
-                case "newpassword":
+                case "_new":
+                case "_newpassword":
                     $this->newPassword();
                     break;
-                case "help":
+                case "_help":
                     $this->help();
                     break;
-                case "agree":
+                case "_agree":
                     $this->signUp();
                     break;
+                case (preg_match("/^_[0-9]{4}$/", $firstWord) ? true : false):
+                    $this->dailyCode();
+                    break;
+                case (preg_match("/^_[0-9]{6}$/", $firstWord) ? true : false):
+                    $this->verify();
+                    break;
                 default:
-                    if (preg_match('/^[0-9]{4}$/', $firstWord)) {
-                        $this->dailyCode();
-                    } else if (preg_match('/^[0-9]{6}$/', $firstWord)) {
-                        $this->verify();
-                    } else {
-                        $this->other();
-                    }
+                    $this->other();
                     break;
             }
             return true;
@@ -64,28 +86,27 @@ class SmsRequest {
      * @param string $message
      */
     public function setMessage($message) {
-        $config = Config::getInstance();
         // remove whitespace and convert to lower case
         $this->message = strtolower(trim($message));
         // remove any instances of wifi from the message
-        $this->message = str_replace(
-                $config->values['strip-keyword'],
+        $this->message = trim(str_replace(
+                $this->config->values['strip-keyword'],
                 "",
-                $this->message);
-        $this->messageWords = explode(' ', trim($this->message));
+                $this->message));
+        $this->messageWords = explode(' ', $this->message);
     }
 
     public function verify() {
         error_log(
                 "SMS: Received an email verification code from " .
                 $this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $user->codeVerify($this->messageWords[0]);
     }
 
     public function dailyCode() {
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
@@ -106,39 +127,37 @@ class SmsRequest {
     }
 
     public function security() {
-        error_log("SMS: Security info request from ".$this->sender->text);
+        error_log("SMS: Security info request from " . $this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
         $sms->sendSecurityInfo();
     }
 
     public function help() {
-        error_log("SMS: Sending help information to ".$this->sender->text);
+        error_log("SMS: Sending help information to " . $this->sender->text);
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
-        $sms->sendHelp();
+        $sms->sendHelp($this->journeyType);
     }
 
     public function newPassword() {
-        error_log("SMS: Creating new password for ".$this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        error_log("SMS: Creating new password for " . $this->sender->text);
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
         $user->signUp("", true);
     }
 
     public function signUp() {
-        error_log("SMS: Creating new account for ".$this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        error_log("SMS: Creating new account for " . $this->sender->text);
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $user->sponsor = $this->sender;
-        $user->signUp($this->message);
+        $user->signUp($this->message, false, true, "", $this->journeyType);
     }
 
     public function other() {
-        $config = Config::getInstance();
-
-        if (!$config->values['send-terms']) {
+        if (self::SMS_JOURNEY_SPLIT == $this->journeyType) {
             $this->signUp();
         } else {
             $sms = new SmsResponse($this->sender->text);
