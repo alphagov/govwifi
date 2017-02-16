@@ -5,6 +5,14 @@ class SmsRequest {
     public $sender;
     public $message;
     public $messageWords;
+    /**
+     * @var Config
+     */
+    private $config;
+
+    function __construct($config) {
+        $this->config = $config;
+    }
 
     /**
      * Processes an incoming SMS request based on the first word of the text sent.
@@ -34,14 +42,14 @@ class SmsRequest {
                 case "agree":
                     $this->signUp();
                     break;
+                case (preg_match("/^[0-9]{4}$/", $firstWord) ? true : false):
+                    $this->dailyCode();
+                    break;
+                case (preg_match("/^[0-9]{6}$/", $firstWord) ? true : false):
+                    $this->verify();
+                    break;
                 default:
-                    if (preg_match('/^[0-9]{4}$/', $firstWord)) {
-                        $this->dailyCode();
-                    } else if (preg_match('/^[0-9]{6}$/', $firstWord)) {
-                        $this->verify();
-                    } else {
-                        $this->other();
-                    }
+                    $this->other();
                     break;
             }
             return true;
@@ -64,12 +72,11 @@ class SmsRequest {
      * @param string $message
      */
     public function setMessage($message) {
-        $config = Config::getInstance();
         // remove whitespace and convert to lower case
         $this->message = strtolower(trim($message));
         // remove any instances of wifi from the message
         $this->message = str_replace(
-                $config->values['strip-keyword'],
+                $this->config->values['strip-keyword'],
                 "",
                 $this->message);
         $this->messageWords = explode(' ', trim($this->message));
@@ -79,13 +86,13 @@ class SmsRequest {
         error_log(
                 "SMS: Received an email verification code from " .
                 $this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $user->codeVerify($this->messageWords[0]);
     }
 
     public function dailyCode() {
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $sms = new SmsResponse($this->sender->text);
         $sms->setReply();
@@ -121,7 +128,7 @@ class SmsRequest {
 
     public function newPassword() {
         error_log("SMS: Creating new password for ".$this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender->text;
         $user->sponsor = $this->sender->text;
         $user->signUp("", true);
@@ -129,16 +136,14 @@ class SmsRequest {
 
     public function signUp() {
         error_log("SMS: Creating new account for ".$this->sender->text);
-        $user = new User(Cache::getInstance(), Config::getInstance());
+        $user = new User(Cache::getInstance(), $this->config);
         $user->identifier = $this->sender;
         $user->sponsor = $this->sender;
         $user->signUp($this->message);
     }
 
     public function other() {
-        $config = Config::getInstance();
-
-        if (!$config->values['send-terms']) {
+        if (!$this->config->values['send-terms']) {
             $this->signUp();
         } else {
             $sms = new SmsResponse($this->sender->text);

@@ -3,7 +3,7 @@ namespace Alphagov\GovWifi;
 
 require "../common.php";
 
-$smsReq = new SmsRequest();
+$smsReq = new SmsRequest(Config::getInstance());
 
 // FireText uses source, message, and keyword
 // for short numbers keyword is set to the keyword entered,
