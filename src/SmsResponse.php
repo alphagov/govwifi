@@ -41,7 +41,7 @@ class SmsResponse {
                     $this->personalisation);
             error_log("SMS sent. " . json_encode($response));
         } catch (NotifyException $e) {
-            error_log("Exception from Notify: " . json_encode($e));
+            error_log("Exception from Notify: " . var_export($e, true));
         }
     }
 
