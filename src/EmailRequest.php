@@ -184,7 +184,7 @@ class EmailRequest {
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
             $email->fileName = $pdf->filename;
-            $email->filepath = $pdf->filepath;
+            $email->filePath = $pdf->filepath;
             $email->logRequest();
             $email->send($orgAdmin->emailManagerAddress);
             // Create sms response for the code if the pdf is encrypted
@@ -259,7 +259,7 @@ class EmailRequest {
                 $email->newSiteBlank($site);
             }
             $email->fileName = $pdf->filename;
-            $email->filepath = $pdf->filepath;
+            $email->filePath = $pdf->filepath;
             $email->send($orgAdmin->emailManagerAddress);
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
