@@ -7,36 +7,42 @@ use Swift_Attachment;
 use Swift_Message;
 
 class EmailResponse {
-    const STANDARD_PARAGRAPH = '<p style=3D"Margin: 0 0 20px 0; font-size: 19px; line-height: 25px; color:#0B0C0C;">';
+    const STANDARD_PARAGRAPH   = '<p style=3D"Margin: 0 0 20px 0; font-size: 19px; line-height: 25px; color:#0B0C0C;">';
+    const HTML_TEMPLATE_PREFIX = 'html' . DIRECTORY_SEPARATOR;
     public $from;
     public $to;
     public $subject;
     public $message;
+    /**
+     * @var string The HTML-formatted message template.
+     */
+    public $htmlMessage;
     public $fileName;
-    public $filepath;
+    public $filePath;
 
     public function __construct() {
-        $config = Config::getInstance();
-        $this->from = $config->values['email-noreply'];
-        $this->subject = "";
-        $this->message = "";
+        $config            = Config::getInstance();
+        $this->from        = $config->values['email-noreply'];
+        $this->subject     = "";
+        $this->message     = "";
+        $this->htmlMessage = "";
     }
 
     public function sponsor($count, $uniqueContactList) {
         $config = Config::getInstance();
         if ($count > 0) {
-            $this->message = file_get_contents($config->values['email-messages']['sponsor-file']);
+            $this->setMessages($config->values['email-messages']['sponsor-file']);
             $this->subject = $config->values['email-messages']['sponsor-subject'];
             if ($count > 1) {
                 $this->subject = $config->values['email-messages']['sponsor-subject-plural'];
-                $this->message = file_get_contents($config->values['email-messages']['sponsor-plural-file']);
+                $this->setMessages($config->values['email-messages']['sponsor-plural-file']);
             }
-            // TODO: Remove when the count placeholder gets fully deprecated.
-            $this->message = str_replace("%X%", $count, $this->message);
+            $this->replaceInMessages("%X%", $count, $this->message);
             $this->message = str_replace("%CONTACTS%", implode("\n", $uniqueContactList), $this->message);
+            $this->htmlMessage = str_replace("%CONTACTS%", implode("<br/>", $uniqueContactList), $this->htmlMessage);
         } else {
             $this->subject = $config->values['email-messages']['sponsor-subject-help'];
-            $this->message = file_get_contents($config->values['email-messages']['sponsor-help-file']);
+            $this->setMessages($config->values['email-messages']['sponsor-help-file']);
         }
     }
 
@@ -44,44 +50,36 @@ class EmailResponse {
         $config = Config::getInstance();
         $this->from = $config->values['email-newsitereply'];
         $this->subject = $site->name;
-        $this->message = file_get_contents(
-                $config->values['email-messages']['newsite-file']);
-        $this->message = str_replace("%OUTCOME%", $outcome, $this->message);
-        $this->message = str_replace("%ACTION%", $action, $this->message);
-        $this->message = str_replace("%NAME%", $site->name, $this->message);
-        $this->message = str_replace(
-                "%ATTRIBUTES%", $site->attributesText(), $this->message);
+        $this->setMessages($config->values['email-messages']['newsite-file']);
+        $this->replaceInMessages("%OUTCOME%", $outcome, $this->message);
+        $this->replaceInMessages("%ACTION%", $action, $this->message);
+        $this->replaceInMessages("%NAME%", $site->name, $this->message);
+        $this->replaceInMessages("%ATTRIBUTES%", $site->attributesText(), $this->message);
     }
 
     public function newSiteBlank($site) {
         $config = Config::getInstance();
         $this->subject = $site->name;
-        $this->message = file_get_contents(
-            $config->values['email-messages']['newsite-help-file']);
+        $this->setMessages($config->values['email-messages']['newsite-help-file']);
     }
 
     public function signUp($user, $selfSignup, $senderName) {
         $config = Config::getInstance();
         $this->subject =
                 $config->values['email-messages']['enrollment-subject'];
-        $this->message = file_get_contents(
-            $config->values['email-messages']['enrollment-file']);
+        $this->setMessages($config->values['email-messages']['enrollment-file']);
         if ($selfSignup) {
-            $this->message = file_get_contents(
-                $config->values['email-messages']['enrollment-file-self-signup']);
+            $this->setMessages($config->values['email-messages']['enrollment-file-self-signup']);
         }
-        $this->message = str_replace("%LOGIN%", $user->login, $this->message);
-        $this->message = str_replace("%PASS%", $user->password, $this->message);
+        $this->replaceInMessages("%LOGIN%", $user->login, $this->message);
+        $this->replaceInMessages("%PASS%", $user->password, $this->message);
+
         $sponsor = $user->sponsor->text;
         if (!empty($senderName)) {
             $sponsor = $senderName . " (" . $sponsor . ")";
         }
-        $this->message = str_replace(
-                "%SPONSOR%", $sponsor, $this->message);
-        $this->message = str_replace(
-                "%THUMBPRINT%",
-                $config->values['radcert-thumbprint'],
-                $this->message);
+        $this->replaceInMessages("%SPONSOR%", $sponsor, $this->message);
+        $this->replaceInMessages("%THUMBPRINT%", $config->values['radcert-thumbprint'], $this->message);
         $this->send();
     }
 
@@ -91,8 +89,7 @@ class EmailResponse {
                 $config->values['email-messages']['logrequest-subject'];
         $this->message = file_get_contents(
                 $config->values['email-messages']['logrequest-file']);
-        $this->message = str_replace(
-            "%FILENAME%", $this->fileName, $this->message);
+        $this->replaceInMessages("%FILENAME%", $this->fileName, $this->message);
     }
 
     public function send($emailManagerAddress = NULL) {
@@ -122,13 +119,14 @@ class EmailResponse {
         if ($config->values['email-messages']['use-html']) {
             $htmlTemplate = file_get_contents(
                 $config->values['email-messages']['header-footer']);
+            $this->htmlMessage = str_replace("<p>", self::STANDARD_PARAGRAPH, $this->htmlMessage);
             $email->addPart(
-                str_replace("##CONTENT##", $this->message, $htmlTemplate),
+                str_replace("##CONTENT##", $this->htmlMessage, $htmlTemplate),
                 'text/html');
         }
 
-        if (!empty($this->filepath)) {
-           $email->attach(Swift_Attachment::fromPath($this->filepath));
+        if (!empty($this->filePath)) {
+           $email->attach(Swift_Attachment::fromPath($this->filePath));
         }
 
         try {
@@ -143,5 +141,23 @@ class EmailResponse {
             error_log(
                 "The email was not sent. Error message: " . $e->getMessage());
         }
+    }
+
+    private function setMessages($templateFilePath) {
+        $this->message = file_get_contents($templateFilePath);
+        $htmlTemplatePath =
+            dirname($templateFilePath) .
+            DIRECTORY_SEPARATOR .
+            self::HTML_TEMPLATE_PREFIX .
+            basename($templateFilePath);
+
+        if (file_exists($htmlTemplatePath)) {
+            $this->htmlMessage = file_get_contents($htmlTemplatePath);
+        }
+    }
+
+    private function replaceInMessages($search, $replace) {
+        $this->message = str_replace($search, $replace, $this->message);
+        $this->htmlMessage = str_replace($search, $replace, $this->htmlMessage);
     }
 }
