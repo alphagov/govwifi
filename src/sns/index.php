@@ -32,17 +32,14 @@ if (isset($data['SubscribeURL'])) {
 } else {
     error_log("EMAIL original message metadata: " . $data['Message']);
     $message = json_decode($data['Message'], true);
-    $emailFrom = $message['mail']['commonHeaders']['returnPath'];
     $emailPattern = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
+
+    preg_match(
+        $emailPattern,
+        reset($message['mail']['commonHeaders']['from']),
+        $fromMatches);
+    $emailFrom = $fromMatches[0];
     // TODO: extend validation, fail fast, log.
-    $emailFromId = new Identifier($emailFrom);
-    if (! $emailFromId->validEmail) {
-        preg_match(
-            $emailPattern,
-            reset($message['mail']['commonHeaders']['from']),
-            $fromMatches);
-        $emailFrom = $fromMatches[0];
-    }
     $emailreq->setEmailFrom($emailFrom);
 
     preg_match(
