@@ -1,5 +1,5 @@
 <p>Hello,</p>
-<p>Thank you for asking to connect to GovWifi.</p>
+<p>You’ve been invited to connect to GovWifi by <a href="#" style="text-decoration:none;color:#0B0C0C">%SPONSOR%</a>.</p>
 <p>GovWifi is a secure wifi service.<br />You only need to get connected once. You&rsquo;ll then access GovWifi wherever it&rsquo;s available.</p>
 <p><strong>Your GovWifi username: %LOGIN%</strong><br /><strong>Your GovWifi password: %PASS%</strong></p>
 <p>When you arrive at a government building where GovWifi is available, follow the instructions below for the device you want to connect.</p>
@@ -27,7 +27,7 @@
 <li>For <strong>Password</strong>, enter your GovWifi&nbsp;password.</li>
 <li>Select <strong>Connect</strong>.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
 
 <h1 id="windows8or10">Windows 8 or 10:</h1>
@@ -42,7 +42,7 @@
 <li>Check that the <strong>Server thumbprint</strong> matches: %THUMBPRINT%</li>
 <li>If it matches, select <strong>Connect</strong>.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
 
 <h1  id="windows7">Windows 7:</h1>
@@ -66,7 +66,7 @@
 <li>Select <strong>OK</strong> to close all windows.</li>
 <li>Select the wifi logo at the bottom right of your screen and select <strong>GovWifi</strong>.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
 
 <h1  id="iphoneipad">iPhone or iPad:</h1>
@@ -79,7 +79,7 @@
 <li>Select <strong>Certificate</strong> in the top left to go back to the previous screen.</li>
 <li>Select <strong>Trust</strong> in the top right to connect to GovWifi.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
 
 <h1  id="mac">Mac, iMac or Macbook:</h1>
@@ -93,7 +93,7 @@
 <li>If so, select <strong>Continue</strong>.</li>
 <li>Your device will ask you for your computer password to save these settings. This is the password you normally use to sign into your computer.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
 
 <h1 id="chromebook">Chromebook:</h1>
@@ -108,4 +108,4 @@
 <li>Leave <strong>Anonymous identity</strong> blank.</li>
 <li>Select <strong>Connect</strong>.</li>
 </ol>
-<p>Having problems connecting? Contact the helpdesk in your building.</p>
+<p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
