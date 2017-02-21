@@ -116,7 +116,7 @@ class EmailResponse {
         $email->setSubject($subject);
         $email->setFrom($this->from, Config::SERVICE_NAME);
         $email->setBody($this->message);
-        if ($config->values['email-messages']['use-html']) {
+        if ($config->values['email-messages']['use-html'] && !empty($this->htmlMessage)) {
             $htmlTemplate = file_get_contents(
                 $config->values['email-messages']['header-footer']);
             $this->htmlMessage = str_replace("<p>", self::STANDARD_PARAGRAPH, $this->htmlMessage);
