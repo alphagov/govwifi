@@ -32,19 +32,21 @@ class EmailRequest {
         $handle = $dblink->prepare(
                 'insert into verify (code, email) values (:code,:email)');
         $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
-        $attempts=0;
-        $success=false;
-        while ($success==false and $attempts<10) {
+        $attempts = 0;
+        $success = false;
+
+        while (!$success && $attempts < 10) {
             try {
                 $attempts++;
                 $code = $this->generateRandomVerifyCode();
                 $handle->bindValue(':code', $code, PDO::PARAM_STR);
                 $handle->execute();
-                $success=true;
+                $success = true;
             } catch (PDOException $e) {
-                $success=false;
+                $success = false;
             }
         }
+
         if ($success) {
             $email = new EmailResponse;
             $email->to = $this->emailFrom->text;
@@ -99,6 +101,7 @@ class EmailRequest {
                 . $this->emailFrom->text);
 
             $signUpCount = 0;
+
             foreach ($this->uniqueContactList() as $identifier) {
                 $signUpCount++;
                 $user = new User(Cache::getInstance(), Config::getInstance());
@@ -106,6 +109,7 @@ class EmailRequest {
                 $user->sponsor = $this->emailFrom;
                 $user->signUp("", false, false, $this->senderName);
             }
+
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
             $email->sponsor($signUpCount, $this->uniqueContactList());
@@ -133,6 +137,7 @@ class EmailRequest {
             if (count($subjectArray) > 1) {
                 $criteria = trim($subjectArray[1]);
             }
+
             switch ($reportType) {
                 case "topsites":
                     $report->topSites();
@@ -180,6 +185,7 @@ class EmailRequest {
             $pdf->populateLogRequest($orgAdmin);
             $pdf->landscape = true;
             $pdf->generatePDF($report);
+
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
@@ -187,6 +193,7 @@ class EmailRequest {
             $email->filepath = $pdf->filepath;
             $email->logRequest();
             $email->send($orgAdmin->emailManagerAddress);
+
             // Create sms response for the code if the pdf is encrypted
             if ($pdf->encrypt) {
                 $sms = new SmsResponse($orgAdmin->mobile);
@@ -202,11 +209,13 @@ class EmailRequest {
             error_log(
                 "EMAIL: processing new site request from : "
                 . $this->emailFrom->text);
+
             // Add the new site & IP addresses
             $outcome = "Existing site updated\n";
             $site = new Site();
             $site->loadByAddress($this->emailSubject);
             $action = "updated";
+
             if (!$site->id) {
                 $site->org_id = $orgAdmin->orgId;
                 $site->org_name = $orgAdmin->orgName;
@@ -227,7 +236,7 @@ class EmailRequest {
             }
 
             $newSiteIPs = $this->ipList();
-            if (count($newSiteIPs) >0) {
+            if (count($newSiteIPs) > 0) {
                 error_log(
                     "EMAIL: Adding client IP addresses : " . $site->name);
                 $outcome .= count($newSiteIPs) . " RADIUS IP Addresses added\n";
@@ -235,7 +244,7 @@ class EmailRequest {
             }
 
             $newSiteSourceIPs = $this->sourceIpList();
-            if (count($newSiteSourceIPs) >0) {
+            if (count($newSiteSourceIPs) > 0) {
                 error_log(
                     "EMAIL: Adding source IP addresses : " . $site->name);
                 $outcome .=
@@ -250,6 +259,7 @@ class EmailRequest {
             $report->orgAdmin = $orgAdmin;
             $report->getIPList($site);
             $pdf->generatePDF($report);
+
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
@@ -261,10 +271,10 @@ class EmailRequest {
             $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
             $email->send($orgAdmin->emailManagerAddress);
+
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
             $sms->sendNewsitePassword($pdf);
-
         } else {
             error_log(
                 "EMAIL: Ignoring new site request from : "
@@ -280,6 +290,7 @@ class EmailRequest {
      */
     public function uniqueContactList() {
         $list = [];
+
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $line) {
             $contact = new Identifier(trim($line));
@@ -287,6 +298,7 @@ class EmailRequest {
                 $list[] = $contact;
             }
         }
+
         return array_unique($list);
     }
 
@@ -297,6 +309,7 @@ class EmailRequest {
      */
     public function ipList() {
         $list = array();
+
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
             $ipAddr = preg_replace('/[^0-9.]/', '', $ipAddr);
@@ -305,6 +318,7 @@ class EmailRequest {
                 $list[] = $ipAddr;
             }
         }
+
         return $list;
     }
 
@@ -331,9 +345,9 @@ class EmailRequest {
                 $list[] = array("min" => $ipAddr[0],'max' => $ipAddr[1]);
             }
         }
+
         return $list;
     }
-
 
     public function fromAuthDomain() {
         $config = Config::getInstance();
@@ -363,7 +377,6 @@ class EmailRequest {
         if (empty($body)) {
             $body = $email;
         }
-
         $this->emailBody = strip_tags($body);
     }
 
@@ -385,7 +398,7 @@ class EmailRequest {
             $boundary = $matches[1];
         }
 
-        if (! empty($boundary) && $boundary != $ignoreBoundary) {
+        if (!empty($boundary) && $boundary != $ignoreBoundary) {
             foreach (explode("--" . $boundary, $email) as $part) {
                 $textBody = $this->extractTextBody($part, $boundary);
                 if (!empty($textBody)) {
@@ -393,9 +406,9 @@ class EmailRequest {
                 }
             }
         } else {
-            if (! strpos($email, self::CONTENT_PLAIN_TEXT) === false) {
+            if (!strpos($email, self::CONTENT_PLAIN_TEXT) == false) {
                 $body = $this->ignoreSignature($email);
-            } else if (! strpos($email, self::CONTENT_HTML) === false) {
+            } else if (!strpos($email, self::CONTENT_HTML) == false) {
                 $body = $this->ignoreSignature($email);
             }
         }
@@ -403,7 +416,7 @@ class EmailRequest {
     }
 
     private function ignoreSignature($emailBody) {
-        if (! strpos($emailBody, "--") === false) {
+        if (!strpos($emailBody, "--") == false) {
             return strstr($emailBody, "--", true);
         }
         return $emailBody;
