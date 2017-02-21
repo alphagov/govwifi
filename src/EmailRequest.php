@@ -406,9 +406,9 @@ class EmailRequest {
                 }
             }
         } else {
-            if (strpos($email, self::CONTENT_PLAIN_TEXT) !== false) {
+            if (!strpos($email, self::CONTENT_PLAIN_TEXT) == false) {
                 $body = $this->ignoreSignature($email);
-            } else if (strpos($email, self::CONTENT_HTML) !== false) {
+            } else if (!strpos($email, self::CONTENT_HTML) == false) {
                 $body = $this->ignoreSignature($email);
             }
         }
@@ -416,7 +416,7 @@ class EmailRequest {
     }
 
     private function ignoreSignature($emailBody) {
-        if (strpos($emailBody, "--") !== false) {
+        if (!strpos($emailBody, "--") == false) {
             return strstr($emailBody, "--", true);
         }
         return $emailBody;
