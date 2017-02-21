@@ -34,7 +34,7 @@ class EmailRequest {
         $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
         $attempts = 0;
         $success = false;
-        
+
         while (!$success && $attempts < 10) {
             try {
                 $attempts++;
@@ -46,7 +46,7 @@ class EmailRequest {
                 $success = false;
             }
         }
-        
+
         if ($success) {
             $email = new EmailResponse;
             $email->to = $this->emailFrom->text;
@@ -101,7 +101,7 @@ class EmailRequest {
                 . $this->emailFrom->text);
 
             $signUpCount = 0;
-            
+
             foreach ($this->uniqueContactList() as $identifier) {
                 $signUpCount++;
                 $user = new User(Cache::getInstance(), Config::getInstance());
@@ -109,7 +109,7 @@ class EmailRequest {
                 $user->sponsor = $this->emailFrom;
                 $user->signUp("", false, false, $this->senderName);
             }
-            
+
             $email = new EmailResponse();
             $email->to = $this->emailFrom->text;
             $email->sponsor($signUpCount, $this->uniqueContactList());
@@ -137,7 +137,7 @@ class EmailRequest {
             if (count($subjectArray) > 1) {
                 $criteria = trim($subjectArray[1]);
             }
-            
+
             switch ($reportType) {
                 case "topsites":
                     $report->topSites();
@@ -185,7 +185,7 @@ class EmailRequest {
             $pdf->populateLogRequest($orgAdmin);
             $pdf->landscape = true;
             $pdf->generatePDF($report);
-            
+
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
@@ -193,7 +193,7 @@ class EmailRequest {
             $email->filepath = $pdf->filepath;
             $email->logRequest();
             $email->send($orgAdmin->emailManagerAddress);
-            
+
             // Create sms response for the code if the pdf is encrypted
             if ($pdf->encrypt) {
                 $sms = new SmsResponse($orgAdmin->mobile);
@@ -209,13 +209,13 @@ class EmailRequest {
             error_log(
                 "EMAIL: processing new site request from : "
                 . $this->emailFrom->text);
-            
+
             // Add the new site & IP addresses
             $outcome = "Existing site updated\n";
             $site = new Site();
             $site->loadByAddress($this->emailSubject);
             $action = "updated";
-            
+
             if (!$site->id) {
                 $site->org_id = $orgAdmin->orgId;
                 $site->org_name = $orgAdmin->orgName;
@@ -259,7 +259,7 @@ class EmailRequest {
             $report->orgAdmin = $orgAdmin;
             $report->getIPList($site);
             $pdf->generatePDF($report);
-            
+
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
@@ -271,7 +271,7 @@ class EmailRequest {
             $email->fileName = $pdf->filename;
             $email->filepath = $pdf->filepath;
             $email->send($orgAdmin->emailManagerAddress);
-            
+
             // Create sms response for the code
             $sms = new SmsResponse($orgAdmin->mobile);
             $sms->sendNewsitePassword($pdf);
@@ -290,7 +290,7 @@ class EmailRequest {
      */
     public function uniqueContactList() {
         $list = [];
-        
+
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $line) {
             $contact = new Identifier(trim($line));
@@ -298,7 +298,7 @@ class EmailRequest {
                 $list[] = $contact;
             }
         }
-        
+
         return array_unique($list);
     }
 
@@ -309,7 +309,7 @@ class EmailRequest {
      */
     public function ipList() {
         $list = array();
-        
+
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
             $ipAddr = preg_replace('/[^0-9.]/', '', $ipAddr);
@@ -318,7 +318,7 @@ class EmailRequest {
                 $list[] = $ipAddr;
             }
         }
-        
+
         return $list;
     }
 
@@ -330,7 +330,7 @@ class EmailRequest {
      */
     public function sourceIpList() {
         $list = array();
-        
+
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
             $ipAddr = preg_replace('/[^-0-9.]/', '', $ipAddr);
@@ -345,10 +345,10 @@ class EmailRequest {
                 $list[] = array("min" => $ipAddr[0],'max' => $ipAddr[1]);
             }
         }
-        
+
         return $list;
     }
-    
+
     public function fromAuthDomain() {
         $config = Config::getInstance();
         return preg_match(
