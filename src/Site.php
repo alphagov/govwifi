@@ -77,8 +77,8 @@ class Site {
     }
 
     public function getWhitelist() {
-        $whitelist = str_replace("$|",", ",$this->activationRegex);
-        $whitelist = str_replace("$","",$whitelist);
+        $whitelist = str_replace("$|", ", ", $this->activationRegex);
+        $whitelist = str_replace("$", "", $whitelist);
         return $whitelist;
     }
 
@@ -91,10 +91,10 @@ class Site {
     }
 
     public function updateFromEmail($emailBody) {
-        $updated = FALSE;
+        $updated = false;
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $emailBody) as $line) {
-            $line = str_replace(">","",$line);
-            $line = str_replace("*","",$line);
+            $line = str_replace(">", "", $line);
+            $line = str_replace("*", "", $line);
             $line = trim($line);
             $parameter = strtolower(trim(substr($line, 0, strpos($line,":"))));
 
@@ -102,9 +102,9 @@ class Site {
 
             switch ($parameter) {
                 case "postcode":
-                error_log("*".$parameter."*");
-                $this->postcode = $value;
-                $updated = TRUE;
+                    error_log("*".$parameter."*");
+                    $this->postcode = $value;
+                    $updated = TRUE;
                 break;
                 case "activation-whitelist":
                     error_log("*".$parameter."*");
