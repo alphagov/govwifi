@@ -105,7 +105,7 @@ class Site {
                     error_log("*".$parameter."*");
                     $this->postcode = $value;
                     $updated = TRUE;
-                break;
+                    break;
                 case "activation-whitelist":
                     error_log("*".$parameter."*");
                     $value = str_replace(" ","",$value);
@@ -114,17 +114,17 @@ class Site {
                     error_log("activation_regex:/".$value."/");
                     $this->activationRegex = $value;
                     $updated = TRUE;
-                break;
+                    break;
                 case "activation-days":
                     error_log("*".$parameter."*");
                     $this->activationDays = $value;
                     $updated = TRUE;
-                break;
+                    break;
                 case "datacontroller":
                     error_log("*".$parameter."*");
                     $this->dataController = $value;
                     $updated = TRUE;
-                break;
+                    break;
             }
         }
         return $updated;
