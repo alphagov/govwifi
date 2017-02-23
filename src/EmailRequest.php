@@ -23,6 +23,10 @@ class EmailRequest {
     public $emailBody;
     public $emailSubject;
 
+    public function __construct($jsonData, $awsS3Client) {
+
+    }
+
     public function verify() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
