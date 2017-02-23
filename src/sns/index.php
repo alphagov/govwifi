@@ -84,21 +84,21 @@ if (isset($data['SubscribeURL'])) {
         case "enrol":
         case "signup":
             $emailreq->signUp();
-        break;
+            break;
         case "verify":
             $emailreq->verify();
-        break;
+            break;
         case "sponsor":
             $emailreq->sponsor();
-        break;
+            break;
         case "newsite":
             $emailreq->newSite();
-        break;
+            break;
         case "logrequest":
             $emailreq->logRequest();
-        break;
+            break;
         default:
             error_log("AWS SNS EMAIL: No command found. Have we been cc'd?");
-        break;
+            break;
     }
 }
