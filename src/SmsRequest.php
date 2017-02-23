@@ -17,35 +17,35 @@ class SmsRequest {
     public function processRequest() {
         if (! $this->sender->validMobile) {
             return false;
-        } else {
-            $firstWord = $this->messageWords[0];
-            error_log("SMS first word:*" . $firstWord . "*");
-            switch ($firstWord) {
-                case "security":
-                    $this->security();
-                    break;
-                case "new":
-                case "newpassword":
-                    $this->newPassword();
-                    break;
-                case "help":
-                    $this->help();
-                    break;
-                case "agree":
-                    $this->signUp();
-                    break;
-                default:
-                    if (preg_match('/^[0-9]{4}$/', $firstWord)) {
-                        $this->dailyCode();
-                    } else if (preg_match('/^[0-9]{6}$/', $firstWord)) {
-                        $this->verify();
-                    } else {
-                        $this->other();
-                    }
-                    break;
-            }
-            return true;
         }
+
+        $firstWord = $this->messageWords[0];
+        error_log("SMS first word:*" . $firstWord . "*");
+        switch ($firstWord) {
+            case "security":
+                $this->security();
+                break;
+            case "new":
+            case "newpassword":
+                $this->newPassword();
+                break;
+            case "help":
+                $this->help();
+                break;
+            case "agree":
+                $this->signUp();
+                break;
+            default:
+                if (preg_match('/^[0-9]{4}$/', $firstWord)) {
+                    $this->dailyCode();
+                } else if (preg_match('/^[0-9]{6}$/', $firstWord)) {
+                    $this->verify();
+                } else {
+                    $this->other();
+                }
+                break;
+        }
+        return true;
     }
 
     public function setSender($sender) {
