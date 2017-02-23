@@ -83,10 +83,10 @@ class Site {
     }
 
     public function attributesText() {
-        $attributes = "Postcode: ".$this->postcode."\n";
-        $attributes .= "Activation-whitelist: ".$this->getWhitelist()."\n";
-        $attributes .= "Activation-days: ".$this->activationDays."\n";
-        $attributes .= "DataController: ".$this->dataController."\n";
+        $attributes = "Postcode: " . $this->postcode."\n";
+        $attributes .= "Activation-whitelist: " . $this->getWhitelist()."\n";
+        $attributes .= "Activation-days: " . $this->activationDays."\n";
+        $attributes .= "DataController: " . $this->dataController."\n";
         return $attributes;
     }
 
@@ -104,7 +104,7 @@ class Site {
                 case "postcode":
                     error_log("*".$parameter."*");
                     $this->postcode = $value;
-                    $updated = TRUE;
+                    $updated = true;
                     break;
                 case "activation-whitelist":
                     error_log("*".$parameter."*");
@@ -113,17 +113,17 @@ class Site {
                     $value .="$";
                     error_log("activation_regex:/".$value."/");
                     $this->activationRegex = $value;
-                    $updated = TRUE;
+                    $updated = true;
                     break;
                 case "activation-days":
                     error_log("*".$parameter."*");
                     $this->activationDays = $value;
-                    $updated = TRUE;
+                    $updated = true;
                     break;
                 case "datacontroller":
                     error_log("*".$parameter."*");
                     $this->dataController = $value;
-                    $updated = TRUE;
+                    $updated = true;
                     break;
             }
         }
