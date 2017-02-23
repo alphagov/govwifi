@@ -8,7 +8,7 @@
 
 <p>By connecting to GovWifi, you agree to the terms and conditions:&nbsp;<a href="https://www.gov.uk/govwifi">https://www.gov.uk/govwifi</a></p>
 
-<h2 id="android">Android devices:</h2>
+<h3 id="android">Android devices:</h3>
 <ol>
 <li>Open your wifi settings. A list of wifi networks appears.</li>
 <li>Select <strong>GovWifi</strong>. A settings menu appears.</li>
@@ -23,7 +23,7 @@
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
-<h2 id="windows8or10">Windows 8 or 10:</h2>
+<h3 id="windows8or10">Windows 8 or 10:</h3>
 <ol>
 <li>Select the wifi icon in the system tray at the bottom right of your screen. You will see all the nearby wifi networks.</li>
 <li>Select <strong>GovWifi</strong>.</li>
@@ -37,7 +37,7 @@
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
-<h2 id="windows7">Windows 7:</h2>
+<h3 id="windows7">Windows 7:</h3>
 <p>Open the <strong>Control Panel</strong>, and select <strong>Network and Sharing Center</strong>.</p>
 <ol>
 <li>Select <strong>Set up a new connection or network</strong>.</li>
@@ -60,7 +60,7 @@
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
-<h2 id="iphoneipad">iPhone or iPad:</h2>
+<h3 id="iphoneipad">iPhone or iPad:</h3>
 <ol>
 <li>Go to wifi settings and select <strong>GovWifi</strong>.</li>
 <li>Enter your GovWifi&nbsp;username and password.</li>
@@ -72,7 +72,7 @@
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
-<h2 id="mac">Mac, iMac or Macbook:</h2>
+<h3 id="mac">Mac, iMac or Macbook:</h3>
 <ol>
 <li>Select the wifi symbol on the top right of your screen.</li>
 <li>Select <strong>GovWifi</strong>.</li>
@@ -85,7 +85,7 @@
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 
-<h2 id="chromebook">Chromebook:</h2>
+<h3 id="chromebook">Chromebook:</h3>
 <ol>
 <li>Select the wireless symbol in the bottom right of the screen. A list of wifi connections appears.</li>
 <li>Select <strong>GovWifi</strong>. A settings menu appears.</li>
