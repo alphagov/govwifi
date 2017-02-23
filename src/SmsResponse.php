@@ -121,18 +121,25 @@ class SmsResponse {
         switch ($os) {
             case (preg_match("/(mac|OSX|apple)/i", $os) ? true : false):
                 return $config->values['notify']['creds-mac'];
+                break;
             case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
                 return $config->values['notify']['creds-windows7'];
+                break;
             case (preg_match("/(win|windows)\s?10/i", $os) ? true : false):
                 return $config->values['notify']['creds-windows10'];
+                break;
             case (preg_match("/(win|windows)\s?/i", $os) ? true : false):
                 return $config->values['notify']['creds-windows'];
+                break;
             case (preg_match("/(android|samsung|galaxy|htc|huawei|sony|motorola|lg|nexus)/i", $os) ? true : false):
                 return $config->values['notify']['creds-android'];
+                break;
             case (preg_match("/(ios|ipad|iphone|ipod)/i", $os) ? true : false):
                 return $config->values['notify']['creds-iphone'];
+                break;
             case (preg_match("/blackberry/i", $os) ? true : false):
                 return $config->values['notify']['creds-blackberry'];
+                break;
             default:
                 return $config->values['notify']['creds-unknown'];
         }
