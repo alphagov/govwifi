@@ -136,7 +136,6 @@ class Report {
             "Stop",
             "Identity",
             "Sponsor");
-
     }
 
     function statsUsersPerDay($site = null) {

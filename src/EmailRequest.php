@@ -89,7 +89,7 @@ class EmailRequest {
             $user->signUp();
         } else {
             error_log(
-                    "EMAIL: Ignoring signup from : "
+                    "EMAIL: Ignoring signup from: "
                     . $this->emailFrom->text);
         }
     }
@@ -141,14 +141,14 @@ class EmailRequest {
             switch ($reportType) {
                 case "topsites":
                     $report->topSites();
-                    $pdf->encrypt = FALSE;
+                    $pdf->encrypt = false;
                     error_log(
                         "Top Sites report generated records: "
                         . count($report->result));
                     break;
                 case "topsites-alltime":
                     $report->topSitesAllTime();
-                    $pdf->encrypt = FALSE;
+                    $pdf->encrypt = false;
                     error_log(
                         "Top Sites Total report generated records: "
                         . count($report->result));
@@ -334,15 +334,15 @@ class EmailRequest {
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $this->emailBody)
                 as $ipAddr) {
             $ipAddr = preg_replace('/[^-0-9.]/', '', $ipAddr);
-            $ipAddr = explode("-",$ipAddr);
+            $ipAddr = explode("-", $ipAddr);
             if (count($ipAddr) == 2
-                    and filter_var($ipAddr[0], FILTER_VALIDATE_IP,
+                    && filter_var($ipAddr[0], FILTER_VALIDATE_IP,
                             FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |
                             FILTER_FLAG_NO_RES_RANGE)
-                    and filter_var($ipAddr[1], FILTER_VALIDATE_IP,
+                    && filter_var($ipAddr[1], FILTER_VALIDATE_IP,
                             FILTER_FLAG_IPV4 | FILTER_FLAG_NO_PRIV_RANGE |
                             FILTER_FLAG_NO_RES_RANGE)) {
-                $list[] = array("min" => $ipAddr[0],'max' => $ipAddr[1]);
+                $list[] = array("min" => $ipAddr[0], 'max' => $ipAddr[1]);
             }
         }
 

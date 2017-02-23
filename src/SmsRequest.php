@@ -39,35 +39,35 @@ class SmsRequest {
     public function processRequest() {
         if (! $this->sender->validMobile) {
             return false;
-        } else {
-            $firstWord = "_" . $this->messageWords[0];
-            error_log("SMS first word:*" . $firstWord . "*");
-            switch ($firstWord) {
-                case "_security":
-                    $this->security();
-                    break;
-                case "_new":
-                case "_newpassword":
-                    $this->newPassword();
-                    break;
-                case "_help":
-                    $this->help();
-                    break;
-                case "_agree":
-                    $this->signUp();
-                    break;
-                case (preg_match("/^_[0-9]{4}$/", $firstWord) ? true : false):
-                    $this->dailyCode();
-                    break;
-                case (preg_match("/^_[0-9]{6}$/", $firstWord) ? true : false):
-                    $this->verify();
-                    break;
-                default:
-                    $this->other();
-                    break;
-            }
-            return true;
         }
+
+        $firstWord = "_" . $this->messageWords[0];
+        error_log("SMS first word:*" . $firstWord . "*");
+        switch ($firstWord) {
+            case "_security":
+                $this->security();
+                break;
+            case "_new":
+            case "_newpassword":
+                $this->newPassword();
+                break;
+            case "_help":
+                $this->help();
+                break;
+            case "_agree":
+                $this->signUp();
+                break;
+            case (preg_match("/^_[0-9]{4}$/", $firstWord) ? true : false):
+                $this->dailyCode();
+                break;
+            case (preg_match("/^_[0-9]{6}$/", $firstWord) ? true : false):
+                $this->verify();
+                break;
+            default:
+                $this->other();
+                break;
+        }
+        return true;
     }
 
     public function setSender($sender) {
@@ -157,7 +157,7 @@ class SmsRequest {
     }
 
     public function other() {
-        if (self::SMS_JOURNEY_SPLIT == $this->journeyType) {
+        if (self::SMS_JOURNEY_SPLIT === $this->journeyType) {
             $this->signUp();
         } else {
             $sms = new SmsResponse($this->sender->text);

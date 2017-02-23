@@ -11,7 +11,7 @@ class PDF {
     public $message;
     public $landscape;
     public $password;
-    public $encrypt = TRUE;
+    public $encrypt = true;
 
     public function populateNewSite($site) {
         $config = Config::getInstance();
@@ -29,10 +29,12 @@ class PDF {
                 str_replace("/32", "", $config->values['radiusIPs'])),
             $this->message);
         $radiusServerList = "";
+
         for ($i = 1; $i <= $config->values['radiusServerCount']; $i++) {
             $radiusServerList .= str_replace(
                 "*n*", $i, $config->values['radiusHostnameTemplate']) . "\n";
         }
+
         $this->message = str_replace(
             "%RADIUS_SERVER_LIST%", $radiusServerList, $this->message);
         $this->filename = $site->org_name . "-" . $site->name;
@@ -60,10 +62,13 @@ class PDF {
         // Generate PDF with the site details
         // Encrypts the file then returns the password
         $un_filename = $this->filepath . "-unencrypted";
-        if ($this->landscape)
+
+        if ($this->landscape) {
             $pdf = new FPDF("L");
-        else
+        } else {
             $pdf = new FPDF();
+        }
+
         $pdf->AddPage();
         $pdf->SetFont('Courier', 'B', 16);
         $pdf->Cell(40, 10, 'GovWifi Service');
@@ -80,6 +85,7 @@ class PDF {
                 $pdf->Write(5, $line . "\n");
             }
         }
+
         $pdf->Output("F", $un_filename);
         if ($this->encrypt) {
             $this->encryptPdf($un_filename);
@@ -117,9 +123,10 @@ class PDF {
             0,
             0,
             0);
-            // Set column width fiddle factor multiplier
-            $widthConstant = 8;
-            $widthMultiplier = 2.7;
+        // Set column width fiddle factor multiplier
+        $widthConstant = 8;
+        $widthMultiplier = 2.7;
+
         // Get column widths for headings
 
         $column = 0;
@@ -131,6 +138,7 @@ class PDF {
             }
             $column++;
         }
+
         // Get column widths for data
         foreach ($report->result as $row[$totalrows]) {
             $column = 0;
@@ -146,16 +154,20 @@ class PDF {
             }
             $totalrows++;
         }
+
         // Write column headers
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Write(5, $report->subject . "\n");
+
         $column = 0;
         while (isset($report->columns[$column])) {
             $pdf->Cell($w[$column], 6, $report->columns[$column], 1, 0, 'C');
             $column++;
         }
+
         $pdf->Ln();
         $pdf->SetFont('Arial', '', 12);
+
         // Write column
         for ($rownum = 0; $rownum <= $totalrows; $rownum++) {
             $column = 0;
@@ -179,12 +191,10 @@ class PDF {
     private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
-        if (!$strong)
-        {
+        if (!$strong) {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }
         return $bytes;
     }
 }
-
