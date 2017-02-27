@@ -5,7 +5,7 @@ use Exception;
 use PDO;
 use PDOException;
 
-class EmailRequest {
+class EmailRequest extends GovWifiBase {
     const CONTENT_PLAIN_TEXT = "content-type: text/plain";
     const CONTENT_HTML       = "content-type: text/html";
 
@@ -23,13 +23,102 @@ class EmailRequest {
     public $emailBody;
     public $emailSubject;
 
-    public function __construct($jsonData, $awsS3Client) {
+    /**
+     * Instance of a class implementing the EmailProvider interface.
+     * @var EmailProvider
+     */
+    private $emailProvider;
 
+    /**
+     * Instance of the environment-specific Config class.
+     * @var Config
+     */
+    private $config;
+
+    /**
+     * Instance of the environment-specific Cache class.
+     * @var Cache
+     */
+    private $cache;
+
+    /**
+     * Instance of the environment-specific DB class.
+     * @var DB
+     */
+    private $db;
+
+    public function __construct($params) {
+        $defaults = [
+            'emailProvider' => null,
+            'config'        => null,
+            'db'            => null,
+            'cache'         => null,
+        ];
+        $params = array_merge($defaults, $params);
+        parent::checkNotEmpty(array_keys($defaults), $params);
+        parent::checkStandardParams($params);
+        if (!is_a($params['emailProvider'], EmailProvider::class)) {
+            throw new GovWifiException("EmailProvider class not recognised.");
+        }
+        $this->emailProvider = $params['emailProvider'];
+        $this->config        = $params['config'];
+        $this->cache         = $params['cache'];
+        $this->db            = $params['db'];
+    }
+
+    /**
+     * Processes the incoming email request based on the EmailProvider the class was initialised with.
+     *
+     * @return bool True if the normal processing stage was executed, false if only the provider-specific
+     * pre-processing was done.
+     * @throws GovWifiException
+     */
+    public function processRequest() {
+        $furtherProcessingRequired = $this->emailProvider->preProcess();
+        if ($furtherProcessingRequired) {
+            $emailFrom  = $this->emailProvider->getEmailFrom();
+            $senderName = $this->emailProvider->getSenderName();
+            error_log("AWS SNS EMAIL: From : " . $emailFrom . ", Sender name: [" . $senderName . "]");
+            $this->setEmailFrom($emailFrom);
+            $this->setSenderName($senderName);
+
+            $destination = $this->emailProvider->getEmailTo();
+            error_log("AWS SNS EMAIL: To : " . $destination);
+            $this->setEmailTo($destination);
+
+            $this->setEmailSubject($this->emailProvider->getEmailSubject());
+            $this->setEmailBody($this->emailProvider->getEmailBody());
+            $this->setEmailTo($this->emailProvider->getEmailTo());
+
+            switch ($this->emailToCMD) {
+                case "enroll":
+                case "enrol":
+                case "signup":
+                    $this->signUp();
+                    break;
+                case "verify":
+                    $this->verify();
+                    break;
+                case "sponsor":
+                    $this->sponsor();
+                    break;
+                case "newsite":
+                    $this->newSite();
+                    break;
+                case "logrequest":
+                    $this->logRequest();
+                    break;
+                default:
+                    error_log("AWS SNS EMAIL: No command found. Have we been cc'd?");
+                    break;
+            }
+            return true;
+        }
+        return false;
     }
 
     public function verify() {
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
+        $dblink = $this->db->getConnection();
         $handle = $dblink->prepare('delete from verify where email = :email');
         $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
         $handle->execute();
@@ -61,9 +150,8 @@ class EmailRequest {
     }
 
     private function generateRandomVerifyCode() {
-        $config = Config::getInstance();
-        $length = $config->values['verify-code']['length'];
-        $pattern = $config->values['verify-code']['regex'];
+        $length  = $this->config->values['verify-code']['length'];
+        $pattern = $this->config->values['verify-code']['regex'];
         $pass = preg_replace(
                 $pattern,
                 "",
@@ -87,7 +175,7 @@ class EmailRequest {
         // Self service signup request
         if ($this->fromAuthDomain()) {
             error_log("EMAIL: signup : " . $this->emailFrom->text);
-            $user = new User(Cache::getInstance(), Config::getInstance());
+            $user = new User($this->cache, $this->config);
             $user->identifier = $this->emailFrom;
             $user->sponsor = $this->emailFrom;
             $user->signUp();
@@ -108,7 +196,7 @@ class EmailRequest {
 
             foreach ($this->uniqueContactList() as $identifier) {
                 $signUpCount++;
-                $user = new User(Cache::getInstance(), Config::getInstance());
+                $user = new User($this->cache, $this->config);
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
                 $user->signUp("", false, false, $this->senderName);
@@ -354,10 +442,16 @@ class EmailRequest {
     }
 
     public function fromAuthDomain() {
-        $config = Config::getInstance();
         return preg_match(
-                $config->values['authorised-domains'],
+                $this->config->values['authorised-domains'],
                 $this->emailFrom->text);
+    }
+
+    /**
+     * @param string $senderName
+     */
+    public function setSenderName($senderName) {
+        $this->senderName = $senderName;
     }
 
     public function setEmailSubject($subject) {

@@ -9,6 +9,7 @@ class Config {
     const SERVICE_NAME           = "GovWifi";
     private static $instance;
     public $values;
+    public $environment;
 
     public static function getInstance() {
         if (!self::$instance) { // If no instance then make one
@@ -21,11 +22,11 @@ class Config {
         // Set up default values
         $this->loadValuesFromConfig("default-values");
         // Extend / overwrite with environment specific ones
-        $environment = getenv("ENVIRONMENT_NAME");
-        if ($environment) {
-            $this->loadValuesFromConfig($environment);
+        $this->environment = strtolower(trim(getenv("ENVIRONMENT_NAME")));
+        if ($this->environment) {
+            $this->loadValuesFromConfig($this->environment);
         } else {
-            throw new Exception("Environment name is required.");
+            throw new GovWifiException("Environment name is required.");
         }
 
         // By default the values below are passed from terraform, and the
