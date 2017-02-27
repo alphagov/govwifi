@@ -53,7 +53,7 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
         $params = array_merge($defaults, $params);
         parent::checkNotEmpty(array_keys($defaults), $params);
 
-        $this->data = json_decode($params['jsonData']);
+        $this->data = json_decode($params['jsonData'], true);
 
         if (null === $this->data) {
             throw new GovWifiException("JSON decoding failed.");

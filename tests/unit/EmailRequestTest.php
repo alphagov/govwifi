@@ -12,84 +12,94 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
     const IP_RANGE_MIN   = "213.42.43.0";
     const IP_RANGE_MAX   = "213.42.43.255";
 
+    /**
+     * @var EmailRequest
+     */
+    private $emailRequest;
+
+    function setUp() {
+        parent::setUp();
+        $this->emailRequest = new EmailRequest([
+            'emailProvider' => EmailProviderFactory::create(
+                Config::getInstance(),
+                '{"data":"empty"}'
+            ),
+            'config'        => Config::getInstance(),
+            'db'            => DB::getInstance(),
+            'cache'         => Cache::getInstance(),
+        ]);
+    }
+
     function testClassInstantiates() {
-        $this->assertInstanceOf(EmailRequest::class, new EmailRequest());
+        $this->assertInstanceOf(EmailRequest::class, $this->emailRequest);
     }
 
     function testContactListFromEmail() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_MULTIPART) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
-        $this->assertEquals([new Identifier(self::CONTACT_NUMBER)], $emailRequest->uniqueContactList());
+        $this->emailRequest->setEmailBody($body);
+        $this->assertEquals([new Identifier(self::CONTACT_NUMBER)], $this->emailRequest->uniqueContactList());
     }
 
     function testContactListFromShortNumberEmail() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SHORT) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         $this->assertEquals(
             implode(",", [new Identifier(self::CONTACT_NUMBER)]),
-            implode(",", $emailRequest->uniqueContactList()));
+            implode(",", $this->emailRequest->uniqueContactList()));
     }
 
     function testContactListFromShortNumberEmail2() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SHORT2) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         $this->assertEquals(
             implode(",", [new Identifier(self::CONTACT_EMAIL)]),
-            implode(",", $emailRequest->uniqueContactList()));
+            implode(",", $this->emailRequest->uniqueContactList()));
     }
 
     function testContactListFromEmailWithSignature() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_SIGNATURE) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         $this->assertEquals(
             implode(",", [new Identifier(self::CONTACT_EMAIL)]),
-            implode(",", $emailRequest->uniqueContactList()));
+            implode(",", $this->emailRequest->uniqueContactList()));
     }
 
     function testContactListFromEmptyEmailWithSignature() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_EMPTY) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         $this->assertEquals(
             "",
-            implode(",", $emailRequest->uniqueContactList()));
+            implode(",", $this->emailRequest->uniqueContactList()));
     }
 
     function testContactListFromAutoConcatEmail() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_CONCAT) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         $this->assertEquals(
             self::CONTACT_NUMBER,
-            implode(",", $emailRequest->uniqueContactList()));
+            implode(",", $this->emailRequest->uniqueContactList()));
     }
 
     function testNewSiteIpSelection() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_IP) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         self::assertEquals(
             array(
                 self::SINGLE_IP1,
                 self::SINGLE_IP2),
-            $emailRequest->ipList());
+            $this->emailRequest->ipList());
         self::assertEquals([[
                 "min" => self::IP_RANGE_MIN,
                 "max" => self::IP_RANGE_MAX]],
-            $emailRequest->sourceIpList());
+            $this->emailRequest->sourceIpList());
     }
 
     function testNewSiteMultipart() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_MULTI) . "\n";
-        $emailRequest = new EmailRequest();
-        $emailRequest->setEmailBody($body);
+        $this->emailRequest->setEmailBody($body);
         self::assertEquals(
             array(self::SINGLE_IP1),
-            $emailRequest->ipList()
+            $this->emailRequest->ipList()
         );
     }
 }
