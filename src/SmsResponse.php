@@ -55,7 +55,7 @@ class SmsResponse {
 
     public function sendLogRequestPassword($pdf) {
         $config = Config::getInstance();
-	    $this->personalisation['PASSWORD'] = $pdf->password;
+        $this->personalisation['PASSWORD'] = $pdf->password;
         $this->personalisation['FILENAME'] = $pdf->filename;
         $this->template=$config->values['notify']['logrequest-password'];
         $this->send();
@@ -86,6 +86,7 @@ class SmsResponse {
         $this->template = $config->values['notify']['restricted-site-email-set'];
         $this->send();
     }
+
     public function sendHelp($journey) {
         $config = Config::getInstance();
         $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
@@ -118,7 +119,7 @@ class SmsResponse {
         $config = Config::getInstance();
         if (empty($os)) {
             $defaultTemplate = $config->values['notify'][$journey . 'creds-unknown'];
-            if (SmsRequest::SMS_JOURNEY_SPLIT == $journey) {
+            if (SmsRequest::SMS_JOURNEY_SPLIT === $journey) {
                 $defaultTemplate = $config->values['notify']['split-wifi-details'];
             }
             return $defaultTemplate;

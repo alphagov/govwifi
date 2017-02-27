@@ -14,8 +14,7 @@ class DB {
     private $dbName;
 
     public static function getInstance() {
-        if (!self::$instance)
-        { // If no instance then make one
+        if (!self::$instance) {
             self::$instance = new self();
         }
         return self::$instance;
@@ -53,9 +52,7 @@ class DB {
     // Magic method clone is empty to prevent duplication of connection
     private function __clone() { }
 
-    public function getConnection()
-    {
+    public function getConnection() {
         return $this->connection;
     }
 }
-

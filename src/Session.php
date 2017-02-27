@@ -4,7 +4,6 @@ namespace Alphagov\GovWifi;
 use PDO;
 
 class Session {
-
     public $id;
     public $inOctets;
     public $outOctets;
