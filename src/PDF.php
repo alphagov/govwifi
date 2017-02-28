@@ -23,10 +23,12 @@ class PDF {
                 "%DESCRIPTION%", $site->name, $this->message);
         $this->message = str_replace(
                 "%KIOSKKEY%", $site->kioskKey, $this->message);
+        $radiusIpList = explode(",", str_replace("/32", "", $config->values['radiusIPs']));
+        // TODO: think about further splitting this by region.
+        shuffle($radiusIpList);
         $this->message = str_replace(
             "%RADIUS_IP_LIST%",
-            str_replace(",","\n",
-                str_replace("/32", "", $config->values['radiusIPs'])),
+            implode("\n", $radiusIpList),
             $this->message);
         $radiusServerList = "";
 
