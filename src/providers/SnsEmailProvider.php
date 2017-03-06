@@ -11,6 +11,8 @@ use Aws\S3\S3Client;
  * @package Alphagov\GovWifi
  */
 class SnsEmailProvider extends GovWifiBase implements EmailProvider {
+    const PROVIDER_ID = "AWS SNS";
+
     /**
      * @var array The decoded JSON data received in the SES request.
      */
@@ -67,6 +69,14 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
             $this->objectKey  = $this->message['receipt']['action']['objectKey'];
         }
         $this->s3Client = $params['s3Client'];
+    }
+
+    /**
+     * Return the provider identifier for logging purposes.
+     * @return string
+     */
+    public function getProviderId() {
+        return self::PROVIDER_ID;
     }
 
     /**

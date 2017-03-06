@@ -37,7 +37,7 @@ class EmailResponse {
                 $this->subject = $config->values['email-messages']['sponsor-subject-plural'];
                 $this->setMessages($config->values['email-messages']['sponsor-plural-file']);
             }
-            $this->replaceInMessages("%X%", $count, $this->message);
+            $this->replaceInMessages("%X%", $count);
             $this->message = str_replace("%CONTACTS%", implode("\n", $uniqueContactList), $this->message);
             $this->htmlMessage = str_replace("%CONTACTS%", implode("<br/>", $uniqueContactList), $this->htmlMessage);
         } else {
@@ -51,10 +51,10 @@ class EmailResponse {
         $this->from = $config->values['email-newsitereply'];
         $this->subject = $site->name;
         $this->setMessages($config->values['email-messages']['newsite-file']);
-        $this->replaceInMessages("%OUTCOME%", $outcome, $this->message);
-        $this->replaceInMessages("%ACTION%", $action, $this->message);
-        $this->replaceInMessages("%NAME%", $site->name, $this->message);
-        $this->replaceInMessages("%ATTRIBUTES%", $site->attributesText(), $this->message);
+        $this->replaceInMessages("%OUTCOME%", $outcome);
+        $this->replaceInMessages("%ACTION%", $action);
+        $this->replaceInMessages("%NAME%", $site->name);
+        $this->replaceInMessages("%ATTRIBUTES%", $site->attributesText());
     }
 
     public function newSiteBlank($site) {
@@ -71,15 +71,15 @@ class EmailResponse {
         if ($selfSignup) {
             $this->setMessages($config->values['email-messages']['enrollment-file-self-signup']);
         }
-        $this->replaceInMessages("%LOGIN%", $user->login, $this->message);
-        $this->replaceInMessages("%PASS%", $user->password, $this->message);
+        $this->replaceInMessages("%LOGIN%", $user->login);
+        $this->replaceInMessages("%PASS%", $user->password);
 
         $sponsor = $user->sponsor->text;
         if (!empty($senderName)) {
             $sponsor = $senderName . " (" . $sponsor . ")";
         }
-        $this->replaceInMessages("%SPONSOR%", $sponsor, $this->message);
-        $this->replaceInMessages("%THUMBPRINT%", $config->values['radcert-thumbprint'], $this->message);
+        $this->replaceInMessages("%SPONSOR%", $sponsor);
+        $this->replaceInMessages("%THUMBPRINT%", $config->values['radcert-thumbprint']);
         $this->send();
     }
 
@@ -89,7 +89,7 @@ class EmailResponse {
                 $config->values['email-messages']['logrequest-subject'];
         $this->message = file_get_contents(
                 $config->values['email-messages']['logrequest-file']);
-        $this->replaceInMessages("%FILENAME%", $this->fileName, $this->message);
+        $this->replaceInMessages("%FILENAME%", $this->fileName);
     }
 
     public function send($emailManagerAddress = NULL) {

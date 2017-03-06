@@ -8,6 +8,13 @@ namespace Alphagov\GovWifi;
  */
 interface EmailProvider {
     const EMAIL_REGEX = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
+
+    /**
+     * Return the provider identifier for logging purposes.
+     * @return string
+     */
+    public function getProviderId();
+
     /**
      * Pre-process the request received.
      * @return bool Whether or not further processing is required.

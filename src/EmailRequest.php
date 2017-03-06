@@ -78,12 +78,13 @@ class EmailRequest extends GovWifiBase {
         if ($furtherProcessingRequired) {
             $emailFrom  = $this->emailProvider->getEmailFrom();
             $senderName = $this->emailProvider->getSenderName();
-            error_log("AWS SNS EMAIL: From : " . $emailFrom . ", Sender name: [" . $senderName . "]");
+            error_log($this->emailProvider->getProviderId() . " EMAIL: From : " . $emailFrom .
+                ", Sender name: [" . $senderName . "]");
             $this->setEmailFrom($emailFrom);
             $this->setSenderName($senderName);
 
             $destination = $this->emailProvider->getEmailTo();
-            error_log("AWS SNS EMAIL: To : " . $destination);
+            error_log($this->emailProvider->getProviderId() . " EMAIL: To : " . $destination);
             $this->setEmailTo($destination);
 
             $this->setEmailSubject($this->emailProvider->getEmailSubject());
