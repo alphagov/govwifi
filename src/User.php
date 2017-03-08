@@ -138,7 +138,7 @@ class User {
                     'SELECT IF ((date(now()) - max(date(`activated`)))
                     <site.activation_days,"YES","NO") as valid,
                     IF (count(1)=0,"YES","NO") as firstvisit
-                    from activation,site
+                    FROM activation,site
                     WHERE (activation.site_id = site.id
                     OR activation.dailycode = site.dailycode)
                     AND site_id = ? AND contact = ?');
@@ -274,7 +274,7 @@ class User {
         $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
         $handle->execute();
         $row = $handle->fetch(PDO::FETCH_ASSOC);
-        if ($row)        {
+        if ($row) {
             $username = $row['username'];
         } else {
             $username = $this->generateRandomUsername();
@@ -293,7 +293,6 @@ class User {
     public function generateRandomUsername() {
         $length = $this->config->values['wifi-username']['length'];
         $pattern = $this->config->values['wifi-username']['regex'];
-
         $userName = $this->getRandomCharacters($pattern, $length);
         return strtolower($userName);
     }
@@ -312,10 +311,8 @@ class User {
     public function generateRandomWifiPassword() {
         $password = "";
         if ($this->config->values['wifi-password']['random-words']) {
-            $f_contents = file(
-                    $this->config->values['wifi-password']['wordlist-file']);
-            for ($x = 1; $x <= $this->config->values['wifi-password']['word-count'];
-                    $x++) {
+            $f_contents = file($this->config->values['wifi-password']['wordlist-file']);
+            for ($x = 1; $x <= $this->config->values['wifi-password']['word-count']; $x++) {
                 $word = trim($f_contents[array_rand($f_contents)]);
                 if ($this->config->values['wifi-password']['uppercase'])
                     $word = ucfirst($word);
@@ -326,7 +323,6 @@ class User {
         if ($this->config->values['wifi-password']['random-chars']) {
             $length = $this->config->values['wifi-password']['length'];
             $pattern = $this->config->values['wifi-password']['regex'];
-
             $password = $this->getRandomCharacters($pattern, $length);
         }
         return $password;
