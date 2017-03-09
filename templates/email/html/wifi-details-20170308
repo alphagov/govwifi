@@ -4,8 +4,8 @@
 <p>GovWifi is a secure wifi service.</p>
 
 <p>You only need to register once. You’ll then connect to GovWifi wherever it’s available.</p>
-<p><strong>Your GovWifi username: %LOGIN%</strong><br />
-<strong>Your GovWifi password: %PASS%</strong></p>
+<p><strong>Your username: %LOGIN%</strong><br />
+<strong>Your password: %PASS%</strong></p>
 
 <p>When you arrive at a government building where GovWifi is available, go to your wifi settings, select GovWifi and enter your details.</p>
 
@@ -38,7 +38,7 @@
 <p>In your wifi settings:</p>
 <ol>
 <li>Enter your username and password.</li>
-<li>Select <strong>Show Certificate</strong>, then check that the certificate is called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and it&rsquo;s issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
+<li>Select <strong>Show Certificate</strong>, then check that the certificate is called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
 <li>If so, select <strong>Continue</strong>.</li>
 <li>Enter your computer password to save these settings.</li>
 </ol>
@@ -64,7 +64,7 @@
 <li style="font-weight: 400;">Open the <strong>Control Panel</strong> and select <strong>Network and Sharing Center</strong>.</li>
 <li style="font-weight: 400;">Select <strong>Set up a new connection or network</strong>.</li>
 <li style="font-weight: 400;">Select <strong>Manually connect to a wireless network</strong>.</li>
-<li style="font-weight: 400;">In the <strong>Network name</strong> field, enter <strong>GovWifi</strong> and for the <strong>Security type</strong>>, select <strong>WPA2-Enterprise</strong>.</li>
+<li style="font-weight: 400;">In the <strong>Network name</strong> field, enter <strong>GovWifi</strong> and for the <strong>Security type</strong>, select <strong>WPA2-Enterprise</strong>.</li>
 <li style="font-weight: 400;">Select <strong>Next</strong>.</li>
 <li style="font-weight: 400;">Select <strong>Change connection settings</strong>.</li>
 <li style="font-weight: 400;">Select the <strong>Security</strong> tab and select <strong>Settings</strong>.</li>
