@@ -87,7 +87,7 @@
 <h3 id="chromebook">Chromebook:</h3>
 <p>In your advanced wifi settings:</p>
 <ol>
-<li style="font-weight: 400;">In the <strong>SSID</strong> field, enter GovWifi.</li>
+<li style="font-weight: 400;">In the <strong>SSID</strong> field, enter <strong>GovWifi</strong>.</li>
 <li style="font-weight: 400;">In the <strong>EAP</strong> field, select <strong>PEAP</strong>.</li>
 <li style="font-weight: 400;">In the <strong>Phase-2 authentication</strong> field, select <strong>MSCHAPV2</strong>.</li>
 <li style="font-weight: 400;">In the <strong>Server CA certificate</strong> field, select <strong>Default</strong>.</li>
