@@ -23,7 +23,7 @@
 <p>&nbsp;</p>
 
 <h3 id="iphoneipad">iPhone or iPad:</h3>
-<p><In your wifi settings:</p>
+<p>In your wifi settings:</p>
 <ol>
 <li style="font-weight: 400;">Enter your username and password.</li>
 <li>Check that the certificate is&nbsp;called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
