@@ -39,7 +39,7 @@ Having problems connecting? Contact the helpdesk in your building.
 Mac, iMac or Macbook:
 
 In your wifi settings:
-1. Enter your username and password.
+1. Enter your GovWifi username and password.
 2. Select Show Certificate, then check that the certificate is called:
 wifi.service.gov.uk
 and that it's issued by:
@@ -54,7 +54,7 @@ Windows 8 or 10:
 
 In your wifi settings:
 1. Select GovWifi, then Connect.
-2. Enter your GovWifi username and password and select OK.
+2. Enter your username and password and select OK.
 3. When you see Continue connecting, select Show certificate details.
 4. Check that the Server thumbprint ends in: 93 74 A5 15 5A
 5. If it matches, select Connect.

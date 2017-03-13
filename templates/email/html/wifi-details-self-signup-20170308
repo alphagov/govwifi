@@ -26,9 +26,8 @@
 <p><In your wifi settings:</p>
 <ol>
 <li style="font-weight: 400;">Enter your username and password.</li>
-<li>Enter your GovWifi&nbsp;username and password.</li>
 <li>Check that the certificate is&nbsp;called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
-<li>If it is, select <strong>Trust</strong> when you see the message <strong>This network is not trusted</strong></li>
+<li>If it is, select <strong>Trust</strong> when you see the message <strong>This network is not trusted</strong>.</li>
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. </p>
 <p>&nbsp;</p>
@@ -37,7 +36,7 @@
 <h3 id="mac">Mac, iMac or Macbook:</h3>
 <p>In your wifi settings:</p>
 <ol>
-<li>Enter your username and password.</li>
+<li>Enter your GovWifi username and password.</li>
 <li>Select <strong>Show Certificate</strong>, then check that the certificate is called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
 <li>If so, select <strong>Continue</strong>.</li>
 <li>Enter your computer password to save these settings.</li>
@@ -50,7 +49,7 @@
 <p>In your wifi settings:</p>
 <ol>
 <li>Select <strong>GovWifi</strong>, then <strong>Connect</strong>.</li>
-<li>Enter your GovWifi username and password and select <strong>OK</strong>.</li>
+<li>Enter your username and password and select <strong>OK</strong>.</li>
 <li>When you see <strong>Continue connecting</strong>, select <strong>Show certificate details</strong>.</li>
 <li>Check that the <strong>Server thumbprint</strong> ends in: 93 74 A5 15 5A</li>
 <li>If it matches, select <strong>Connect</strong>.</li>
