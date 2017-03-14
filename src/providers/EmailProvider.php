@@ -7,7 +7,8 @@ namespace Alphagov\GovWifi;
  * @package Alphagov\GovWifi
  */
 interface EmailProvider {
-    const EMAIL_REGEX = "/([a-zA-Z0-9_\.\-]+@[a-zA-Z0-9_\.\-]+)/";
+    //TODO: Consider removing this regex and use a new one utilising filter_var for validating results.
+    const EMAIL_REGEX = "/([a-zA-Z0-9_\.\-']+@[a-zA-Z0-9_\.\-]+)/";
 
     /**
      * Return the provider identifier for logging purposes.
