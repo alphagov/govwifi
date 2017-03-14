@@ -16,7 +16,7 @@ class SmsRequest {
      */
     private $config;
     /**
-     * @var int
+     * @var string
      */
     private $journeyType;
 

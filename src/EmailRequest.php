@@ -47,6 +47,12 @@ class EmailRequest extends GovWifiBase {
      */
     private $db;
 
+    /**
+     * The text journey type to switch sponsored text templates.
+     * @var string
+     */
+    private $journeyType;
+
     public function __construct($params) {
         $defaults = [
             'emailProvider' => null,
@@ -64,6 +70,10 @@ class EmailRequest extends GovWifiBase {
         $this->config        = $params['config'];
         $this->cache         = $params['cache'];
         $this->db            = $params['db'];
+        $this->journeyType   = SmsRequest::SMS_JOURNEY_TERMS;
+        if (! $this->config->values['send-terms']) {
+            $this->journeyType = SmsRequest::SMS_JOURNEY_SPLIT;
+        }
     }
 
     /**
@@ -200,7 +210,7 @@ class EmailRequest extends GovWifiBase {
                 $user = new User($this->cache, $this->config);
                 $user->identifier = $identifier;
                 $user->sponsor = $this->emailFrom;
-                $user->signUp("", false, false, $this->senderName);
+                $user->signUp("", false, false, $this->senderName, $this->journeyType);
             }
 
             $email = new EmailResponse();
