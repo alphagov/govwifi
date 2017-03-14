@@ -126,7 +126,7 @@ class SmsResponse {
         }
         // TODO: Split per journey, fail and log error if message is mismatched.
         switch ($os) {
-            case (preg_match("/(5|mac|OSX|apple)/i", $os) ? true : false):
+            case (preg_match("/(3|mac|OSX|apple)/i", $os) ? true : false):
                 return $config->values['notify'][$journey . 'creds-mac'];
                 break;
             case (preg_match("/(win|windows)\s?(XP|7|8)/i", $os) ? true : false):
@@ -141,7 +141,7 @@ class SmsResponse {
             case (preg_match("/(1|android|samsung|galaxy|htc|huawei|sony|motorola|lg|nexus)/i", $os) ? true : false):
                 return $config->values['notify'][$journey . 'creds-android'];
                 break;
-            case (preg_match("/(2|3|ios|ipad|iphone|ipod)/i", $os) ? true : false):
+            case (preg_match("/(2|ios|ipad|iphone|ipod)/i", $os) ? true : false):
                 return $config->values['notify'][$journey . 'creds-iphone'];
                 break;
             case (preg_match("/blackberry/i", $os) ? true : false):

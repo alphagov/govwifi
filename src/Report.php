@@ -25,7 +25,6 @@ class Report {
         $this->columns = array(
             "IP Address",
             "RADIUS Secret");
-
     }
 
     function siteList() {

@@ -111,20 +111,8 @@ class PDF {
 
     private function PdfSqlTable(FPDF $pdf, Report $report) {
         $totalrows = 0;
-        $w = array(
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0);
+        $w = array_fill(0, 13, 0);
+        
         // Set column width fiddle factor multiplier
         $widthConstant = 8;
         $widthMultiplier = 2.7;
