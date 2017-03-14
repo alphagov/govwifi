@@ -13,7 +13,7 @@
 
 
 <h3 id="android">Android devices:</h3>
-<p>In your wifi settings:</p>
+<p>In your wifi settings (scroll down):</p>
 <ol>
 <li> In the <strong>EAP method</strong> field, select <strong>PEAP</strong>.</li>
 <li> In the <strong>Phase 2 authentication</strong> field, select <strong>MSCHAPV2</strong>.</li>
@@ -77,7 +77,7 @@
 <li style="font-weight: 400;">Select <strong>User authentication</strong> from the dropdown menu under <strong>Specify authentication mode</strong>, then select <strong>Save credentials</strong>.</li>
 <li style="font-weight: 400;">Enter your GovWifi username and password.</li>
 <li style="font-weight: 400;">Select <strong>OK</strong> to close all windows.</li>
-<li style="font-weight: 400;">Select the wifi logo at the bottom right of your screen and select GovWifi.</li>
+<li style="font-weight: 400;">Select the wifi logo at the bottom right of your screen and select <strong>GovWifi</strong>.</li>
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. Ask for details from the person who invited you to connect to GovWifi.</p>
 <p>&nbsp;</p>

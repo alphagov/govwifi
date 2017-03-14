@@ -15,7 +15,7 @@ Scroll down to find instructions for your device.
 
 Android devices:
 
-In your wifi settings:
+In your wifi settings (scroll down):
 1. In the EAP method field, select PEAP.
 2. In the Phase 2 authentication field, select MSCHAPV2.
 3. Enter your username (in the Identity field) and password.
