@@ -107,6 +107,7 @@ class AAA {
                     break;
                 case self::URL_USER:
                     $this->user = new User(Cache::getInstance(), Config::getInstance());
+                    //TODO: Consider removing strtoupper so session ID / records match visually. (log search!)
                     $this->user->login = strtoupper($parts[$x + 1]);
                     $this->user->loadRecord();
                     break;
