@@ -120,11 +120,8 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
      * @return string
      */
     public function getEmailFrom() {
-        preg_match(
-            EmailProvider::EMAIL_REGEX,
-            reset($this->message['mail']['commonHeaders']['from']),
-            $fromMatches);
-        return $fromMatches[0];
+        return $this->extractValidEmail(
+            reset($this->message['mail']['commonHeaders']['from']));
     }
     /**
      * Extract the name of the sender from the message received.
@@ -135,7 +132,7 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
             "/^([^<]+)/",
             reset($this->message['mail']['commonHeaders']['from']),
             $nameMatches);
-        return trim($nameMatches[0]);
+        return trim(trim($nameMatches[1]), '\'"');
     }
 
     /**
@@ -143,11 +140,8 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
      * @return string
      */
     public function getEmailTo() {
-        preg_match(
-            EmailProvider::EMAIL_REGEX,
-            reset($this->message['mail']['commonHeaders']['to']),
-            $toMatches);
-        return $toMatches[0];
+        return $this->extractValidEmail(
+            reset($this->message['mail']['commonHeaders']['to']));
     }
 
     /**
@@ -172,5 +166,25 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
         $body = $result['Body'] . "\n";
         error_log("EMAIL body: " . $body);
         return $body;
+    }
+
+    /**
+     * Parses and validates an assumed email address, returns either a valid email address
+     * or an empty string on failure.
+     *
+     * @param string $emailString
+     * @return string The matched email address or empty string
+     */
+    private function extractValidEmail($emailString) {
+        if (! filter_var($emailString, FILTER_VALIDATE_EMAIL) === false) {
+            return $emailString;
+        }
+        $matches = array();
+        if (preg_match(EmailProvider::EMAIL_REGEX, $emailString, $matches)) {
+            if (! filter_var($matches[1], FILTER_VALIDATE_EMAIL) === false) {
+                return $matches[1];
+            }
+        }
+        return "";
     }
 }
