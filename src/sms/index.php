@@ -9,8 +9,10 @@ $smsReq = new SmsRequest(Config::getInstance());
 // for short numbers keyword is set to the keyword entered,
 // otherwise it's a string constant.
 error_log(var_export($_REQUEST, true));
-$sender = $_REQUEST['sender'];
-if (isset($_REQUEST['source'])) {
+$sender = "";
+if (isset($_REQUEST['sender'])) {
+    $sender = $_REQUEST['sender'];
+} else if (isset($_REQUEST['source'])) {
     $sender = $_REQUEST['source'];
 }
 $smsReq->setSender($sender);
@@ -22,6 +24,8 @@ if (isset($_REQUEST["message"])) {
         $keyword = $_REQUEST["keyword"];
     }
     $message = "";
+    error_log("SMS Empty message: " .
+        var_export(! strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"]), true));
     if (! strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"])) {
         $message = trim($keyword . " " . $_REQUEST["message"]);
     }
