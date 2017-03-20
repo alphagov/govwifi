@@ -24,9 +24,7 @@ if (isset($_REQUEST["message"])) {
         $keyword = $_REQUEST["keyword"];
     }
     $message = "";
-    error_log("SMS Empty message: " .
-        var_export(! strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"]), true));
-    if (! strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"])) {
+    if (!(strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"]))) {
         $message = trim($keyword . " " . $_REQUEST["message"]);
     }
     $smsReq->setMessage($message);
