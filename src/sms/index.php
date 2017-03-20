@@ -21,7 +21,11 @@ if (isset($_REQUEST["message"])) {
         Config::FIRETEXT_EMPTY_KEYWORD != strtoupper($_REQUEST["keyword"])) {
         $keyword = $_REQUEST["keyword"];
     }
-    $smsReq->setMessage(trim($keyword . " " . $_REQUEST["message"]));
+    $message = "";
+    if (! strtolower(Config::FIRETEXT_EMPTY_MESSAGE) === strtolower($_REQUEST["message"])) {
+        $message = trim($keyword . " " . $_REQUEST["message"]);
+    }
+    $smsReq->setMessage($message);
 } else {
     $smsReq->setMessage($_REQUEST["content"]);
 }
