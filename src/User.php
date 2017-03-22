@@ -217,8 +217,10 @@ class User {
         # otherwise it will return a randomly generated one
         $db = DB::getInstance();
         $dblink = $db->getConnection();
+        $userRecord = false;
 
         if ($this->login) {
+            error_log("Loading user record for login: " . $this->login);
             $userRecord = $this->cache->get($this->login);
 
             if (!$userRecord) {
@@ -233,7 +235,8 @@ class User {
                     $this->cache->set($this->login, $userRecord);
                 }
             }
-        } else if ($this->identifier->validMobile) {
+        } else if (isset($this->identifier) && $this->identifier->validMobile) {
+            error_log("Loading user record for mobile: " . $this->identifier->text);
             $handle = $dblink->prepare(
                     'select * from userdetails where contact=?');
             $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
@@ -242,11 +245,14 @@ class User {
         }
 
         if ($userRecord) {
+            error_log("User record loaded.");
             $this->password = $userRecord['password'];
             $this->identifier = new Identifier($userRecord['contact']);
             $this->sponsor = new Identifier($userRecord['sponsor']);
             $this->email = $userRecord['email'];
         } else {
+            //TODO: wwhat?
+            error_log("No previous user record found, generating new password.");
             $this->newPassword();
         }
     }

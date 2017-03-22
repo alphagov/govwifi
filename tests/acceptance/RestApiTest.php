@@ -91,6 +91,8 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("172.17.0.6",        $result[0]['siteIP']);
     }
 
+    // The order of the tests below matters (!)
+
     /**
      * @coversNothing
      */
@@ -153,6 +155,52 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
                     'header'           => 'Content-type: application/json',
                     'content'          =>
                         TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_STOP, $userName)
+                )
+            ))
+        );
+        $this->assertEquals(TestConstants::HTTP_NO_DATA, $http_response_header[0]);
+        $this->assertEquals("", $response);
+    }
+
+    /**
+     * @coversNothing
+     */
+    public function testAccountingOn() {
+        $userName = TestConstants::getInstance()->getAcceptanceTestUserName();
+        $response = file_get_contents(
+            TestConstants::getBackendBaseUrl()
+            . TestConstants::accountingUrlForUser($userName),
+            false,
+            stream_context_create(array(
+                'http' => array(
+                    'method'           => 'POST',
+                    'protocol_version' => 1.0,
+                    'header'           => 'Content-type: application/json',
+                    'content'          =>
+                        TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_ON, $userName)
+                )
+            ))
+        );
+        $this->assertEquals(TestConstants::HTTP_NO_DATA, $http_response_header[0]);
+        $this->assertEquals("", $response);
+    }
+
+    /**
+     * @coversNothing
+     */
+    public function testAccountingOff() {
+        $userName = TestConstants::getInstance()->getAcceptanceTestUserName();
+        $response = file_get_contents(
+            TestConstants::getBackendBaseUrl()
+            . TestConstants::accountingUrlForUser($userName),
+            false,
+            stream_context_create(array(
+                'http' => array(
+                    'method'           => 'POST',
+                    'protocol_version' => 1.0,
+                    'header'           => 'Content-type: application/json',
+                    'content'          =>
+                        TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_OFF, $userName)
                 )
             ))
         );
