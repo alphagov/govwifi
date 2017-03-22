@@ -26,8 +26,8 @@
 <p>In your wifi settings:</p>
 <ol>
 <li style="font-weight: 400;">Enter your username and password.</li>
-<li>Check that the certificate is&nbsp;called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
-<li>If it is, select <strong>Trust</strong> when you see the message <strong>This network is not trusted</strong>.</li>
+<li>The message <strong>Not trusted</strong> means your phone doesn&rsquo;t recognise this wifi network yet. Check that the certificate is&nbsp;called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
+<li>If it is, select <strong>Trust</strong> so your phone recognises the wifi network.</li>
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. </p>
 <p>&nbsp;</p>
@@ -67,7 +67,7 @@
 <li style="font-weight: 400;">Select <strong>Next</strong>.</li>
 <li style="font-weight: 400;">Select <strong>Change connection settings</strong>.</li>
 <li style="font-weight: 400;">Select the <strong>Security</strong> tab and select <strong>Settings</strong>.</li>
-<li style="font-weight: 400;">Tick the <strong>Connect to these servers</strong> box. In the text box below it, enter <strong>wifi.service.gov.uk</strong></li>
+<li style="font-weight: 400;">Tick the <strong>Connect to these servers</strong> box. In the text box below it, enter <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong></li>
 <li style="font-weight: 400;">In the <strong>Trusted Root Certification Authorities</strong> list, select <strong>GeoTrust Primary Certification Authority - G3</strong>.</li>
 <li style="font-weight: 400;">Tick <strong>Enable Identity Privacy</strong> and enter <strong>anonymous</strong> to prevent your device from broadcasting your GovWifi username.</li>
 <li style="font-weight: 400;">Select <strong>Configure</strong>.</li>

@@ -27,11 +27,11 @@ iPhone or iPad instructions:
 
 In your wifi settings:
 1. Enter your username and password.
-2. Check that the certificate is called:
+2. The message Not trusted means your phone doesn’t recognise this wifi network yet. Check that the certificate is called:
 wifi.service.gov.uk
 and that it's issued by:
 GeoTrust DV SSL SHA256 CA
-3. If it is, select Trust when you see the message This network is not trusted.
+3. If it is, select Trust so your phone recognises the wifi network.
 
 Having problems connecting? Contact the helpdesk in your building.
 
