@@ -162,8 +162,8 @@ class Survey extends GovWifiBase {
                     " userdetails.contact = userdetails.sponsor AND "
                 ) : ""
             ) .
-            "((hour(timediff(now(), created_at)) * 60) + minute(timediff(now(), created_at))) < ?" .
-            " AND " .
+            "((hour(timediff(now(), userdetails.created_at)) * 60) ".
+            "+ minute(timediff(now(), userdetails.created_at))) < ? AND " .
             "userdetails.contact LIKE " . $contactCondition;
         error_log("SURVEY - Contact details SQL [" . $sql . "]");
         $handle = $this->db->getConnection()->prepare($sql);
