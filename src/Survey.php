@@ -151,7 +151,7 @@ class Survey extends GovWifiBase {
             "LEFT JOIN logs ON userdetails.username = logs.username ".
             "LEFT JOIN survey_logs " .
                 "ON (userdetails.username = survey_logs.username " .
-                "AND survey_logs.survey_setting_id = :survey_setting_id) " .
+                "AND survey_logs.survey_setting_id = ?) " .
             "WHERE ".
             "survey_logs.username IS NULL " .
             "NOT userdetails.survey_opt_out AND " .
@@ -162,12 +162,13 @@ class Survey extends GovWifiBase {
                     " userdetails.contact = userdetails.sponsor AND "
                 ) : ""
             ) .
-            "((hour(timediff(now(), created_at)) * 60) + minute(timediff(now(), created_at))) < " .
-            $timeDelayMinutes . " AND " .
+            "((hour(timediff(now(), created_at)) * 60) + minute(timediff(now(), created_at))) < ?" .
+            " AND " .
             "userdetails.contact LIKE " . $contactCondition;
         error_log("SURVEY - Contact details SQL [" . $sql . "]");
         $handle = $this->db->getConnection()->prepare($sql);
-        $handle->bindValue(':survey_setting_id', $surveySettingId, PDO::PARAM_INT);
+        $handle->bindValue(1, $surveySettingId);
+        $handle->bindValue(2, $timeDelayMinutes);
         $handle->execute();
         return $handle->fetchAll(PDO::FETCH_ASSOC);
     }
