@@ -86,6 +86,7 @@ class Survey extends GovWifiBase {
                         in_array($surveyConfig['journey_type'], self::SUCCESSFUL_JOURNEYS),
                         self::EMAIL_CONTACT_CONDITION,
                         $surveyConfig['time_delay_minutes'],
+                        $surveyConfig['survey_setting_id'],
                         true,
                         in_array($surveyConfig['journey_type'], self::SPONSORED_JOURNEYS)
                     );
@@ -99,11 +100,12 @@ class Survey extends GovWifiBase {
                     $contactDetails = $this->getContactDetails(
                         in_array($surveyConfig['journey_type'], self::SUCCESSFUL_JOURNEYS),
                         self::SMS_CONTACT_CONDITION,
-                        $surveyConfig['time_delay_minutes']
+                        $surveyConfig['time_delay_minutes'],
+                        $surveyConfig['survey_setting_id']
                     );
                     if (!empty($contactDetails)) {
                         error_log("SURVEY - Sending survey to [" . count($contactDetails) . "] mobile numbers.");
-
+                        $this->sendSmsToContacts($contactDetails, $surveyConfig);
                     } else {
                         error_log("SURVEY - no contacts found for [" . $surveyConfig['journey_type'] . "]");
                     }
@@ -136,16 +138,22 @@ class Survey extends GovWifiBase {
      * @param $loginSuccessful bool Have ever logged in successfully
      * @param $contactCondition string SQL LIKE condition to distinguish between email and mobile contacts
      * @param $timeDelayMinutes int The number of minutes passed since the user registered.
+     * @param $surveySettingId int The database ID of the survey setting record we're using for this survey
      * @param $sponsoredOnly bool Whether or not the journey is restricted to consider sponsored registrations
      * @param $sponsored bool If sponsoredOnly is true, this decides if we are looking at sponsored or self-signup.
      *
      * @return array Associative array containing the contact details.
      */
 
-    public function getContactDetails($loginSuccessful, $contactCondition, $timeDelayMinutes,
+    public function getContactDetails($loginSuccessful, $contactCondition, $timeDelayMinutes, $surveySettingId,
                                       $sponsoredOnly = false, $sponsored = false) {
-        $sql = "SELECT distinct(userdetails.contact) FROM userdetails " .
-            "LEFT JOIN logs ON userdetails.username = logs.username WHERE ".
+        $sql = "SELECT distinct(userdetails.contact), userdetails.username FROM userdetails " .
+            "LEFT JOIN logs ON userdetails.username = logs.username ".
+            "LEFT JOIN survey_logs " .
+                "ON (userdetails.username = survey_logs.username " .
+                "AND survey_logs.survey_setting_id = :survey_setting_id) " .
+            "WHERE ".
+            "survey_logs.username IS NULL " .
             "NOT userdetails.survey_opt_out AND " .
             "logs.username IS " . ($loginSuccessful ? "NOT " : "") . "NULL AND " .
             ($sponsoredOnly ?
@@ -159,6 +167,7 @@ class Survey extends GovWifiBase {
             "userdetails.contact LIKE " . $contactCondition;
         error_log("SURVEY - Contact details SQL [" . $sql . "]");
         $handle = $this->db->getConnection()->prepare($sql);
+        $handle->bindValue(':survey_setting_id', $surveySettingId, PDO::PARAM_INT);
         $handle->execute();
         return $handle->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -172,6 +181,7 @@ class Survey extends GovWifiBase {
         foreach ($contactDetails as $contactDetail) {
             $emailResponse = new EmailResponse();
             $emailResponse->sendSurvey($contactDetail['contact'], $surveyConfig);
+            $this->logSurvey($surveyConfig['survey_setting_id'], $contactDetail['username']);
         }
     }
 
@@ -184,6 +194,20 @@ class Survey extends GovWifiBase {
         foreach ($contactDetails as $contactDetail) {
             $smsResponse = new SmsResponse($contactDetail['contact']);
             $smsResponse->sendSurvey($surveyConfig);
+            $this->logSurvey($surveyConfig['survey_setting_id'], $contactDetail['username']);
         }
+    }
+
+    /**
+     * Save username and survey setting ID to the logs table.
+     * @param $surveySettingId
+     * @param $userName
+     */
+    public function logSurvey($surveySettingId, $userName) {
+        $sql = "INSERT INTO survey_logs(survey_setting_id, username) VALUES (:survey_setting_id, :username)";
+        $handle = $this->db->getConnection()->prepare($sql);
+        $handle->bindValue(':survey_setting_id', $surveySettingId, PDO::PARAM_INT);
+        $handle->bindValue(':username', $userName, PDO::PARAM_STR);
+        $handle->execute();
     }
 }
