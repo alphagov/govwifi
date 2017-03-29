@@ -115,6 +115,16 @@ class SmsResponse {
         $this->send();
     }
 
+    /**
+     * Send a survey text message to the contact, based on the survey configuration provided.
+     * @param $surveyConfig array the survey configuration array
+     */
+    public function sendSurvey($surveyConfig) {
+        $this->template = $surveyConfig['text_template'];
+        $this->personalisation['SURVEY'] = $surveyConfig['survey_url'];
+        $this->send();
+    }
+
     public function getTemplateForOs($os, $journey) {
         $config = Config::getInstance();
         if (empty($os)) {

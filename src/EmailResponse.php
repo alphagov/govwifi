@@ -92,6 +92,14 @@ class EmailResponse {
         $this->replaceInMessages("%FILENAME%", $this->fileName);
     }
 
+    public function sendSurvey($contact, $surveyConfig) {
+        $this->to = $contact;
+        $this->subject = $surveyConfig['email_subject'];
+        $this->setMessages($surveyConfig['email_template']);
+        $this->replaceInMessages("%SURVEY%", $surveyConfig['survey_url']);
+        $this->send();
+    }
+
     public function send($emailManagerAddress = NULL) {
         $config = Config::getInstance();
         // TODO(afoldesi-gds): (Low)Refactor out deprecated factory method.
@@ -143,7 +151,15 @@ class EmailResponse {
         }
     }
 
-    private function setMessages($templateFilePath) {
+    /**
+     * Sets the internal message templates based on the file path provided.
+     *
+     * The file path must exist and point to the plain text version of the email. If there is an HTML template
+     * corresponding with the file path (same file name in the html directory) it will also be loaded.
+     *
+     * @param $templateFilePath
+     */
+    public function setMessages($templateFilePath) {
         $this->message = file_get_contents($templateFilePath);
         $htmlTemplatePath =
             dirname($templateFilePath) .
@@ -156,7 +172,13 @@ class EmailResponse {
         }
     }
 
-    private function replaceInMessages($search, $replace) {
+    /**
+     * Perform a search and replace in both the plain text and html message templates.
+     *
+     * @param $search
+     * @param $replace
+     */
+    public function replaceInMessages($search, $replace) {
         $this->message = str_replace($search, $replace, $this->message);
         $this->htmlMessage = str_replace($search, $replace, $this->htmlMessage);
     }
