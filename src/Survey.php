@@ -153,7 +153,7 @@ class Survey extends GovWifiBase {
                 "ON (userdetails.username = survey_logs.username " .
                 "AND survey_logs.survey_setting_id = ?) " .
             "WHERE ".
-            "survey_logs.username IS NULL " .
+            "survey_logs.username IS NULL AND " .
             "NOT userdetails.survey_opt_out AND " .
             "logs.username IS " . ($loginSuccessful ? "NOT " : "") . "NULL AND " .
             ($sponsoredOnly ?
