@@ -170,7 +170,7 @@ class Survey extends GovWifiBase {
         $handle = $this->db->getConnection()->prepare($sql);
         $handle->bindValue(1, $surveyConfig['survey_setting_id']);
         $handle->bindValue(2, $surveyConfig['min_delay_minutes']);
-        $handle->bindValue(2, $surveyConfig['max_delay_minutes']);
+        $handle->bindValue(3, $surveyConfig['max_delay_minutes']);
         $handle->execute();
         return $handle->fetchAll(PDO::FETCH_ASSOC);
     }
