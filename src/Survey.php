@@ -43,6 +43,7 @@ class Survey extends GovWifiBase {
 
     const SMS_CONTACT_CONDITION = "'+%'";
     const EMAIL_CONTACT_CONDITION = "'%@%'";
+
     /**
      * Instance of the environment-specific Config class.
      * @var Config
@@ -85,8 +86,7 @@ class Survey extends GovWifiBase {
                     $contactDetails = $this->getContactDetails(
                         in_array($surveyConfig['journey_type'], self::SUCCESSFUL_JOURNEYS),
                         self::EMAIL_CONTACT_CONDITION,
-                        $surveyConfig['time_delay_minutes'],
-                        $surveyConfig['survey_setting_id'],
+                        $surveyConfig,
                         true,
                         in_array($surveyConfig['journey_type'], self::SPONSORED_JOURNEYS)
                     );
@@ -100,8 +100,7 @@ class Survey extends GovWifiBase {
                     $contactDetails = $this->getContactDetails(
                         in_array($surveyConfig['journey_type'], self::SUCCESSFUL_JOURNEYS),
                         self::SMS_CONTACT_CONDITION,
-                        $surveyConfig['time_delay_minutes'],
-                        $surveyConfig['survey_setting_id']
+                        $surveyConfig
                     );
                     if (!empty($contactDetails)) {
                         error_log("SURVEY - Sending survey to [" . count($contactDetails) . "] mobile numbers.");
@@ -134,18 +133,20 @@ class Survey extends GovWifiBase {
 
     /**
      * Retrieve the list of contact details for the users who have not opted out and are matching the conditions below.
+     * Checking the survey_logs table ensures that we never send the same survey twice to the user. However specifying
+     * the survey_setting_id means that we will potentially send 2 surveys to the same user if after the initial
+     * unsuccessful state they log in for the first time.
      *
      * @param $loginSuccessful bool Have ever logged in successfully
      * @param $contactCondition string SQL LIKE condition to distinguish between email and mobile contacts
-     * @param $timeDelayMinutes int The number of minutes passed since the user registered.
-     * @param $surveySettingId int The database ID of the survey setting record we're using for this survey
+     * @param $surveyConfig array The survey configuration associative array (survey_settings_view record)
      * @param $sponsoredOnly bool Whether or not the journey is restricted to consider sponsored registrations
      * @param $sponsored bool If sponsoredOnly is true, this decides if we are looking at sponsored or self-signup.
      *
      * @return array Associative array containing the contact details.
      */
 
-    public function getContactDetails($loginSuccessful, $contactCondition, $timeDelayMinutes, $surveySettingId,
+    public function getContactDetails($loginSuccessful, $contactCondition, $surveyConfig,
                                       $sponsoredOnly = false, $sponsored = false) {
         $sql = "SELECT distinct(userdetails.contact), userdetails.username FROM userdetails " .
             "LEFT JOIN logs ON userdetails.username = logs.username ".
@@ -163,12 +164,13 @@ class Survey extends GovWifiBase {
                 ) : ""
             ) .
             "((hour(timediff(now(), userdetails.created_at)) * 60) ".
-            "+ minute(timediff(now(), userdetails.created_at))) < ? AND " .
+            "+ minute(timediff(now(), userdetails.created_at))) BETWEEN ? AND ? AND " .
             "userdetails.contact LIKE " . $contactCondition;
         error_log("SURVEY - Contact details SQL [" . $sql . "]");
         $handle = $this->db->getConnection()->prepare($sql);
-        $handle->bindValue(1, $surveySettingId);
-        $handle->bindValue(2, $timeDelayMinutes);
+        $handle->bindValue(1, $surveyConfig['survey_setting_id']);
+        $handle->bindValue(2, $surveyConfig['min_delay_minutes']);
+        $handle->bindValue(2, $surveyConfig['max_delay_minutes']);
         $handle->execute();
         return $handle->fetchAll(PDO::FETCH_ASSOC);
     }
