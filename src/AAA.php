@@ -33,10 +33,14 @@ class AAA {
     const ACCOUNTING_TYPE_START     = 1;
     const ACCOUNTING_TYPE_STOP      = 2;
     const ACCOUNTING_TYPE_INTERIM   = 3;
+    const ACCOUNTING_TYPE_ON        = 7;
+    const ACCOUNTING_TYPE_OFF       = 8;
     const ACCEPTED_ACCOUNTING_TYPES = [
         self::ACCOUNTING_TYPE_START,
         self::ACCOUNTING_TYPE_STOP,
-        self::ACCOUNTING_TYPE_INTERIM
+        self::ACCOUNTING_TYPE_INTERIM,
+        self::ACCOUNTING_TYPE_ON,
+        self::ACCOUNTING_TYPE_OFF
     ];
     const HTTP_RESPONSE_OK          = "200 OK";
     const HTTP_RESPONSE_NO_CONTENT  = "204 OK";
@@ -227,6 +231,8 @@ class AAA {
      * storage.
      */
     public function accounting() {
+        error_log("Accounting JSON: " . $this->requestJson);
+
         $acct = json_decode($this->requestJson, true);
         $accountingType = $acct['Acct-Status-Type']['value'][0];
 
@@ -242,8 +248,10 @@ class AAA {
                 $this->user->login . $acct['Acct-Session-Id']['value'][0],
                 Cache::getInstance());
 
+        error_log("Acct type: " . $accountingType);
         switch ($accountingType) {
             case self::ACCOUNTING_TYPE_START:
+            case self::ACCOUNTING_TYPE_ON:
                 // Acct Start - Store session in Memcache
                 $this->session->login = $this->user->login;
                 $this->session->startTime = time();
@@ -255,13 +263,17 @@ class AAA {
                 $this->session->writeToCache();
                 error_log(
                         "Accounting start: "
+                        . "[" . $accountingType . "] "
                         . $this->session->login . " "
                         . $this->session->id);
                 $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 break;
             case self::ACCOUNTING_TYPE_STOP:
-                // Acct Stop - store record in DB -
-                // if there is no start record do nothing.
+            case self::ACCOUNTING_TYPE_OFF:
+                // Acct Stop - store record in DB
+
+                // If there is no start record do nothing and return the default error message.
+                // The RADIUS frontend will not respond to the client if this happens.
                 if ($this->session->startTime) {
                     $this->session->inOctets +=
                             $acct['Acct-Input-Octets']['value'][0];
@@ -271,11 +283,7 @@ class AAA {
                     $this->session->deleteFromCache();
                     error_log(
                             "Accounting stop: "
-                            . $this->session->login . " "
-                            . $this->session->id);
-
-                    error_log(
-                            "Accounting stop: "
+                            . "[" . $accountingType . "] "
                             . $this->session->login . " "
                             . $this->session->id
                             . " InMB: " . $this->session->inMB()
@@ -301,6 +309,9 @@ class AAA {
                             . $this->session->id);
                     $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 }
+                break;
+            default:
+                error_log("Accounting request type not recognised: (default) [" . $accountingType . "]");
                 break;
         }
     }

@@ -31,6 +31,8 @@ class TestConstants {
     const ACCOUNTING_DATA_FILE_START      = "tests/acceptance/config/radius-accounting-start.json";
     const ACCOUNTING_DATA_FILE_STOP       = "tests/acceptance/config/radius-accounting-stop.json";
     const ACCOUNTING_DATA_FILE_INTERIM    = "tests/acceptance/config/radius-accounting-interim.json";
+    const ACCOUNTING_DATA_FILE_ON         = "tests/acceptance/config/radius-accounting-on.json";
+    const ACCOUNTING_DATA_FILE_OFF        = "tests/acceptance/config/radius-accounting-off.json";
     const FIXTURE_EMAIL_SPONSOR_MULTIPART = "tests/unit/fixtures/email-sponsor-multipart.txt";
     const FIXTURE_EMAIL_SPONSOR_SHORT     = "tests/unit/fixtures/email-sponsor-shortnumber.txt";
     const FIXTURE_EMAIL_SPONSOR_SHORT2    = "tests/unit/fixtures/email-sponsor-shortnumber2.txt";
@@ -184,8 +186,14 @@ class TestConstants {
             case AAA::ACCOUNTING_TYPE_START:
                 $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_START);
                 break;
+            case AAA::ACCOUNTING_TYPE_ON:
+                $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_ON);
+                break;
             case AAA::ACCOUNTING_TYPE_STOP:
                 $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_STOP);
+                break;
+            case AAA::ACCOUNTING_TYPE_OFF:
+                $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_OFF);
                 break;
             case AAA::ACCOUNTING_TYPE_INTERIM:
                 $jsonData = file_get_contents(self::ACCOUNTING_DATA_FILE_INTERIM);
