@@ -94,6 +94,7 @@ class SmsRequest {
                 "",
                 $this->message));
         $this->messageWords = explode(' ', $this->message);
+        error_log("SMS MessageWords:" . var_export($this->messageWords, true));
     }
 
     public function verify() {

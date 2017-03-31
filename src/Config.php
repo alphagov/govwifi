@@ -6,6 +6,7 @@ use Exception;
 class Config {
     const HEALTH_CHECK_USER      = "HEALTH";
     const FIRETEXT_EMPTY_KEYWORD = "NON-SPECIFIED";
+    const FIRETEXT_EMPTY_MESSAGE = "No Message Content";
     const SERVICE_NAME           = "GovWifi";
     private static $instance;
     public $values;

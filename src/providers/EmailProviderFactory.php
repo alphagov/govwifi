@@ -34,6 +34,5 @@ class EmailProviderFactory extends GovWifiBase {
                 ]
             ])
         ]);
-
     }
 }
