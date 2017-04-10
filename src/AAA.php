@@ -10,19 +10,14 @@ class AAA {
     const URL_MAC                   = "mac";
     const URL_AP                    = "ap";
     const URL_SITE                  = "site";
-    const URL_KIOSK_IP              = "kioskip";
     const URL_RESULT                = "result";
-    const URL_PHONE                 = "phone";
-    const URL_CODE                  = "code";
     const TYPE_AUTHORIZE            = "authorize";
     const TYPE_POST_AUTH            = "post-auth";
     const TYPE_ACCOUNTING           = "accounting";
-    const TYPE_ACTIVATE             = "activate";
     const ACCEPTED_REQUEST_TYPES    = [
         self::TYPE_AUTHORIZE,
         self::TYPE_ACCOUNTING,
         self::TYPE_POST_AUTH,
-        self::TYPE_ACTIVATE
     ];
     const AUTH_RESULT_ACCEPT        = "Access-Accept";
     const AUTH_RESULT_REJECT        = "Access-Reject";
@@ -53,6 +48,11 @@ class AAA {
     public $siteIP;
     public $site;
     public $type;
+    /**
+     * The result of the RADIUS authentication.
+     * @var string
+     */
+    public $result;
     private $responseHeader;
     private $responseBody;
     private $requestJson;
@@ -60,8 +60,6 @@ class AAA {
      * @var Session
      */
     private $session;
-    public $result;
-    public $kioskKey;
 
     /**
      * @var string The request url.
@@ -126,22 +124,11 @@ class AAA {
                     $this->site = new Site;
                     $this->site->loadByIp($this->siteIP);
                     break;
-                case self::URL_KIOSK_IP:
-                    $this->site = new Site;
-                    $this->site->loadByKioskIp($parts[$x + 1]);
-                    break;
                 case self::URL_RESULT:
                     $this->result = $parts[$x + 1];
                     if (! in_array($this->result, self::ACCEPTED_AUTH_RESULTS)) {
                         throw new Exception("Auth result [" . $this->result . "] is not recognized.");
                     }
-                    break;
-                case self::URL_PHONE:
-                    $this->user = new User(Cache::getInstance(), Config::getInstance());
-                    $this->user->identifier = new Identifier($parts[$x + 1]);
-                    break;
-                case self::URL_CODE:
-                    $this->kioskKey = $parts[$x + 1];
                     break;
             }
         }
@@ -151,8 +138,7 @@ class AAA {
      * Process the request provided in the constructor based
      * on the type of the request.
      *
-     * Supported request types are: authorize, post-auth, accounting
-     * and activate.
+     * Supported request types are: authorize, post-auth, accounting.
      *
      * @return array the response headers and body to be returned for the request
      * format:
@@ -170,9 +156,6 @@ class AAA {
             case self::TYPE_ACCOUNTING:
                 $this->accounting();
                 break;
-            case self::TYPE_ACTIVATE:
-                $this->activate();
-                break;
         }
 
         $httpProtocol = self::DEFAULT_HTTP_PROTOCOL;
@@ -187,38 +170,6 @@ class AAA {
             ],
             'body'    => $this->responseBody
         ];
-    }
-
-    public function kioskKeyValid() {
-        if (strtoupper($this->site->kioskKey) == strtoupper($this->kioskKey)) {
-            return true;
-        } else {
-            error_log($this->site->kioskKey . " " . $this->kioskKey);
-            return false;
-        }
-    }
-
-    public function activate() {
-        error_log("Site ID: ".$this->site->id);
-
-        if (($this->site->id) && $this->kioskKeyValid()) {
-            if (isset($this->user->identifier)
-                && $this->user->identifier->validMobile) {
-                // insert an activation entry
-                $this->user->kioskActivate($this->site->id);
-                $this->user->loadRecord();
-                if (!$this->user->login) {
-                     $sms = new SmsResponse($this->user->identifier->text);
-                     $sms->setReply();
-                     $sms->sendTerms();
-                }
-            } else {
-                // TODO: print.
-                print $this->site->getDailyCode();
-            }
-        } else {
-            $this->responseHeader = "404 Not Found";
-        }
     }
 
     /**
@@ -274,6 +225,7 @@ class AAA {
 
                 // If there is no start record do nothing and return the default error message.
                 // The RADIUS frontend will not respond to the client if this happens.
+                // TODO: add logging for failed case so we can generate a metric in CloudWatch.
                 if ($this->session->startTime) {
                     $this->session->inOctets +=
                             $acct['Acct-Input-Octets']['value'][0];
@@ -397,8 +349,6 @@ class AAA {
      *
      * If the site is restricted by an activation regex, the user's email
      * is checked against this.
-     * If this check fails the user could still be authorized if she has
-     * a valid daily code already activated for the current site.
      */
     public function authorize() {
         // Return immediately for health checks.
@@ -422,12 +372,7 @@ class AAA {
                     "Restricted site: "
                     . $this->site->activationRegex
                     . " Users email: " . $this->user->email);
-                // or the user has activated at this site
-                if ($this->user->activatedHere($this->site)) {
-                    $this->authorizeResponse(TRUE);
-                } else {
-                    $this->authorizeResponse(FALSE);
-                }
+                $this->authorizeResponse(FALSE);
             }
         }
     }

@@ -21,9 +21,8 @@ class PDF {
         $this->message = str_replace("%RADKEY%", $site->radKey, $this->message);
         $this->message = str_replace(
                 "%DESCRIPTION%", $site->name, $this->message);
-        $this->message = str_replace(
-                "%KIOSKKEY%", $site->kioskKey, $this->message);
         $radiusIpList = explode(",", str_replace("/32", "", $config->values['radiusIPs']));
+
         // TODO: think about further splitting this by region.
         shuffle($radiusIpList);
         $this->message = str_replace(

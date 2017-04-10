@@ -44,9 +44,6 @@ class SmsRequest {
         $firstWord = "_" . $this->messageWords[0];
         error_log("SMS first word:*" . $firstWord . "*");
         switch ($firstWord) {
-            case "_security":
-                $this->security();
-                break;
             case "_new":
             case "_newpassword":
                 $this->newPassword();
@@ -56,12 +53,6 @@ class SmsRequest {
                 break;
             case "_agree":
                 $this->signUp();
-                break;
-            case (preg_match("/^_[0-9]{4}$/", $firstWord) ? true : false):
-                $this->dailyCode();
-                break;
-            case (preg_match("/^_[0-9]{6}$/", $firstWord) ? true : false):
-                $this->verify();
                 break;
             default:
                 $this->other();
@@ -95,43 +86,6 @@ class SmsRequest {
                 $this->message));
         $this->messageWords = explode(' ', $this->message);
         error_log("SMS MessageWords:" . var_export($this->messageWords, true));
-    }
-
-    public function verify() {
-        error_log(
-                "SMS: Received an email verification code from " .
-                $this->sender->text);
-        $user = new User(Cache::getInstance(), $this->config);
-        $user->identifier = $this->sender;
-        $user->codeVerify($this->messageWords[0]);
-    }
-
-    public function dailyCode() {
-        $user = new User(Cache::getInstance(), $this->config);
-        $user->identifier = $this->sender;
-        $sms = new SmsResponse($this->sender->text);
-        $sms->setReply();
-        $login = $user->codeActivate($this->messageWords[0]);
-        error_log(
-            "SMS: Received a daily code from " .
-                $this->sender->text . " User: " . $login);
-        if ($login) {
-            $sms->sendDailyCodeConfirmation();
-            error_log(
-                "SMS: Account exists, sending activation response to " .
-                    $this->sender->text);
-        } else {
-            $sms->sendTerms();
-            error_log("SMS: No account, sending terms to " .
-                    $this->sender->text);
-        }
-    }
-
-    public function security() {
-        error_log("SMS: Security info request from " . $this->sender->text);
-        $sms = new SmsResponse($this->sender->text);
-        $sms->setReply();
-        $sms->sendSecurityInfo();
     }
 
     public function help() {

@@ -7,7 +7,6 @@ use PDOException;
 
 class Site {
     public $radKey;
-    public $kioskKey;
     public $name;
     public $org_id;
     public $org_name;
@@ -17,48 +16,26 @@ class Site {
     public $postcode;
     public $dataController;
     public $address;
-    public $dailyCode;
-    public $dailyCodeDate;
 
     public function writeRecord() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        // TODO: dailycode and dailycodedate only populated on update.
-        $handle = $dblink->prepare('insert into site (id, radkey, kioskkey, datacontroller, address, postcode, activation_regex, activation_days, org_id)
-         VALUES (:id, :radkey, :kioskkey, :datacontroller, :address, :postcode, :activation_regex, :activation_days, :org_id)
-                on duplicate key update radkey=:radkey, kioskkey=:kioskkey, datacontroller=:datacontroller, address=:address
-                ,postcode=:postcode, activation_regex=:activation_regex, activation_days=:activation_days, org_id = :org_id, dailycode=:dailycode, dailycodedate=:dailycodedate');
+        $handle = $dblink->prepare('insert into site (id, radkey, datacontroller, address, postcode, activation_regex, activation_days, org_id)
+         VALUES (:id, :radkey, :datacontroller, :address, :postcode, :activation_regex, :activation_days, :org_id)
+                on duplicate key update radkey=:radkey, datacontroller=:datacontroller, address=:address,
+                postcode=:postcode, activation_regex=:activation_regex, activation_days=:activation_days, org_id = :org_id');
         $handle->bindValue(':id', $this->id, PDO::PARAM_INT);
         $handle->bindValue(':radkey', $this->radKey, PDO::PARAM_STR);
-        $handle->bindValue(':kioskkey', $this->kioskKey, PDO::PARAM_STR);
         $handle->bindValue(':datacontroller', $this->dataController, PDO::PARAM_STR);
         $handle->bindValue(':address', $this->name, PDO::PARAM_STR);
         $handle->bindValue(':postcode', $this->postcode, PDO::PARAM_STR);
         $handle->bindValue(':activation_regex', $this->activationRegex, PDO::PARAM_STR);
         $handle->bindValue(':activation_days', $this->activationDays, PDO::PARAM_STR);
         $handle->bindValue(':org_id', $this->org_id, PDO::PARAM_INT);
-        $handle->bindValue(':dailycode', $this->dailyCode, PDO::PARAM_STR);
-        $handle->bindValue(':dailycodedate', $this->dailyCodeDate, PDO::PARAM_INT);
         $handle->execute();
         if (!$this->id) {
             $this->id = $dblink->lastInsertId();
         }
-    }
-
-    public function getDailyCode() {
-        if ($this->dailyCodeDate <> date("z")) {
-            $config = Config::getInstance();
-            $length = $config->values['daily-code']['length'];
-            $pattern = $config->values['daily-code']['regex'];
-            $pass = preg_replace(
-                    $pattern, "",
-                    base64_encode($this->strongRandomBytes($length * 4)));
-            $this->dailyCode = substr($pass, 0, $length);
-            $this->dailyCodeDate = date("z");
-            $this->writeRecord();
-        }
-
-        return $this->dailyCode;
     }
 
     private function loadRow($row) {
@@ -70,10 +47,7 @@ class Site {
         $this->activationDays = $row['activation_days'];
         $this->id = $row['site_id'];
         $this->radKey = $row['radkey'];
-        $this->kioskKey = $row['kioskkey'];
         $this->org_name = $row['org_name'];
-        $this->dailyCode = $row['dailycode'];
-        $this->dailyCodeDate = $row['dailycodedate'];
     }
 
     public function getWhitelist() {
@@ -130,47 +104,18 @@ class Site {
         return $updated;
     }
 
-    public function loadByKioskIp($ipAddr) {
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare('select site.id as site_id,
-                                    radkey,
-                                    kioskkey,
-                                    datacontroller,
-                                    address,
-                                    postcode,
-                                    activation_regex,
-                                    activation_days,
-                                    org_id,
-                                    organisation.name as org_name,
-                                    dailycode,
-                                    dailycodedate
-                                    from site, organisation, sourceip
-                                    WHERE organisation.id = site.org_id
-                                    and site.id=sourceip.site_id
-                                    and ? between sourceip.min
-                                    and sourceip.max');
-        $handle->bindValue(1, ip2long($ipAddr), PDO::PARAM_INT);
-        $handle->execute();
-        $row = $handle->fetch(\PDO::FETCH_ASSOC);
-        $this->loadRow($row);
-    }
-
     public function loadByIp($ipAddr) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
                                     radkey,
-                                    kioskkey,
                                     datacontroller,
                                     address,
                                     postcode,
                                     activation_regex,
                                     activation_days,
                                     org_id,
-                                    organisation.name as org_name,
-                                    dailycode,
-                                    dailycodedate
+                                    organisation.name as org_name
                                     from site, organisation, siteip
                                     WHERE organisation.id = site.org_id
                                     and site.id=siteip.site_id
@@ -186,16 +131,13 @@ class Site {
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
                                     radkey,
-                                    kioskkey,
                                     datacontroller,
                                     address,
                                     postcode,
                                     activation_regex,
                                     activation_days,
                                     org_id,
-                                    organisation.name as org_name,
-                                    dailycode,
-                                    dailycodedate
+                                    organisation.name as org_name
                                     from site, organisation
                                     WHERE organisation.id = site.org_id
                                     and site.address = ?');
@@ -240,17 +182,15 @@ class Site {
     public function setRadKey() {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $handle = $dbLink->prepare('select radkey, kioskkey from site WHERE address=? and org_id=?');
+        $handle = $dbLink->prepare('select radkey from site WHERE address=? and org_id=?');
         $handle->bindValue(1, $this->name, PDO::PARAM_STR);
         $handle->bindValue(2, $this->org_id, PDO::PARAM_INT);
         $handle->execute();
         $row = $handle->fetch(PDO::FETCH_ASSOC);
         if ($row) {
             $this->radKey = $row['secret'];
-            $this->kioskKey = $row['kioskkey'];
         } else {
             $this->generateRandomRadKey();
-            $this->generateRandomKioskKey();
         }
     }
 
@@ -262,16 +202,6 @@ class Site {
                 $pattern, "",
                 base64_encode($this->strongRandomBytes($length * 4)));
         $this->radKey = substr($pass, 0, $length);
-    }
-
-    private function generateRandomKioskKey() {
-        $config = Config::getInstance();
-        $length = $config->values['kiosk-password']['length'];
-        $pattern = $config->values['kiosk-password']['regex'];
-        $pass = preg_replace(
-                $pattern, "",
-                base64_encode($this->strongRandomBytes($length * 10)));
-        $this->kioskKey = substr($pass, 0, $length);
     }
 
     private function strongRandomBytes($length) {

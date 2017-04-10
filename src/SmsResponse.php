@@ -72,21 +72,6 @@ class SmsResponse {
         $this->send();
     }
 
-    public function sendRestrictedSiteHelpEmailUnset(Site $site) {
-        $config = Config::getInstance();
-        $this->personalisation['ADDRESS'] = $site->name;
-        $this->personalisation['WHITELIST'] = $site->getWhitelist();
-        $this->template = $config->values['notify']['restricted-site-email-unset'];
-        $this->send();
-    }
-
-    public function sendRestrictedSiteHelpEmailSet(Site $site) {
-        $config = Config::getInstance();
-        $this->personalisation['ADDRESS'] = $site->name;
-        $this->template = $config->values['notify']['restricted-site-email-set'];
-        $this->send();
-    }
-
     public function sendHelp($journey) {
         $config = Config::getInstance();
         $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
@@ -98,12 +83,6 @@ class SmsResponse {
         $config = Config::getInstance();
         $this->personalisation['KEYWORD'] = $config->values['reply-keyword'];
         $this->template = $config->values['notify']['terms'];
-        $this->send();
-    }
-
-    public function sendDailyCodeConfirmation() {
-        $config = Config::getInstance();
-        $this->template = $config->values['notify']['daily-code-confirmation'];
         $this->send();
     }
 

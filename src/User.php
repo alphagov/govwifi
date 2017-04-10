@@ -58,54 +58,6 @@ class User {
         $this->sendCredentials($message, $selfSignup, $senderName, $journey);
     }
 
-    public function kioskActivate($site_id) {
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare(
-                'insert into activation (site_id, contact) '
-                . 'values (:siteId,:contact)');
-        $handle->bindValue(':siteId', $site_id, PDO::PARAM_INT);
-        $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
-        $handle->execute();
-    }
-
-    public function codeActivate($code) {
-        $this->loadRecord();
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare(
-                'insert into activation (dailycode, contact) '
-                . 'values (:dailycode,:contact)');
-        $handle->bindValue(':dailycode', $code, PDO::PARAM_INT);
-        $handle->bindValue(':contact', $this->identifier->text, PDO::PARAM_STR);
-        $handle->execute();
-        return $this->login;
-    }
-
-    public function codeVerify($code) {
-        $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare(
-                'select email from verify where code = :code');
-        $handle->bindValue(':code', $code, PDO::PARAM_STR);
-        $handle->execute();
-        $row = $handle->fetch(PDO::FETCH_ASSOC);
-
-        if ($row) {
-            $handle = $dblink->prepare('delete from verify where code = :code');
-            $handle->bindValue(':code', $code, PDO::PARAM_STR);
-            $handle->execute();
-
-            $handle = $dblink->prepare(
-                    'update userdetails set email = :email '
-                    . 'where contact = :contact');
-            $handle->bindValue(':email', $row['email'], PDO::PARAM_STR);
-            $handle->bindValue(':contact', $this->identifier->text,
-                    PDO::PARAM_STR);
-            $handle->execute();
-        }
-    }
-
     /**
      * Send the generated credentials to the user, in an email or text message, based on the user's main contact.
      *
@@ -127,53 +79,6 @@ class User {
             $email = new EmailResponse();
             $email->to = $this->identifier->text;
             $email->signUp($this, $selfSignup, $senderName);
-        }
-    }
-
-    public function activatedHere(Site $site) {
-        if ($this->identifier->validMobile) {
-            $db = DB::getInstance();
-            $dblink = $db->getConnection();
-            $handle = $dblink->prepare(
-                    'SELECT IF ((date(now()) - max(date(`activated`)))
-                    <site.activation_days,"YES","NO") as valid,
-                    IF (count(1)=0,"YES","NO") as firstvisit
-                    FROM activation,site
-                    WHERE (activation.site_id = site.id
-                    OR activation.dailycode = site.dailycode)
-                    AND site_id = ? AND contact = ?');
-            $handle->bindValue(1, $site->id, PDO::PARAM_INT);
-            $handle->bindValue(2, $this->identifier->text, PDO::PARAM_STR);
-            $handle->execute();
-            $row = $handle->fetch(PDO::FETCH_ASSOC);
-            if ($row['valid'] == "YES") {
-                return true;
-            } else {
-                if ($row['firstvisit'] == "YES") {
-                    // Send text message the first time a user enters a building
-                    error_log(
-                        "SMS: Sending restricted building to " .
-                        $this->identifier->text);
-                    $sms = new SmsResponse($this->identifier->text);
-                    $sms->setReply();
-
-                    if ($this->email) {
-                        $sms->sendRestrictedSiteHelpEmailSet($site);
-                    } else {
-                        $sms->sendRestrictedSiteHelpEmailUnset($site);
-                    }
-                    // Put an entry in the activations database with a date of 0
-                    $handle = $dblink->prepare(
-                            'insert into activation '
-                            . '(activated, site_id, contact) values (0, ?, ?)');
-                    $handle->bindValue(1, $site->id, PDO::PARAM_INT);
-                    $handle->bindValue(2, $this->identifier->text,
-                            PDO::PARAM_STR);
-                    $handle->execute();
-                }
-                // TODO(afoldesi-gds): Discuss moving this to the last line.
-                return false;
-            }
         }
     }
 

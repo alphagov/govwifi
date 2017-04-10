@@ -107,9 +107,6 @@ class EmailRequest extends GovWifiBase {
                 case "signup":
                     $this->signUp();
                     break;
-                case "verify":
-                    $this->verify();
-                    break;
                 case "sponsor":
                     $this->sponsor();
                     break;
@@ -154,8 +151,6 @@ class EmailRequest extends GovWifiBase {
         if ($success) {
             $email = new EmailResponse;
             $email->to = $this->emailFrom->text;
-            // TODO: There's no verify() in EmailResponse.
-            //$email->verify($code);
             $email->send();
         }
     }
