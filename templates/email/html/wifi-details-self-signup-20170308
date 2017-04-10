@@ -13,11 +13,11 @@
 
 
 <h3 id="android">Android devices:</h3>
-<p>In your wifi settings (scroll down):</p>
+<p>In your wifi settings:</p>
 <ol>
 <li> In the <strong>EAP method</strong> field, select <strong>PEAP</strong>.</li>
 <li> In the <strong>Phase 2 authentication</strong> field, select <strong>MSCHAPV2</strong>.</li>
-<li> Enter your username (in the <strong>Identity</strong> field) and password.</li>
+<li> Enter your username (in the <strong>Identity</strong> field), scroll down and enter your password.</li>
 </ol>
 <p>Having problems connecting? Contact the helpdesk in your building. </p>
 <p>&nbsp;</p>
