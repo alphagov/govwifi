@@ -355,29 +355,29 @@ class EmailRequest extends GovWifiBase {
                 $site->addSourceIPs($newSiteSourceIPs);
             }
 
-            // Create the site information pdf
-            $pdf = new PDF();
-            $pdf->populateNewSite($site);
-            $report = new Report;
-            $report->orgAdmin = $orgAdmin;
-            $report->getIPList($site);
-            $pdf->generatePDF($report);
 
             // Create email response and attach the pdf
             $email = new EmailResponse;
             $email->to = $orgAdmin->email;
             if ($outcome) {
                 $email->newSite($action, $outcome, $site);
+                // Create the site information pdf
+                $pdf = new PDF();
+                $pdf->populateNewSite($site);
+                $report = new Report;
+                $report->orgAdmin = $orgAdmin;
+                $report->getIPList($site);
+                $pdf->generatePDF($report);
+                $email->fileName = $pdf->filename;
+                $email->filePath = $pdf->filepath;
+                // Create sms response for the code
+                $sms = new SmsResponse($orgAdmin->mobile);
+                $sms->sendNewsitePassword($pdf);
             } else {
                 $email->newSiteBlank($site);
             }
-            $email->fileName = $pdf->filename;
-            $email->filePath = $pdf->filepath;
             $email->send($orgAdmin->emailManagerAddress);
 
-            // Create sms response for the code
-            $sms = new SmsResponse($orgAdmin->mobile);
-            $sms->sendNewsitePassword($pdf);
         } else {
             error_log(
                 "EMAIL: Ignoring new site request from : "
