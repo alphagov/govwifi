@@ -328,7 +328,7 @@ class EmailRequest extends GovWifiBase {
         $email = new EmailResponse;
         $email->to = $orgAdmin->email;
         if (!$site->id && count($newSiteIPs) == 0 && count($newSiteSourceIPs) == 0) {
-            $email->newSiteBlank($site);
+            $email->newSiteBlank($this->emailSubject);
             $email->send($orgAdmin->emailManagerAddress);
             return;
         }

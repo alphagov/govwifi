@@ -57,9 +57,9 @@ class EmailResponse {
         $this->replaceInMessages("%ATTRIBUTES%", $site->attributesText());
     }
 
-    public function newSiteBlank($site) {
+    public function newSiteBlank($subject) {
         $config = Config::getInstance();
-        $this->subject = $site->name;
+        $this->subject = $subject;
         $this->setMessages($config->values['email-messages']['newsite-help-file']);
     }
 
