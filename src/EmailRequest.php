@@ -125,58 +125,6 @@ class EmailRequest extends GovWifiBase {
         return false;
     }
 
-    public function verify() {
-        $dblink = $this->db->getConnection();
-        $handle = $dblink->prepare('delete from verify where email = :email');
-        $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
-        $handle->execute();
-        $handle = $dblink->prepare(
-                'insert into verify (code, email) values (:code,:email)');
-        $handle->bindValue(':email', $this->emailFrom->text, PDO::PARAM_STR);
-        $attempts = 0;
-        $success = false;
-
-        while (!$success && $attempts < 10) {
-            try {
-                $attempts++;
-                $code = $this->generateRandomVerifyCode();
-                $handle->bindValue(':code', $code, PDO::PARAM_STR);
-                $handle->execute();
-                $success = true;
-            } catch (PDOException $e) {
-                $success = false;
-            }
-        }
-
-        if ($success) {
-            $email = new EmailResponse;
-            $email->to = $this->emailFrom->text;
-            $email->send();
-        }
-    }
-
-    private function generateRandomVerifyCode() {
-        $length  = $this->config->values['verify-code']['length'];
-        $pattern = $this->config->values['verify-code']['regex'];
-        $pass = preg_replace(
-                $pattern,
-                "",
-                base64_encode($this->strongRandomBytes($length * 10)));
-        return substr($pass, 0, $length);
-    }
-
-    private function strongRandomBytes($length) {
-        $strong = false; // Flag for whether a strong algorithm was used
-        $bytes = openssl_random_pseudo_bytes($length, $strong);
-
-        if (!$strong) {
-            // System did not use a cryptographically strong algorithm
-            throw new Exception('Strong algorithm not available for PRNG.');
-        }
-
-        return $bytes;
-    }
-
     public function signUp() {
         // Self service signup request
         if ($this->fromAuthDomain()) {
