@@ -1,0 +1,11 @@
+You have been enrolled to the GovWifi wireless internet service by %SPONSOR%.
+When you get to a participating building please connect to the wireless network called GovWifi, and log on using your credentials below:
+username: %LOGIN%
+password: %PASS%
+
+Checking the certificate is the only way to ensure that you are connecting to the real GovWifi network. When you connect, your device should offer you either a certificate called wifi.service.gov.uk issed by GeoTrust or
+Thumbprint: %THUMBPRINT%
+
+If these do not match, disconnect or your privacy will be compromised.
+
+You must not use this service for any unlawful activities. Use this service at your own risk

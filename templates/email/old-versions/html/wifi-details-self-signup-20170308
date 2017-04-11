@@ -1,0 +1,101 @@
+<p>Hello,</p>
+<p>Thank you for asking to connect to GovWifi.</p>
+
+<p>GovWifi is a secure wifi service.</p>
+
+<p>You only need to register once. You&rsquo;ll then access GovWifi wherever it&rsquo;s available.</p>
+<p><strong>Your username: %LOGIN%</strong><br />
+<strong>Your password: %PASS%</strong></p>
+
+<p>When you arrive at a government building where GovWifi is available, go to your wifi settings, select GovWifi and enter your details.</p>
+
+<p>Scroll down to find instructions for your device, or view the instructions online:&nbsp;<a href="https://www.gov.uk/govwifi">https://www.gov.uk/govwifi</a></p>
+
+
+<h3 id="android">Android devices:</h3>
+<p>In your wifi settings:</p>
+<ol>
+<li> In the <strong>EAP method</strong> field, select <strong>PEAP</strong>.</li>
+<li> In the <strong>Phase 2 authentication</strong> field, select <strong>MSCHAPV2</strong>.</li>
+<li> Enter your username (in the <strong>Identity</strong> field), scroll down and enter your password.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+<h3 id="iphoneipad">iPhone or iPad:</h3>
+<p>In your wifi settings:</p>
+<ol>
+<li style="font-weight: 400;">Enter your username and password.</li>
+<li>The message <strong>Not trusted</strong> means your phone doesn&rsquo;t recognise this wifi network yet. Check that the certificate is&nbsp;called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
+<li>If it is, select <strong>Trust</strong> so your phone recognises the wifi network.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+
+<h3 id="mac">Mac, iMac or Macbook:</h3>
+<p>In your wifi settings:</p>
+<ol>
+<li>Enter your GovWifi username and password.</li>
+<li>Select <strong>Show Certificate</strong>, then check that the certificate is called <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong> and that it is issued by <strong>GeoTrust DV SSL SHA256 CA</strong>.</li>
+<li>If so, select <strong>Continue</strong>.</li>
+<li>Enter your computer password to save these settings.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+
+<h3 id="windows8or10">Windows 8 or 10:</h3>
+<p>In your wifi settings:</p>
+<ol>
+<li>Select <strong>GovWifi</strong>, then <strong>Connect</strong>.</li>
+<li>Enter your username and password and select <strong>OK</strong>.</li>
+<li>When you see <strong>Continue connecting</strong>, select <strong>Show certificate details</strong>.</li>
+<li>Check that the <strong>Server thumbprint</strong> ends in: 93 74 A5 15 5A</li>
+<li>If it matches, select <strong>Connect</strong>.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+
+<h3 id="windows7">Windows 7:</h3>
+<ol>
+<li style="font-weight: 400;">Open the <strong>Control Panel</strong> and select <strong>Network and Sharing Center</strong>.</li>
+<li style="font-weight: 400;">Select <strong>Set up a new connection or network</strong>.</li>
+<li style="font-weight: 400;">Select <strong>Manually connect to a wireless network</strong>.</li>
+<li style="font-weight: 400;">In the <strong>Network name</strong> field, enter <strong>GovWifi</strong> and for the <strong>Security type</strong>, select <strong>WPA2-Enterprise</strong>.</li>
+<li style="font-weight: 400;">Select <strong>Next</strong>.</li>
+<li style="font-weight: 400;">Select <strong>Change connection settings</strong>.</li>
+<li style="font-weight: 400;">Select the <strong>Security</strong> tab and select <strong>Settings</strong>.</li>
+<li style="font-weight: 400;">Tick the <strong>Connect to these servers</strong> box. In the text box below it, enter <strong><a href="#" style="text-decoration:none;color:#0B0C0C;cursor:text">wifi.service.gov.uk</a></strong></li>
+<li style="font-weight: 400;">In the <strong>Trusted Root Certification Authorities</strong> list, select <strong>GeoTrust Primary Certification Authority - G3</strong>.</li>
+<li style="font-weight: 400;">Tick <strong>Enable Identity Privacy</strong> and enter <strong>anonymous</strong> to prevent your device from broadcasting your GovWifi username.</li>
+<li style="font-weight: 400;">Select <strong>Configure</strong>.</li>
+<li style="font-weight: 400;">Untick <strong>Automatically use my Windows logon name</strong>.</li>
+<li style="font-weight: 400;">Select <strong>OK</strong>, then <strong>OK</strong> again to go back to the <strong>GovWifi Wireless Network Properties</strong> window.</li>
+<li style="font-weight: 400;">Select <strong>Advanced settings</strong>.</li>
+<li style="font-weight: 400;">Select <strong>User authentication</strong> from the dropdown menu under <strong>Specify authentication mode</strong>, then select <strong>Save credentials</strong>.</li>
+<li style="font-weight: 400;">Enter your GovWifi username and password.</li>
+<li style="font-weight: 400;">Select <strong>OK</strong> to close all windows.</li>
+<li style="font-weight: 400;">Select the wifi logo at the bottom right of your screen and select <strong>GovWifi</strong>.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+
+<h3 id="chromebook">Chromebook:</h3>
+<p>In your advanced wifi settings:</p>
+<ol>
+<li style="font-weight: 400;">In the <strong>SSID</strong> field, enter <strong>GovWifi</strong>.</li>
+<li style="font-weight: 400;">In the <strong>EAP</strong> field, select <strong>PEAP</strong>.</li>
+<li style="font-weight: 400;">In the <strong>Phase-2 authentication</strong> field, select <strong>MSCHAPV2</strong>.</li>
+<li style="font-weight: 400;">In the <strong>Server CA certificate</strong> field, select <strong>Default</strong>.</li>
+<li style="font-weight: 400;">In the <strong>Identity</strong> field, enter your GovWifi username.</li>
+<li style="font-weight: 400;">In the <strong>Password</strong> field, enter your GovWifi password.</li>
+<li style="font-weight: 400;">Tick the <strong>Save identity and password</strong> box.</li>
+<li style="font-weight: 400;">Select <strong>Connect</strong>.</li>
+</ol>
+<p>Having problems connecting? Contact the helpdesk in your building. </p>
+<p>&nbsp;</p>
+
+<p>By connecting to GovWifi, you agree to the terms and conditions:&nbsp;<a href="https://www.gov.uk/govwifi">https://www.gov.uk/govwifi</a></p>
