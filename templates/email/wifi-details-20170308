@@ -10,15 +10,15 @@ Your password: %PASS%
 
 When you arrive at a government building where GovWifi is available, go to your wifi settings, select GovWifi and enter your details.
 
-Scroll down to find instructions for your device.
-
+Scroll down to find instructions for your device, or view the instructions online:
+https://www.gov.uk/govwifi
 
 Android devices:
 
-In your wifi settings (scroll down):
+In your wifi settings:
 1. In the EAP method field, select PEAP.
 2. In the Phase 2 authentication field, select MSCHAPV2.
-3. Enter your username (in the Identity field) and password.
+3. Enter your username (in the Identity field), scroll down and enter your password.
 
 Having problems connecting? Contact the helpdesk in your building.
 

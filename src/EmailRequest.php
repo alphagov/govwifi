@@ -303,81 +303,80 @@ class EmailRequest extends GovWifiBase {
     public function newSite() {
         $this->emailSubject = str_ireplace("re: ", "", $this->emailSubject);
         $orgAdmin = new OrgAdmin($this->emailFrom->text);
-        if ($orgAdmin->authorised) {
-            error_log(
-                "EMAIL: processing new site request from : "
-                . $this->emailFrom->text);
-
-            // Add the new site & IP addresses
-            $outcome = "Existing site updated\n";
-            $site = new Site();
-            $site->loadByAddress($this->emailSubject);
-            $action = "updated";
-
-            if (!$site->id) {
-                $site->org_id = $orgAdmin->orgId;
-                $site->org_name = $orgAdmin->orgName;
-                $site->name = $this->emailSubject;
-                error_log(
-                    "EMAIL: creating new site : " . $site->name);
-                $outcome = "New site created\n";
-                $site->setRadKey();
-                if ($site->updateFromEmail($this->emailBody))
-                    $outcome .= "Site attributes updated\n";
-                $site->writeRecord();
-                $action = "created";
-            } else if ($site->updateFromEmail($this->emailBody)) {
-                error_log(
-                    "EMAIL: updating site attributes : " . $site->name);
-                $outcome .= "Site attributes updated\n";
-                $site->writeRecord();
-            }
-
-            $newSiteIPs = $this->ipList();
-            if (count($newSiteIPs) > 0) {
-                error_log(
-                    "EMAIL: Adding client IP addresses : " . $site->name);
-                $outcome .= count($newSiteIPs) . " RADIUS IP Addresses added\n";
-                $site->addIPs($newSiteIPs);
-            }
-
-            $newSiteSourceIPs = $this->sourceIpList();
-            if (count($newSiteSourceIPs) > 0) {
-                error_log(
-                    "EMAIL: Adding source IP addresses : " . $site->name);
-                $outcome .=
-                    count($newSiteIPs) . " Source IP Address ranges added\n";
-                $site->addSourceIPs($newSiteSourceIPs);
-            }
-
-            // Create the site information pdf
-            $pdf = new PDF();
-            $pdf->populateNewSite($site);
-            $report = new Report;
-            $report->orgAdmin = $orgAdmin;
-            $report->getIPList($site);
-            $pdf->generatePDF($report);
-
-            // Create email response and attach the pdf
-            $email = new EmailResponse;
-            $email->to = $orgAdmin->email;
-            if ($outcome) {
-                $email->newSite($action, $outcome, $site);
-            } else {
-                $email->newSiteBlank($site);
-            }
-            $email->fileName = $pdf->filename;
-            $email->filePath = $pdf->filepath;
-            $email->send($orgAdmin->emailManagerAddress);
-
-            // Create sms response for the code
-            $sms = new SmsResponse($orgAdmin->mobile);
-            $sms->sendNewsitePassword($pdf);
-        } else {
+        if (!$orgAdmin->authorised) {
             error_log(
                 "EMAIL: Ignoring new site request from : "
                 . $this->emailFrom->text);
+            return;
         }
+        error_log(
+            "EMAIL: processing new site request from : "
+            . $this->emailFrom->text);
+
+        // Add the new site & IP addresses
+        $outcome = "Existing site updated\n";
+        $site = new Site();
+        $site->loadByAddress($this->emailSubject);
+        $action = "updated";
+        $newSiteIPs = $this->ipList();
+        $newSiteSourceIPs = $this->sourceIpList();
+        $email = new EmailResponse;
+        $email->to = $orgAdmin->email;
+        if (!$site->id && count($newSiteIPs) == 0 && count($newSiteSourceIPs) == 0) {
+            $email->newSiteBlank($this->emailSubject);
+            $email->send($orgAdmin->emailManagerAddress);
+            return;
+        }
+
+        if (!$site->id) {
+            $site->org_id = $orgAdmin->orgId;
+            $site->org_name = $orgAdmin->orgName;
+            $site->name = $this->emailSubject;
+            error_log(
+                "EMAIL: creating new site : " . $site->name);
+            $outcome = "New site created\n";
+            $site->setRadKey();
+            if ($site->updateFromEmail($this->emailBody))
+                $outcome .= "Site attributes updated\n";
+            $site->writeRecord();
+            $action = "created";
+        } else if ($site->updateFromEmail($this->emailBody)) {
+            error_log(
+                "EMAIL: updating site attributes : " . $site->name);
+            $outcome .= "Site attributes updated\n";
+            $site->writeRecord();
+        }
+
+        if (count($newSiteIPs) > 0) {
+            error_log(
+                "EMAIL: Adding client IP addresses : " . $site->name);
+            $outcome .= count($newSiteIPs) . " RADIUS IP Addresses added\n";
+            $site->addIPs($newSiteIPs);
+        }
+
+        if (count($newSiteSourceIPs) > 0) {
+            error_log(
+                "EMAIL: Adding source IP addresses : " . $site->name);
+            $outcome .=
+                count($newSiteIPs) . " Source IP Address ranges added\n";
+            $site->addSourceIPs($newSiteSourceIPs);
+        }
+
+        $email->newSite($action, $outcome, $site);
+        // Create the site information pdf
+        $pdf = new PDF();
+        $pdf->populateNewSite($site);
+        $report = new Report;
+        $report->orgAdmin = $orgAdmin;
+        $report->getIPList($site);
+        $pdf->generatePDF($report);
+        $email->fileName = $pdf->filename;
+        $email->filePath = $pdf->filepath;
+        $email->send($orgAdmin->emailManagerAddress);
+
+        // Create sms response for the code
+        $sms = new SmsResponse($orgAdmin->mobile);
+        $sms->sendNewsitePassword($pdf);
     }
 
     /**
