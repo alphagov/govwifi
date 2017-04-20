@@ -8,7 +8,7 @@ class PerformancePlatformClientTest extends PHPUnit_Framework_TestCase {
         $this->assertInstanceOf(
             PerformancePlatformClient::class,
             new PerformancePlatformClient([
-                'serviceName' => "teet",
+                'serviceName' => "test",
                 'baseUrl'     => "https://test.com"
             ])
         );
