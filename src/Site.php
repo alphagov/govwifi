@@ -11,26 +11,20 @@ class Site {
     public $org_id;
     public $org_name;
     public $id;
-    public $activationRegex;
-    public $activationDays;
     public $postcode;
-    public $dataController;
     public $address;
 
     public function writeRecord() {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
-        $handle = $dblink->prepare('insert into site (id, radkey, datacontroller, address, postcode, activation_regex, activation_days, org_id)
-         VALUES (:id, :radkey, :datacontroller, :address, :postcode, :activation_regex, :activation_days, :org_id)
-                on duplicate key update radkey=:radkey, datacontroller=:datacontroller, address=:address,
-                postcode=:postcode, activation_regex=:activation_regex, activation_days=:activation_days, org_id = :org_id');
+        $handle = $dblink->prepare('insert into site (id, radkey, address, postcode, org_id)
+         VALUES (:id, :radkey, :address, :postcode, :org_id)
+                on duplicate key update radkey=:radkey, address=:address,
+                postcode=:postcode, org_id = :org_id');
         $handle->bindValue(':id', $this->id, PDO::PARAM_INT);
         $handle->bindValue(':radkey', $this->radKey, PDO::PARAM_STR);
-        $handle->bindValue(':datacontroller', $this->dataController, PDO::PARAM_STR);
         $handle->bindValue(':address', $this->name, PDO::PARAM_STR);
         $handle->bindValue(':postcode', $this->postcode, PDO::PARAM_STR);
-        $handle->bindValue(':activation_regex', $this->activationRegex, PDO::PARAM_STR);
-        $handle->bindValue(':activation_days', $this->activationDays, PDO::PARAM_STR);
         $handle->bindValue(':org_id', $this->org_id, PDO::PARAM_INT);
         $handle->execute();
         if (!$this->id) {
@@ -42,25 +36,13 @@ class Site {
         $this->name = $row['address'];
         $this->postcode = $row['postcode'];
         $this->org_id = $row['org_id'];
-        $this->dataController = $row['datacontroller'];
-        $this->activationRegex = $row['activation_regex'];
-        $this->activationDays = $row['activation_days'];
         $this->id = $row['site_id'];
         $this->radKey = $row['radkey'];
         $this->org_name = $row['org_name'];
     }
 
-    public function getWhitelist() {
-        $whitelist = str_replace("$|", ", ", $this->activationRegex);
-        $whitelist = str_replace("$", "", $whitelist);
-        return $whitelist;
-    }
-
     public function attributesText() {
         $attributes = "Postcode: " . $this->postcode . "\n";
-        $attributes .= "Activation-whitelist: " . $this->getWhitelist() . "\n";
-        $attributes .= "Activation-days: " . $this->activationDays . "\n";
-        $attributes .= "DataController: " . $this->dataController . "\n";
         return $attributes;
     }
 
@@ -76,27 +58,8 @@ class Site {
 
             switch ($parameter) {
                 case "postcode":
-                    error_log("*" . $parameter . "*");
+                    error_log("*" . $parameter . ":" . $value . "*");
                     $this->postcode = $value;
-                    $updated = true;
-                    break;
-                case "activation-whitelist":
-                    error_log("*" . $parameter . "*");
-                    $value = str_replace(" ", "", $value);
-                    $value = str_replace(",", "$|", $value);
-                    $value .="$";
-                    error_log("activation_regex:/" . $value . "/");
-                    $this->activationRegex = $value;
-                    $updated = true;
-                    break;
-                case "activation-days":
-                    error_log("*" . $parameter . "*");
-                    $this->activationDays = $value;
-                    $updated = true;
-                    break;
-                case "datacontroller":
-                    error_log("*" . $parameter . "*");
-                    $this->dataController = $value;
                     $updated = true;
                     break;
             }
@@ -109,11 +72,8 @@ class Site {
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
                                     radkey,
-                                    datacontroller,
                                     address,
                                     postcode,
-                                    activation_regex,
-                                    activation_days,
                                     org_id,
                                     organisation.name as org_name
                                     from site, organisation, siteip
@@ -131,11 +91,8 @@ class Site {
         $dblink = $db->getConnection();
         $handle = $dblink->prepare('select site.id as site_id,
                                     radkey,
-                                    datacontroller,
                                     address,
                                     postcode,
-                                    activation_regex,
-                                    activation_days,
                                     org_id,
                                     organisation.name as org_name
                                     from site, organisation

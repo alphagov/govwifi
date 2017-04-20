@@ -46,6 +46,9 @@ class AAA {
      */
     public $user;
     public $siteIP;
+    /**
+     * @var Site
+     */
     public $site;
     public $type;
     /**
@@ -346,9 +349,6 @@ class AAA {
      * Tries to authorize the user based on her mobile number, email address,
      * and site-specific settings. Sets the response header and content
      * accordingly.
-     *
-     * If the site is restricted by an activation regex, the user's email
-     * is checked against this.
      */
     public function authorize() {
         // Return immediately for health checks.
@@ -360,20 +360,9 @@ class AAA {
         // If this matches a user account continue
         if (isset($this->user->identifier)
             && $this->user->identifier->text) {
-
-            // If the site isn't restricted
-            if (($this->site->activationRegex == "")
-            // or the user's email address is authorised
-            || preg_match('/' . $this->site->activationRegex . '/',
-                    $this->user->email)) {
-                $this->authorizeResponse(TRUE);
-            } else {
-                error_log(
-                    "Restricted site: "
-                    . $this->site->activationRegex
-                    . " Users email: " . $this->user->email);
-                $this->authorizeResponse(FALSE);
-            }
+            // Logic for restricted journey may come here
+            // Eg test emails against specific regex, lock out SMS-registered users, etc.
+            $this->authorizeResponse(TRUE);
         }
     }
 
