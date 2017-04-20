@@ -10,4 +10,6 @@ if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] 
         'db'     => DB::getInstance()
     ]);
     $survey->sendSurveys();
+} else {
+    header("HTTP/1.1 404 Not Found");
 }

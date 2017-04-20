@@ -11,7 +11,7 @@ if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] 
     $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
 
     if (!empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
-        for ($i = $_REQUEST['days']; $i>1; $i--) {
+        for ($i = $_REQUEST['days']; $i >= 1; $i--) {
             $dateObject = new DateTime();
             $reportVolumetrics->sendMetrics(
                 $dateObject->sub(new DateInterval('P' . intval($i). 'D'))->format('Y-m-d'));
@@ -19,4 +19,6 @@ if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] 
     } else {
         $reportVolumetrics->sendMetrics();
     }
+} else {
+    header("HTTP/1.1 404 Not Found");
 }
