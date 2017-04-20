@@ -56,7 +56,7 @@ class Site {
             $line = trim($line);
             $parameter = strtolower(trim(substr($line, 0, strpos($line, ":"))));
 
-            $value = substr($line, strpos($line, ":") + 1);
+            $value = trim(substr($line, strpos($line, ":") + 1));
 
             switch ($parameter) {
                 case "postcode":
