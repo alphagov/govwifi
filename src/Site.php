@@ -48,6 +48,8 @@ class Site {
 
     public function updateFromEmail($emailBody) {
         $updated = false;
+        // TODO: refactor with constants and accepted attribute list.
+        $postcodeFound = false;
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $emailBody) as $line) {
             $line = str_replace(">", "", $line);
             $line = str_replace("*", "", $line);
@@ -58,10 +60,13 @@ class Site {
 
             switch ($parameter) {
                 case "postcode":
-                    $value = strtoupper($value);
-                    error_log("*" . $parameter . ":" . $value . "*");
-                    $this->postcode = $value;
-                    $updated = true;
+                    if (! $postcodeFound) {
+                        $value = strtoupper($value);
+                        error_log("*" . $parameter . ":" . $value . "*");
+                        $this->postcode = $value;
+                        $updated = true;
+                        $postcodeFound = true;
+                    }
                     break;
             }
         }
