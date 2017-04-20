@@ -58,6 +58,7 @@ class Site {
 
             switch ($parameter) {
                 case "postcode":
+                    $value = strtoupper($value);
                     error_log("*" . $parameter . ":" . $value . "*");
                     $this->postcode = $value;
                     $updated = true;
