@@ -38,6 +38,7 @@ class ReportCompletionRate extends PerformancePlatformReport {
             'period'       => 'week'
         ];
 
+        $smsCondition = "contact LIKE '+%' AND userdetails.contact = userdetails.sponsor";
         // Number of registered users
         $this->sendSimpleMetric(array_merge($defaults, [
             'categoryValue' => 'start',
