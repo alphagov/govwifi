@@ -64,11 +64,11 @@ abstract class PerformancePlatformReport {
     protected function sendSimpleMetric($params) {
         $dateObject = new DateTime();
         $params = array_merge([
+            'timestamp'     => $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d') . 'T00:00:00+00:00',
+            'period'        => self::DEFAULT_PERIOD,
             'categoryName'  => null,
             'categoryValue' => null,
-            'sql'           => null,
-            'period'        => self::DEFAULT_PERIOD,
-            'timestamp'     => $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d') . 'T00:00:00+00:00'
+            'sql'           => null
         ], $params);
 
         if (! is_array($params['sql'])) {
