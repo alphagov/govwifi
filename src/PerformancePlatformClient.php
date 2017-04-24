@@ -65,6 +65,9 @@ class PerformancePlatformClient {
      * 'categoryName'  Name of the category used, eg. channel, stage, etc.
      * 'categoryValue' The actual value of the category.
      *
+     * optional fields:
+     * 'extras'        Array. Optional extra parameters, passed through as-is.
+     *
      * @param array $data Associative array, passed through as-is.
      * @throws GovWifiException
      */
@@ -102,6 +105,11 @@ class PerformancePlatformClient {
                 $config['categoryName'] => $config['categoryValue']
             ],
             $data);
+
+        if (!empty($config['extras']) && is_array($config['extras'])) {
+            $payload = array_merge($payload, $config['extras']);
+        }
+
         try {
             // TODO: Check response?
             $this->httpPostJson($this->buildUrl($config['dataType']), $config['bearerToken'], $payload);

@@ -15,6 +15,18 @@ use DateTime;
  * @package Alphagov\GovWifi
  */
 class ReportCompletionRate extends PerformancePlatformReport {
+    const REPORT_CHANNELS = [
+        [
+            'condition' => "(contact LIKE '+%' AND userdetails.contact = userdetails.sponsor)",
+            'extras'    => ['channel' => 'sms']
+        ], [
+            'condition' => "(contact LIKE '%@%' AND userdetails.contact = userdetails.sponsor)",
+            'extras'    => ['channel' => 'email']
+        ], [
+            'condition' => "(userdetails.contact != userdetails.sponsor)",
+            'extras'    => ['channel' => 'sponsor']
+        ]
+    ];
 
     public function getMetricName() {
         return 'completion-rate';
@@ -22,11 +34,10 @@ class ReportCompletionRate extends PerformancePlatformReport {
 
     public function sendMetrics($date = null) {
         $dateObject = new DateTime();
-        if (empty($date)) {
-            $date = $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d');
-        } else {
+        if (!empty($date)) {
             $dateObject = new DateTime($date);
         }
+        $date = $dateObject->format('Y-m-d');
 
         // The date object retains it's state - so these will be 7 and 14 days before the date provided.
         $endDate = $dateObject->sub(new DateInterval('P7D'))->format('Y-m-d');
@@ -38,21 +49,26 @@ class ReportCompletionRate extends PerformancePlatformReport {
             'period'       => 'week'
         ];
 
-        $smsCondition = "contact LIKE '+%' AND userdetails.contact = userdetails.sponsor";
-        // Number of registered users
-        $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'start',
-            'sql' => "SELECT count(username) AS count FROM userdetails "
-                . "WHERE date(created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "'"
-        ]));
+        foreach (self::REPORT_CHANNELS as $channel) {
+            // Number of registered users via Email
+            $this->sendSimpleMetric(array_merge($defaults, [
+                'categoryValue' => 'start',
+                'extras'        => $channel['extras'],
+                'sql' => "SELECT count(username) AS count FROM userdetails "
+                    . "WHERE date(created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
+                    . "AND " . $channel['condition']
+            ]));
 
-        // Number of users successfully logged in
-        $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'complete',
-            'sql' => "SELECT count(distinct(userdetails.username)) AS count FROM "
-                . "userdetails LEFT JOIN session ON (userdetails.username = session.username) "
-                . "WHERE date(userdetails.created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
-                . "AND session.username IS NOT NULL"
-        ]));
+            // Number of users successfully logged in
+            $this->sendSimpleMetric(array_merge($defaults, [
+                'categoryValue' => 'complete',
+                'extras'        => $channel['extras'],
+                'sql' => "SELECT count(distinct(userdetails.username)) AS count FROM "
+                    . "userdetails LEFT JOIN session ON (userdetails.username = session.username) "
+                    . "WHERE date(userdetails.created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
+                    . "AND session.username IS NOT NULL AND " . $channel['condition']
+            ]));
+
+        }
     }
 }

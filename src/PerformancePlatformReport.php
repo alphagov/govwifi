@@ -68,7 +68,8 @@ abstract class PerformancePlatformReport {
             'period'        => self::DEFAULT_PERIOD,
             'categoryName'  => null,
             'categoryValue' => null,
-            'sql'           => null
+            'sql'           => null,
+            'extras'        => null
         ], $params);
 
         if (! is_array($params['sql'])) {
@@ -91,7 +92,8 @@ abstract class PerformancePlatformReport {
             'dataType'      => $this->getMetricName(),
             'period'        => $params['period'],
             'categoryName'  => $params['categoryName'],
-            'categoryValue' => $params['categoryValue']
+            'categoryValue' => $params['categoryValue'],
+            'extras'        => $params['extras']
         ], $data);
     }
 
