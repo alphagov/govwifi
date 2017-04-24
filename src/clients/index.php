@@ -5,7 +5,7 @@ require "../common.php";
 
 use PDO;
 
-if (Config::getInstance()->values["frontendApiKey"] == $_REQUEST['key']) {
+if (Config::getInstance()->values["frontendApiKey"] === $_REQUEST['key']) {
     $db = DB::getInstance();
     $dbLink = $db->getConnection();
     $handle = $dbLink->prepare(
