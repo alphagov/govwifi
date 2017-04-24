@@ -6,9 +6,9 @@ require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "common.php";
 use DateInterval;
 use DateTime;
 
-if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] == $_REQUEST['key']) {
+if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] === $_REQUEST['key']) {
     $period = "daily";
-    if (!empty($_REQUEST['period'])) {
+    if (! empty($_REQUEST['period'])) {
         $period = $_REQUEST['period'];
     }
 
@@ -16,7 +16,7 @@ if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] 
         case "daily":
             $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
 
-            if (!empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
+            if (! empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
                 for ($i = intval($_REQUEST['days']); $i >= 1; $i--) {
                     $dateObject = new DateTime();
                     $reportVolumetrics->sendMetrics(
@@ -28,7 +28,7 @@ if (!empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] 
             break;
         case "weekly":
             $reportCompletionRate = new ReportCompletionRate(Config::getInstance(), DB::getInstance());
-            if (!empty($_REQUEST['date'])) {
+            if (! empty($_REQUEST['date'])) {
                 $reportCompletionRate->sendMetrics($_REQUEST['date']);
             } else {
                 $reportCompletionRate->sendMetrics();
