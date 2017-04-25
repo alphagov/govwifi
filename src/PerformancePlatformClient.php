@@ -91,24 +91,27 @@ class PerformancePlatformClient {
             throw new GovWifiException("The period provided [" . $config['period'] . "] is not recognised.");
         }
 
+        $extras = array();
+        if (! empty($config['extras']) && is_array($config['extras'])) {
+            $extras = $config['extras'];
+        }
+
         $payload = array_merge([
                 '_id'       => base64_encode(
                     $config['timestamp'] .
                     $this->serviceName .
                     $config['period'] .
                     $config['dataType'] .
-                    $config['categoryValue']
+                    $config['categoryValue'] .
+                    implode($extras)
                 ),
                 '_timestamp' => $config['timestamp'],
                 'dataType'   => $config['dataType'],
                 'period'     => $config['period'],
                 $config['categoryName'] => $config['categoryValue']
             ],
+            $extras,
             $data);
-
-        if (! empty($config['extras']) && is_array($config['extras'])) {
-            $payload = array_merge($payload, $config['extras']);
-        }
 
         try {
             // TODO: Check response?
