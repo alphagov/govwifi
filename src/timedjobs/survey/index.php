@@ -9,6 +9,6 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
         'db'     => DB::getInstance()
     ]);
     $survey->sendSurveys();
-} else {
+} else if (! substr(php_sapi_name(), 0, 3) == 'cgi'){
     header("HTTP/1.1 404 Not Found");
 }

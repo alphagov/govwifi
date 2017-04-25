@@ -37,6 +37,6 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
         case "monthly":
             break;
     }
-} else {
+} else if (! substr(php_sapi_name(), 0, 3) == 'cgi'){
     header("HTTP/1.1 404 Not Found");
 }
