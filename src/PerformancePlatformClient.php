@@ -114,8 +114,12 @@ class PerformancePlatformClient {
             $data);
 
         try {
-            // TODO: Check response?
-            $this->httpPostJson($this->buildUrl($config['dataType']), $config['bearerToken'], $payload);
+            $response = $this->httpPostJson($this->buildUrl($config['dataType']), $config['bearerToken'], $payload);
+            error_log("PerformancePlatform response: " .
+                $response->getStatusCode() . " " . $response->getReasonPhrase());
+            if ($response->getStatusCode() != "200") {
+                error_log("PerformancePlatform response body: " . $response->getBody()->getContents());
+            }
         } catch (RuntimeException $e) {
             throw new GovWifiException($e->getMessage(), $e->getCode(), $e);
         }

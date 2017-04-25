@@ -68,7 +68,6 @@ class ReportCompletionRate extends PerformancePlatformReport {
                     . "WHERE date(userdetails.created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
                     . "AND session.username IS NOT NULL AND " . $channel['condition']
             ]));
-
         }
     }
 }
