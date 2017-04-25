@@ -128,7 +128,7 @@ class User {
             error_log("Loading user record for login: " . $this->login);
             $userRecord = $this->cache->get($this->login);
 
-            if (!$userRecord) {
+            if (! $userRecord) {
                 $handle = $dblink->prepare(
                         'select * from userdetails where username=?');
                 $handle->bindValue(1, $this->login, PDO::PARAM_STR);
@@ -286,7 +286,7 @@ class User {
     private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
-        if (!$strong) {
+        if (! $strong) {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }

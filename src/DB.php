@@ -14,7 +14,7 @@ class DB {
     private $dbName;
 
     public static function getInstance() {
-        if (!self::$instance) {
+        if (empty(self::$instance)) {
             self::$instance = new self();
         }
         return self::$instance;

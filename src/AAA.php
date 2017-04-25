@@ -162,7 +162,7 @@ class AAA {
         }
 
         $httpProtocol = self::DEFAULT_HTTP_PROTOCOL;
-        if (!empty($_SERVER["SERVER_PROTOCOL"])){
+        if (! empty($_SERVER["SERVER_PROTOCOL"])){
             $httpProtocol = $_SERVER["SERVER_PROTOCOL"];
         }
 

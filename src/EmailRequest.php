@@ -63,7 +63,7 @@ class EmailRequest extends GovWifiBase {
         $params = array_merge($defaults, $params);
         parent::checkNotEmpty(array_keys($defaults), $params);
         parent::checkStandardParams($params);
-        if (!is_a($params['emailProvider'], EmailProvider::class)) {
+        if (! is_a($params['emailProvider'], EmailProvider::class)) {
             throw new GovWifiException("EmailProvider class not recognised.");
         }
         $this->emailProvider = $params['emailProvider'];
@@ -251,7 +251,7 @@ class EmailRequest extends GovWifiBase {
     public function newSite() {
         $this->emailSubject = str_ireplace("re: ", "", $this->emailSubject);
         $orgAdmin = new OrgAdmin($this->emailFrom->text);
-        if (!$orgAdmin->authorised) {
+        if (! $orgAdmin->authorised) {
             error_log(
                 "EMAIL: Ignoring new site request from : "
                 . $this->emailFrom->text);
@@ -276,7 +276,7 @@ class EmailRequest extends GovWifiBase {
             return;
         }
 
-        if (!$site->id) {
+        if (! $site->id) {
             $site->org_id = $orgAdmin->orgId;
             $site->org_name = $orgAdmin->orgName;
             $site->name = $this->emailSubject;
@@ -452,14 +452,14 @@ class EmailRequest extends GovWifiBase {
         if (!empty($boundary) && $boundary != $ignoreBoundary) {
             foreach (explode("--" . $boundary, $email) as $part) {
                 $textBody = $this->extractTextBody($part, $boundary);
-                if (!empty($textBody)) {
+                if (! empty($textBody)) {
                     return $textBody;
                 }
             }
         } else {
-            if (!strpos($email, self::CONTENT_PLAIN_TEXT) == false) {
+            if (! strpos($email, self::CONTENT_PLAIN_TEXT) == false) {
                 $body = $this->ignoreSignature($email);
-            } else if (!strpos($email, self::CONTENT_HTML) == false) {
+            } else if (! strpos($email, self::CONTENT_HTML) == false) {
                 $body = $this->ignoreSignature($email);
             }
         }
@@ -467,7 +467,7 @@ class EmailRequest extends GovWifiBase {
     }
 
     private function ignoreSignature($emailBody) {
-        if (!strpos($emailBody, "--") == false) {
+        if (! strpos($emailBody, "--") == false) {
             return strstr($emailBody, "--", true);
         }
         return $emailBody;

@@ -27,7 +27,7 @@ class Site {
         $handle->bindValue(':postcode', $this->postcode, PDO::PARAM_STR);
         $handle->bindValue(':org_id', $this->org_id, PDO::PARAM_INT);
         $handle->execute();
-        if (!$this->id) {
+        if (! $this->id) {
             $this->id = $dblink->lastInsertId();
         }
     }
@@ -170,7 +170,7 @@ class Site {
     private function strongRandomBytes($length) {
         $strong = false; // Flag for whether a strong algorithm was used
         $bytes = openssl_random_pseudo_bytes($length, $strong);
-        if (!$strong) {
+        if (! $strong) {
             // System did not use a cryptographically strong algorithm
             throw new Exception('Strong algorithm not available for PRNG.');
         }

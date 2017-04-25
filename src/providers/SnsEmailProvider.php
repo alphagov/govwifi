@@ -107,7 +107,7 @@ class SnsEmailProvider extends GovWifiBase implements EmailProvider {
                 }
             }
             return false;
-        } else if (!isset($this->data['Message'])) {
+        } else if (! isset($this->data['Message'])) {
             throw new GovWifiException("AWS SNS - empty data received.");
         } else {
             error_log("EMAIL original message metadata: " . $this->data['Message']);

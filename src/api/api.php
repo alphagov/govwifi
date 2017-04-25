@@ -12,6 +12,6 @@ if (!empty($response['headers']) && is_array($response['headers'])) {
         header($header);
     }
 }
-if (!empty($response['body'])) {
+if (! empty($response['body'])) {
     print $response['body'];
 }

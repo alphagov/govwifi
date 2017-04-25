@@ -75,7 +75,7 @@ class EmailResponse {
         $this->replaceInMessages("%PASS%", $user->password);
 
         $sponsor = $user->sponsor->text;
-        if (!empty($senderName)) {
+        if (! empty($senderName)) {
             $sponsor = $senderName . " (" . $sponsor . ")";
         }
         $this->replaceInMessages("%SPONSOR%", $sponsor);
@@ -115,7 +115,7 @@ class EmailResponse {
         $email = Swift_Message::newInstance();
         $recipient = $this->to;
         $subject   = $this->subject;
-        if (!empty($emailManagerAddress)) {
+        if (! empty($emailManagerAddress)) {
             $recipient = $emailManagerAddress;
             $subject   = $this->to;
         }
@@ -133,7 +133,7 @@ class EmailResponse {
                 'text/html');
         }
 
-        if (!empty($this->filePath)) {
+        if (! empty($this->filePath)) {
            $email->attach(Swift_Attachment::fromPath($this->filePath));
         }
 

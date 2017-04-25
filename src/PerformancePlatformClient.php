@@ -106,7 +106,7 @@ class PerformancePlatformClient {
             ],
             $data);
 
-        if (!empty($config['extras']) && is_array($config['extras'])) {
+        if (! empty($config['extras']) && is_array($config['extras'])) {
             $payload = array_merge($payload, $config['extras']);
         }
 

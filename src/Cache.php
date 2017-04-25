@@ -32,7 +32,7 @@ class Cache {
      * @return Cache The single instance.
      */
     public static function getInstance() {
-        if (!self::$instance) { // If no instance then make one
+        if (empty(self::$instance)) { // If no instance then make one
             self::$instance = new self();
         }
         return self::$instance;

@@ -80,7 +80,7 @@ class Survey extends GovWifiBase {
     public function sendSurveys() {
         error_log("SURVEY - started.");
         $configs = $this->getSurveyConfigs();
-        if (!empty($configs)) {
+        if (! empty($configs)) {
             foreach ($configs as $surveyConfig) {
                 if (in_array($surveyConfig['journey_type'], self::EMAIL_JOURNEYS)) {
                     $contactDetails = $this->getContactDetails(
@@ -90,7 +90,7 @@ class Survey extends GovWifiBase {
                         true,
                         in_array($surveyConfig['journey_type'], self::SPONSORED_JOURNEYS)
                     );
-                    if (!empty($contactDetails)) {
+                    if (! empty($contactDetails)) {
                         error_log("SURVEY - Sending survey to [" . count($contactDetails) . "] email addresses.");
                         $this->sendEmailToContacts($contactDetails, $surveyConfig);
                     } else {
@@ -102,7 +102,7 @@ class Survey extends GovWifiBase {
                         self::SMS_CONTACT_CONDITION,
                         $surveyConfig
                     );
-                    if (!empty($contactDetails)) {
+                    if (! empty($contactDetails)) {
                         error_log("SURVEY - Sending survey to [" . count($contactDetails) . "] mobile numbers.");
                         $this->sendSmsToContacts($contactDetails, $surveyConfig);
                     } else {

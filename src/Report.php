@@ -142,7 +142,7 @@ class Report {
         $dbLink = $db->getConnection();
 
         $siteSql = "";
-        if (!empty($site)) {
+        if (! empty($site)) {
             $siteSql = 'and shortname = ?';
         }
         $sql = 'select count(distinct(username)) as Users,
@@ -153,7 +153,7 @@ class Report {
                 group by Date order by Date desc';
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
-        if (!empty($site)) {
+        if (! empty($site)) {
             $handle->bindValue(2, $site, PDO::PARAM_INT);
         }
         $handle->execute();
