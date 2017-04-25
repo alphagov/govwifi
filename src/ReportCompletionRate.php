@@ -50,7 +50,7 @@ class ReportCompletionRate extends PerformancePlatformReport {
         ];
 
         foreach (self::REPORT_CHANNELS as $channel) {
-            // Number of registered users via Email
+            // Number of registered users for the given channel
             $this->sendSimpleMetric(array_merge($defaults, [
                 'categoryValue' => 'start',
                 'extras'        => $channel['extras'],
@@ -59,7 +59,7 @@ class ReportCompletionRate extends PerformancePlatformReport {
                     . "AND " . $channel['condition']
             ]));
 
-            // Number of users successfully logged in
+            // Number of users successfully logged in from the list above
             $this->sendSimpleMetric(array_merge($defaults, [
                 'categoryValue' => 'complete',
                 'extras'        => $channel['extras'],
