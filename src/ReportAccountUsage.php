@@ -1,0 +1,62 @@
+<?php
+
+namespace Alphagov\GovWifi;
+
+use DateInterval;
+use DateTime;
+
+/**
+ * Sends the account usage reports to the Performance Platform.
+ * Eg. number of active users per day, total, roaming and single-location.
+ *
+ * @package Alphagov\GovWifi
+ */
+class ReportAccountUsage extends PerformancePlatformReport {
+
+    public function getMetricName() {
+        return 'account-usage';
+    }
+
+    public function sendMetrics($date = null) {
+        $dateObject = new DateTime();
+        if (empty($date)) {
+            $date = $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d');
+        }
+        $defaults = [
+            'timestamp'     => $date . 'T00:00:00+00:00',
+            'categoryName'  => 'type',
+        ];
+
+        $sql = "SELECT count(distinct(username)) as total, "
+            . "count(distinct(concat_ws('-', session.username, site.address))) as per_site FROM session "
+            . "LEFT JOIN siteip ON (siteip.ip = session.siteIP) "
+            . "LEFT JOIN site ON (siteip.site_id = site.id) WHERE "
+            . "site.org_id IS NOT NULL AND date(session.start) = '" . $date . "' GROUP BY date(start)";
+
+        $results = $this->runQuery($sql);
+        $total   = intval($results[0]['total']);
+        $perSite = intval($results[0]['per_site']);
+        $roaming = $perSite - $total;
+
+        $this->sendSimpleMetric(array_merge($defaults, [
+            'categoryValue' => 'total',
+            'data'          => [
+                'count' => $total
+            ]
+        ]));
+
+        $this->sendSimpleMetric(array_merge($defaults, [
+            'categoryValue' => 'roaming',
+            'data'          => [
+                'count' => $roaming
+            ]
+        ]));
+
+        $this->sendSimpleMetric(array_merge($defaults, [
+            'categoryValue' => 'one-time',
+            'data'          => [
+                'count' => $total - $roaming
+            ]
+        ]));
+    }
+}

@@ -66,24 +66,36 @@ abstract class PerformancePlatformReport {
         $params = array_merge([
             'timestamp'     => $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d') . 'T00:00:00+00:00',
             'period'        => self::DEFAULT_PERIOD,
+            'forceIntVal'   => true,
             'categoryName'  => null,
             'categoryValue' => null,
             'sql'           => null,
-            'extras'        => null
+            'extras'        => null,
+            'data'          => null
         ], $params);
 
-        if (! is_array($params['sql'])) {
-            $params['sql'] = array($params['sql']);
-        }
         $data = [];
-        foreach ($params['sql'] as $sql) {
-            if (! empty($sql)) {
-                $results = $this->runQuery($sql);
-                //TODO: Check if forcing intval here will be applicable in every instance.
-                foreach ($results[0] as $key => $value) {
-                    $data[$key] = intval($value);
+        if (! empty($params['sql'])) {
+            if (!is_array($params['sql'])) {
+                $params['sql'] = array($params['sql']);
+            }
+            foreach ($params['sql'] as $sql) {
+                if (! empty($sql)) {
+                    $results = $this->runQuery($sql);
+                    // Forcing intval() here is required by the Performance Platform API for most metrics.
+                    foreach ($results[0] as $key => $value) {
+                        if ($params['forceIntVal']) {
+                            $data[ $key ] = intval($value);
+                        } else {
+                            $data[ $key ] = $value;
+                        }
+                    }
                 }
             }
+        }
+
+        if (!empty($params['data']) && is_array($params['data'])) {
+            $data = array_merge($data, $params['data']);
         }
 
         $this->ppClient->sendData([

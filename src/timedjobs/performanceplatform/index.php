@@ -15,15 +15,18 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
     switch ($period) {
         case "daily":
             $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
+            $reportAccountUsage = new ReportAccountUsage(Config::getInstance(), DB::getInstance());
 
             if (! empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
                 for ($i = intval($_REQUEST['days']); $i >= 1; $i--) {
                     $dateObject = new DateTime();
-                    $reportVolumetrics->sendMetrics(
-                        $dateObject->sub(new DateInterval('P' . $i. 'D'))->format('Y-m-d'));
+                    $reportDate = $dateObject->sub(new DateInterval('P' . $i. 'D'))->format('Y-m-d');
+                    // $reportVolumetrics->sendMetrics($reportDate); - report initialised.
+                    $reportAccountUsage->sendMetrics($reportDate);
                 }
             } else {
                 $reportVolumetrics->sendMetrics();
+                $reportAccountUsage->sendMetrics();
             }
             break;
         case "weekly":
@@ -37,6 +40,6 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
         case "monthly":
             break;
     }
-} else if (! strtolower(substr(php_sapi_name(), 0, 3)) === 'cgi') {
+} else if (! strtolower(substr(php_sapi_name(), 0, 3)) === 'cli') {
     header("HTTP/1.1 404 Not Found");
 }
