@@ -76,7 +76,7 @@ abstract class PerformancePlatformReport {
 
         $data = [];
         if (! empty($params['sql'])) {
-            if (!is_array($params['sql'])) {
+            if (! is_array($params['sql'])) {
                 $params['sql'] = array($params['sql']);
             }
             foreach ($params['sql'] as $sql) {

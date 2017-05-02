@@ -24,7 +24,7 @@ if (isset($_REQUEST["message"])) {
         $keyword = $_REQUEST["keyword"];
     }
     $message = "";
-    if (! (strtolower(Config::FIRETEXT_EMPTY_MESSAGE) == strtolower($_REQUEST["message"]))) {
+    if (! (strtolower(Config::FIRETEXT_EMPTY_MESSAGE) === strtolower($_REQUEST["message"]))) {
         $message = trim($keyword . " " . $_REQUEST["message"]);
     }
     $smsReq->setMessage($message);

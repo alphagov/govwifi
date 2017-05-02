@@ -117,7 +117,7 @@ class PerformancePlatformClient {
             $response = $this->httpPostJson($this->buildUrl($config['dataType']), $config['bearerToken'], $payload);
             error_log("PerformancePlatform response: " .
                 $response->getStatusCode() . " " . $response->getReasonPhrase());
-            if ($response->getStatusCode() != "200") {
+            if (intval($response->getStatusCode()) !== 200) {
                 error_log("PerformancePlatform response body: " . $response->getBody()->getContents());
             }
         } catch (RuntimeException $e) {

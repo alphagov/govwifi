@@ -13,5 +13,5 @@ if (!empty($response['headers']) && is_array($response['headers'])) {
     }
 }
 if (! empty($response['body'])) {
-    print $response['body'];
+    echo $response['body'];
 }

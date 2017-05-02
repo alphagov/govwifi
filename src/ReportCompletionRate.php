@@ -34,7 +34,7 @@ class ReportCompletionRate extends PerformancePlatformReport {
 
     public function sendMetrics($date = null) {
         $dateObject = new DateTime();
-        if (!empty($date)) {
+        if (! empty($date)) {
             $dateObject = new DateTime($date);
         }
         $date = $dateObject->format('Y-m-d');
