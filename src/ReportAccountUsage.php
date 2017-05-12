@@ -23,8 +23,7 @@ class ReportAccountUsage extends PerformancePlatformReport {
             $date = $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d');
         }
         $defaults = [
-            'timestamp'     => $date . 'T00:00:00+00:00',
-            'categoryName'  => 'type',
+            'timestamp'     => $date . 'T00:00:00+00:00'
         ];
 
         $sql = "SELECT count(distinct(username)) as total, "
@@ -39,22 +38,22 @@ class ReportAccountUsage extends PerformancePlatformReport {
         $roaming = $perSite - $total;
 
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'total',
-            'data'          => [
+            'extras' => [ 'type' => 'total' ],
+            'data'   => [
                 'count' => $total
             ]
         ]));
 
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'roaming',
-            'data'          => [
+            'extras' => [ 'type' => 'roaming' ],
+            'data'   => [
                 'count' => $roaming
             ]
         ]));
 
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'one-time',
-            'data'          => [
+            'extras' => [ 'type' => 'one-time' ],
+            'data'   => [
                 'count' => $total - $roaming
             ]
         ]));

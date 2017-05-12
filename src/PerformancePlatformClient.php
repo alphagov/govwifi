@@ -62,8 +62,6 @@ class PerformancePlatformClient {
      * 'timestamp'     The timestamp the data relates to
      * 'dataType'      The name of the metric, used in the url construction as well as being sent
      * 'period'        The period the data describes.
-     * 'categoryName'  Name of the category used, eg. channel, stage, etc.
-     * 'categoryValue' The actual value of the category.
      *
      * optional fields:
      * 'extras'        Array. Optional extra parameters, passed through as-is.
@@ -76,9 +74,7 @@ class PerformancePlatformClient {
             'bearerToken'   => null,
             'timestamp'     => null,
             'dataType'      => null,
-            'period'        => null,
-            'categoryName'  => null,
-            'categoryValue' => null
+            'period'        => null
         ];
         $config = array_merge($requiredFields, $config);
 
@@ -102,13 +98,11 @@ class PerformancePlatformClient {
                     $this->serviceName .
                     $config['period'] .
                     $config['dataType'] .
-                    $config['categoryValue'] .
                     implode($extras)
                 ),
                 '_timestamp' => $config['timestamp'],
                 'dataType'   => $config['dataType'],
-                'period'     => $config['period'],
-                $config['categoryName'] => $config['categoryValue']
+                'period'     => $config['period']
             ],
             $extras,
             $data);

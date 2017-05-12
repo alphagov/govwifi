@@ -67,8 +67,6 @@ abstract class PerformancePlatformReport {
             'timestamp'     => $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d') . 'T00:00:00+00:00',
             'period'        => self::DEFAULT_PERIOD,
             'forceIntVal'   => true,
-            'categoryName'  => null,
-            'categoryValue' => null,
             'sql'           => null,
             'extras'        => null,
             'data'          => null
@@ -103,8 +101,6 @@ abstract class PerformancePlatformReport {
             'timestamp'     => $params['timestamp'],
             'dataType'      => $this->getMetricName(),
             'period'        => $params['period'],
-            'categoryName'  => $params['categoryName'],
-            'categoryValue' => $params['categoryValue'],
             'extras'        => $params['extras']
         ], $data);
     }

@@ -18,13 +18,13 @@ class ReportCompletionRate extends PerformancePlatformReport {
     const REPORT_CHANNELS = [
         [
             'condition' => "(contact LIKE '+%' AND userdetails.contact = userdetails.sponsor)",
-            'extras'    => ['channel' => 'sms']
+            'extras'    => [ 'channel' => 'sms' ]
         ], [
             'condition' => "(contact LIKE '%@%' AND userdetails.contact = userdetails.sponsor)",
-            'extras'    => ['channel' => 'email']
+            'extras'    => [ 'channel' => 'email' ]
         ], [
             'condition' => "(userdetails.contact != userdetails.sponsor)",
-            'extras'    => ['channel' => 'sponsor']
+            'extras'    => [ 'channel' => 'sponsor' ]
         ]
     ];
 
@@ -45,15 +45,16 @@ class ReportCompletionRate extends PerformancePlatformReport {
 
         $defaults = [
             'timestamp'    => $date . 'T00:00:00+00:00',
-            'categoryName' => 'stage',
             'period'       => 'week'
         ];
 
         foreach (self::REPORT_CHANNELS as $channel) {
             // Number of registered users for the given channel
             $this->sendSimpleMetric(array_merge($defaults, [
-                'categoryValue' => 'start',
-                'extras'        => $channel['extras'],
+                'extras' => array_merge(
+                    [ 'stage' => 'start' ],
+                    $channel['extras']
+                ),
                 'sql' => "SELECT count(username) AS count FROM userdetails "
                     . "WHERE date(created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
                     . "AND " . $channel['condition']
@@ -61,8 +62,10 @@ class ReportCompletionRate extends PerformancePlatformReport {
 
             // Number of users successfully logged in from the list above
             $this->sendSimpleMetric(array_merge($defaults, [
-                'categoryValue' => 'complete',
-                'extras'        => $channel['extras'],
+                array_merge(
+                    [ 'stage' => 'complete' ],
+                    $channel['extras']
+                ),
                 'sql' => "SELECT count(distinct(userdetails.username)) AS count FROM "
                     . "userdetails LEFT JOIN session ON (userdetails.username = session.username) "
                     . "WHERE date(userdetails.created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "

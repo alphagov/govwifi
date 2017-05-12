@@ -23,59 +23,58 @@ class ReportVolumetrics extends PerformancePlatformReport {
             $date = $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d');
         }
         $defaults = [
-            'timestamp'     => $date . 'T00:00:00+00:00',
-            'categoryName'  => 'channel',
+            'timestamp'     => $date . 'T00:00:00+00:00'
         ];
 
         // Number of sign ups per day and total.
-        $sql = [
+        $totalSql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "'",
             "SELECT count(username) AS cumulative_count FROM userdetails WHERE date(created_at) <= '" . $date . "'"
         ];
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'all-sign-ups',
-            'sql'           => $sql,
+            'extras' => [ 'channel' => 'all-sign-ups' ],
+            'sql'    => $totalSql,
         ]));
 
         // SMS sign ups per day and total.
         $smsCondition = "contact LIKE '+%' " .
             "AND userdetails.contact = userdetails.sponsor AND date(created_at) <= '" . $date . "'";
-        $sql = [
+        $smsSql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "' AND " .
             $smsCondition,
             "SELECT count(username) AS cumulative_count FROM userdetails WHERE " . $smsCondition .
             " AND date(created_at) <= '" . $date . "'"
         ];
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'sms-sign-ups',
-            'sql'           => $sql,
+            'extras' => [ 'channel' => 'sms-sign-ups' ],
+            'sql'    => $smsSql,
         ]));
 
         // Email self-sign ups per day and total.
         $emailCondition = "contact LIKE '%@%' " .
             "AND userdetails.contact = userdetails.sponsor";
-        $sql = [
+        $emailSql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "' AND " .
             $emailCondition,
             "SELECT count(username) AS cumulative_count FROM userdetails WHERE " . $emailCondition .
             " AND date(created_at) <= '" . $date . "'"
         ];
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'email-sign-ups',
-            'sql'           => $sql,
+            'extras' => [ 'channel' => 'email-sign-ups' ],
+            'sql'    => $emailSql,
         ]));
 
         // Sponsored sign-ups per day and total
-        $emailCondition = "userdetails.contact != userdetails.sponsor";
-        $sql = [
+        $sponsorCondition = "userdetails.contact != userdetails.sponsor";
+        $sponsorSql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "' AND " .
             $emailCondition,
-            "SELECT count(username) AS cumulative_count FROM userdetails WHERE " . $emailCondition .
+            "SELECT count(username) AS cumulative_count FROM userdetails WHERE " . $sponsorCondition .
             " AND date(created_at) <= '" . $date . "'"
         ];
         $this->sendSimpleMetric(array_merge($defaults, [
-            'categoryValue' => 'sponsor-sign-ups',
-            'sql'           => $sql,
+            'extras' => [ 'channel' => 'sponsor-sign-ups' ],
+            'sql'    => $sponsorSql,
         ]));
     }
 }
