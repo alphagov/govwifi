@@ -16,17 +16,20 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
         case "daily":
             $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
             $reportAccountUsage = new ReportAccountUsage(Config::getInstance(), DB::getInstance());
+            $reportActiveLocations = new ReportActiveLocations(Config::getInstance(), DB::getInstance());
 
             if (! empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
                 for ($i = intval($_REQUEST['days']); $i >= 1; $i--) {
                     $dateObject = new DateTime();
                     $reportDate = $dateObject->sub(new DateInterval('P' . $i. 'D'))->format('Y-m-d');
                     // $reportVolumetrics->sendMetrics($reportDate); - report initialised.
-                    $reportAccountUsage->sendMetrics($reportDate);
+                    // $reportAccountUsage->sendMetrics($reportDate);
+                    $reportActiveLocations->sendMetrics($reportDate);
                 }
             } else {
                 $reportVolumetrics->sendMetrics();
                 $reportAccountUsage->sendMetrics();
+                $reportActiveLocations->sendMetrics();
             }
             break;
         case "weekly":
