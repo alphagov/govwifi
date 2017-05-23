@@ -34,10 +34,13 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
             break;
         case "weekly":
             $reportCompletionRate = new ReportCompletionRate(Config::getInstance(), DB::getInstance());
+            $reportUniqueUsers = new ReportUniqueUsers(Config::getInstance(), DB::getInstance());
             if (! empty($_REQUEST['date'])) {
-                $reportCompletionRate->sendMetrics($_REQUEST['date']);
+                // $reportCompletionRate->sendMetrics($_REQUEST['date']);
+                $reportUniqueUsers->sendMetrics($_REQUEST['date']);
             } else {
                 $reportCompletionRate->sendMetrics();
+                $reportUniqueUsers->sendMetrics();
             }
             break;
         case "monthly":
