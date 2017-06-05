@@ -6,7 +6,10 @@ require dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . "common.php";
 use DateInterval;
 use DateTime;
 
+error_log("sapi name:" . strtolower(substr(php_sapi_name(), 0, 3)));
+
 if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"] === $_REQUEST['key']) {
+    error_log("hit true");
     $period = "daily";
     if (! empty($_REQUEST['period'])) {
         $period = $_REQUEST['period'];
@@ -47,7 +50,9 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
             break;
     }
 } else if (! strtolower(substr(php_sapi_name(), 0, 3)) === 'cli') {
+    error_log("hit false");
     header("HTTP/1.1 404 Not Found");
 } else {
+    error_log("hit else");
     echo strtolower(substr(php_sapi_name(), 0, 3));
 }
