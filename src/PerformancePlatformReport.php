@@ -62,6 +62,8 @@ abstract class PerformancePlatformReport {
      * @param array $params
      */
     protected function sendSimpleMetric($params) {
+        error_log("PerformancePlatform report sendSimpleMetrics called for [" . $this->getMetricName() . "]");
+
         $dateObject = new DateTime();
         $params = array_merge([
             'timestamp'     => $dateObject->sub(new DateInterval('P1D'))->format('Y-m-d') . 'T00:00:00+00:00',
