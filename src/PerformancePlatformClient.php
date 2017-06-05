@@ -107,6 +107,8 @@ class PerformancePlatformClient {
             $extras,
             $data);
 
+        error_log("PerformancePlatform payload: " . json_encode($payload));
+
         try {
             $response = $this->httpPostJson($this->buildUrl($config['dataType']), $config['bearerToken'], $payload);
             error_log("PerformancePlatform response: " .
