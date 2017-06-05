@@ -8,7 +8,7 @@ $smsReq = new SmsRequest(Config::getInstance());
 // FireText uses source, message, and keyword
 // for short numbers keyword is set to the keyword entered,
 // otherwise it's a string constant.
-error_log(var_export($_REQUEST, true));
+
 $sender = "";
 if (isset($_REQUEST['sender'])) {
     $sender = $_REQUEST['sender'];
