@@ -48,4 +48,6 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
     }
 } else if (! strtolower(substr(php_sapi_name(), 0, 3)) === 'cli') {
     header("HTTP/1.1 404 Not Found");
+} else {
+    echo strtolower(substr(php_sapi_name(), 0, 3));
 }
