@@ -62,7 +62,7 @@ class ReportCompletionRate extends PerformancePlatformReport {
 
             // Number of users successfully logged in from the list above
             $this->sendSimpleMetric(array_merge($defaults, [
-                array_merge(
+                'extras' => array_merge(
                     [ 'stage' => 'complete' ],
                     $channel['extras']
                 ),
