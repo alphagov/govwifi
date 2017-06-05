@@ -40,7 +40,8 @@ class ReportAccountUsage extends PerformancePlatformReport {
         $this->sendSimpleMetric(array_merge($defaults, [
             'extras' => [ 'type' => 'total' ],
             'data'   => [
-                'count' => $total
+                'count' => $total,
+                'transactionsCount' => $perSite
             ]
         ]));
 

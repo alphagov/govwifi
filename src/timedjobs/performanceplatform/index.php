@@ -23,8 +23,8 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
                     $dateObject = new DateTime();
                     $reportDate = $dateObject->sub(new DateInterval('P' . $i. 'D'))->format('Y-m-d');
                     // $reportVolumetrics->sendMetrics($reportDate); - report initialised.
-                    // $reportAccountUsage->sendMetrics($reportDate);
-                    $reportActiveLocations->sendMetrics($reportDate);
+                    $reportAccountUsage->sendMetrics($reportDate);
+                    //$reportActiveLocations->sendMetrics($reportDate);
                 }
             } else {
                 $reportVolumetrics->sendMetrics();
