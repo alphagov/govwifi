@@ -40,8 +40,7 @@ class ReportAccountUsage extends PerformancePlatformReport {
         $this->sendSimpleMetric(array_merge($defaults, [
             'extras' => [ 'type' => 'total' ],
             'data'   => [
-                'count' => $total,
-                'transactionsCount' => $perSite
+                'count' => $total
             ]
         ]));
 
@@ -56,6 +55,13 @@ class ReportAccountUsage extends PerformancePlatformReport {
             'extras' => [ 'type' => 'one-time' ],
             'data'   => [
                 'count' => $total - $roaming
+            ]
+        ]));
+
+        $this->sendSimpleMetric(array_merge($defaults, [
+            'extras' => [ 'type' => 'transactions' ],
+            'data'   => [
+                'count' => $perSite
             ]
         ]));
     }
