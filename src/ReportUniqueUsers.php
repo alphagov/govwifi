@@ -6,12 +6,10 @@ use DateTime;
 
 
 /**
- * Sends the number of unique users to the Performance Platform.
- * This is different from the the number of transactions, as the period
- * used here is week and month - which helps to compare with the number
- * of registrations.
+ * Sends the average number of unique users per working day to the
+ * Performance Platform.
  *
- * The script is expected to run on Mondays - with data for the previous
+ * The script is expected to run on Sundays - with data for the previous
  * month overwritten.
  *
  * @package Alphagov\GovWifi
@@ -23,26 +21,31 @@ class ReportUniqueUsers extends PerformancePlatformReport {
     }
 
     public function sendMetrics($date = null) {
-        $dateObject = (new DateTime())->sub(new DateInterval('P1D'));
+        $dateObject = new DateTime();
         if (! empty($date)) {
             $dateObject = new DateTime($date);
         }
-        $yesterday = $dateObject->format('Y-m-d');
-        $today = $dateObject->add(new DateInterval('P1D'))->format('Y-m-d');
+        $today = $dateObject->format('Y-m-d');
 
-        $perWeekSql = "SELECT count(distinct(username)) FROM session " .
-            "WHERE start BETWEEN " .
-            "date_sub('" . $yesterday . "', INTERVAL 7 DAY) AND '" . $today . "';";
+        $perWeekSql = "SELECT sum(users)/count(*) DIV 1 as `count` FROM (" .
+                "SELECT date(start) AS day, count(distinct(username)) AS users FROM session " .
+                "WHERE start BETWEEN " .
+                "date_sub('" . $today . "', INTERVAL 7 DAY) AND '" . $today . "' ".
+                "AND dayofweek(start) NOT IN (1,7) GROUP BY day" .
+            ") foo;";
         $this->sendSimpleMetric([
             'timestamp' => $today . 'T00:00:00+00:00',
             'sql'       => $perWeekSql,
             'period'    => 'week' //TODO: refactor accepted PP periods to constants.
         ]);
 
-        $lastMonthStart = (new DateTime($yesterday))->sub(new DateInterval('P1M'))->format('Y-m-01');
-        $thisMonthStart = (new DateTime($yesterday))->format('Y-m-01');
-        $perMonthSql = "SELECT count(distinct(username)) FROM session " .
-            "WHERE start BETWEEN '" . $lastMonthStart . "' AND '" . $thisMonthStart . "';";
+        $lastMonthStart = (new DateTime($today))->sub(new DateInterval('P1M'))->format('Y-m-01');
+        $thisMonthStart = (new DateTime($today))->format('Y-m-01');
+        $perMonthSql = "SELECT sum(users)/count(*) DIV 1 as `count` FROM (" .
+                "SELECT date(start) AS day, count(distinct(username)) AS users FROM session " .
+                "WHERE start BETWEEN '" . $lastMonthStart . "' AND '" . $thisMonthStart . "' ".
+                "AND dayofweek(start) NOT IN (1,7) GROUP BY day" .
+            ") foo;";
         $this->sendSimpleMetric([
             'timestamp' => $thisMonthStart . 'T00:00:00+00:00',
             'sql'       => $perMonthSql,
