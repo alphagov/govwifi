@@ -41,13 +41,13 @@ class ReportUniqueUsers extends PerformancePlatformReport {
 
         $lastMonthStart = (new DateTime($today))->sub(new DateInterval('P1M'))->format('Y-m-01');
         $thisMonthStart = (new DateTime($today))->format('Y-m-01');
-        $perMonthSql = "SELECT sum(users)/count(*) DIV 1 as `count` FROM (" .
+        $perMonthSql = "SELECT sum(users)/count(*) DIV 1 as `month-count` FROM (" .
                 "SELECT date(start) AS day, count(distinct(username)) AS users FROM session " .
                 "WHERE start BETWEEN '" . $lastMonthStart . "' AND '" . $thisMonthStart . "' ".
                 "AND dayofweek(start) NOT IN (1,7) GROUP BY day" .
             ") foo;";
         $this->sendSimpleMetric([
-            'timestamp' => $thisMonthStart . 'T00:00:00+00:00',
+            'timestamp' => $lastMonthStart . 'T00:00:00+00:00',
             'sql'       => $perMonthSql,
             'period'    => 'month'
         ]);
