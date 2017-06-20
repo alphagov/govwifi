@@ -68,7 +68,7 @@ class ReportVolumetrics extends PerformancePlatformReport {
         $sponsorCondition = "userdetails.contact != userdetails.sponsor";
         $sponsorSql = [
             "SELECT count(username) AS count FROM userdetails WHERE date(created_at) = '" . $date . "' AND " .
-            $emailCondition,
+            $sponsorCondition,
             "SELECT count(username) AS cumulative_count FROM userdetails WHERE " . $sponsorCondition .
             " AND date(created_at) <= '" . $date . "'"
         ];
