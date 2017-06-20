@@ -11,7 +11,7 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
     if (! empty($_REQUEST['period'])) {
         $period = $_REQUEST['period'];
     }
-
+    // TODO: move logic to controller.
     switch ($period) {
         case "daily":
             $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
@@ -21,11 +21,21 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
             if (! empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
                 for ($i = intval($_REQUEST['days']); $i >= 1; $i--) {
                     $dateObject = new DateTime();
-                    $reportDate = $dateObject->sub(new DateInterval('P' . $i. 'D'))->format('Y-m-d');
-                    // $reportVolumetrics->sendMetrics($reportDate); - report initialised.
+                    if (!empty($_REQUEST['date'])) {
+                        $dateObject = new DateTime($_REQUEST['date']);
+                    }
+                    $reportDate = $dateObject->sub(new DateInterval('P' . $i . 'D'))->format('Y-m-d');
+                    $reportVolumetrics->sendMetrics($reportDate);
                     $reportAccountUsage->sendMetrics($reportDate);
-                    //$reportActiveLocations->sendMetrics($reportDate);
+                    $reportActiveLocations->sendMetrics($reportDate);
                 }
+            } else if (! empty($_REQUEST['date'])) {
+                $dateObject = new DateTime($_REQUEST['date']);
+                $reportDate = $dateObject->format('Y-m-d');
+                $reportVolumetrics->sendMetrics($reportDate);
+                $reportAccountUsage->sendMetrics($reportDate);
+                $reportActiveLocations->sendMetrics($reportDate);
+
             } else {
                 $reportVolumetrics->sendMetrics();
                 $reportAccountUsage->sendMetrics();
