@@ -238,7 +238,6 @@ class AAA {
 
                 // If there is no start record do nothing and return the default error message.
                 // The RADIUS frontend will not respond to the client if this happens.
-                // TODO: add logging for failed case so we can generate a metric in CloudWatch.
                 if ($this->session->startTime) {
                     $this->session->inOctets +=
                             $acct['Acct-Input-Octets']['value'][0];
@@ -258,6 +257,9 @@ class AAA {
                             . " ap: " . $this->session->ap);
                     $this->session->writeToDB();
                     $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
+                } else {
+                    error_log("No previous record found for accounting stop request. ID ["
+                        . $this->session->id. "]");
                 }
                 break;
             case self::ACCOUNTING_TYPE_INTERIM:
