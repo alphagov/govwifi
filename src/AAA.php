@@ -80,6 +80,15 @@ class AAA {
     private $ap;
 
     /**
+     * @var string Building identifier
+     *
+     * Sent in place of the MAC address of the AP by clients
+     * with cloud-based services where the originating IP address
+     * is the same for multiple buildings.
+     */
+    private $buildingIdentifier;
+
+    /**
      * AAA constructor.
      *
      * @param $requestUrl string The request url.
@@ -213,6 +222,7 @@ class AAA {
                 $this->setAp($acct['Called-Station-Id']['value'][0]);
                 $this->session->mac = $this->getMac();
                 $this->session->ap = $this->getAp();
+                $this->session->buildingIdentifier = $this->buildingIdentifier;
                 $this->session->siteIP = $this->siteIP;
                 $this->session->writeToCache();
                 error_log(
@@ -287,7 +297,7 @@ class AAA {
                 $handle = $dbLink->prepare(
                         'insert into session ' .
                         '(start, siteIP, username, mac, ap) ' .
-                        'values (now(), :siteIP, :username, :mac, :ap)');
+                        'values (now(), :siteIP, :username, :mac, :ap, :building_identifier)');
                 $handle->bindValue(
                     ':siteIP', $this->siteIP, PDO::PARAM_STR);
                 $handle->bindValue(
@@ -296,6 +306,9 @@ class AAA {
                     ':mac', strtoupper($this->getMac()), PDO::PARAM_STR);
                 $handle->bindValue(
                     ':ap', strtoupper($this->getAp()), PDO::PARAM_STR);
+                $handle->bindValue(
+                    ':building_identifier', $this->buildingIdentifier, PDO::PARAM_STR);
+
                 $handle->execute();
             }
         } else if (self::AUTH_RESULT_REJECT == $this->result) {
@@ -339,10 +352,20 @@ class AAA {
     }
 
     /**
-     * @param $apMac string
+     * @param $calledStationId string Sets the AP or the building identifier
+     * based on the length of the "fixed" mac address.
+     * This is valid as building identifiers can not be converted to
+     * a correct (and proper sized) mac address.
      */
-    public function setAp($apMac) {
-        $this->ap = $this->fixMac($apMac);
+    public function setAp($calledStationId) {
+        $this->ap = null;
+        $this->buildingIdentifier = null;
+        $possibleMac = $this->fixMac($calledStationId);
+        if (17 === strlen($possibleMac)) {
+            $this->ap = $possibleMac;
+        } else {
+            $this->buildingIdentifier = $calledStationId;
+        }
     }
 
     /**

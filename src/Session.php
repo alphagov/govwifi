@@ -12,6 +12,7 @@ class Session {
     public $stopTime;
     public $mac;
     public $ap;
+    public $buildingIdentifier;
     public $siteIP;
 
     /**
@@ -33,13 +34,14 @@ class Session {
      */
     public function sessionRecord() {
         $sessionRecord = array();
-        $sessionRecord['login']  = $this->login;
-        $sessionRecord['InO']    = $this->inOctets;
-        $sessionRecord['OutO']   = $this->outOctets;
-        $sessionRecord['Start']  = $this->startTime;
-        $sessionRecord['siteIP'] = $this->siteIP;
-        $sessionRecord['mac']    = $this->mac;
-        $sessionRecord['ap']     = $this->ap;
+        $sessionRecord['login']               = $this->login;
+        $sessionRecord['InO']                 = $this->inOctets;
+        $sessionRecord['OutO']                = $this->outOctets;
+        $sessionRecord['Start']               = $this->startTime;
+        $sessionRecord['siteIP']              = $this->siteIP;
+        $sessionRecord['mac']                 = $this->mac;
+        $sessionRecord['ap']                  = $this->ap;
+        $sessionRecord['building_identifier'] = $this->buildingIdentifier;
         return $sessionRecord;
     }
 
@@ -58,13 +60,14 @@ class Session {
     public function loadFromCache() {
         $sessionRecord = $this->cache->get($this->id);
         if ($sessionRecord) {
-            $this->login     = $sessionRecord['login'];
-            $this->inOctets  = $sessionRecord['InO'];
-            $this->outOctets = $sessionRecord['OutO'];
-            $this->startTime = $sessionRecord['Start'];
-            $this->siteIP    = $sessionRecord['siteIP'];
-            $this->mac       = $sessionRecord['mac'];
-            $this->ap        = $sessionRecord['ap'];
+            $this->login              = $sessionRecord['login'];
+            $this->inOctets           = $sessionRecord['InO'];
+            $this->outOctets          = $sessionRecord['OutO'];
+            $this->startTime          = $sessionRecord['Start'];
+            $this->siteIP             = $sessionRecord['siteIP'];
+            $this->mac                = $sessionRecord['mac'];
+            $this->ap                 = $sessionRecord['ap'];
+            $this->buildingIdentifier = $sessionRecord['building_identifier'];
         }
     }
 
@@ -105,6 +108,7 @@ class Session {
         $handle->bindValue(':username', $this->login, PDO::PARAM_STR);
         $handle->bindValue(':mac', $this->mac, PDO::PARAM_STR);
         $handle->bindValue(':ap', $this->ap, PDO::PARAM_STR);
+        $handle->bindValue(':building_identifier', $this->buildingIdentifier, PDO::PARAM_STR);
         $handle->bindValue(':inMB', $this->inMB(), PDO::PARAM_INT);
         $handle->bindValue(':outMB', $this->outMB(), PDO::PARAM_INT);
         $handle->execute();
