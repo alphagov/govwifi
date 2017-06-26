@@ -64,8 +64,10 @@ class AAATest extends PHPUnit_Framework_TestCase {
             $aaa->user->password);
         $this->assertEquals($userName,                 $aaa->user->login);
         $this->assertEquals("02-11-00-00-00-01",       $aaa->getMac());
-        // Empty AP value.
-        $this->assertEquals("-----",                   $aaa->getAp());
+        $this->assertEquals(null,                      $aaa->getAp());
+        $this->assertEquals(
+            TestConstants::BUILDING_ID,
+            $aaa->getBuildingIdentifier());
         $this->assertInstanceOf(Site::class,           $aaa->site);
     }
 
@@ -115,14 +117,15 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $sessionData = $this->getSessionDataForUser($userName);
         $sessionDataFixture = [
             0 => [
-                'start'    => $sessionData[0]['start'],
-                'stop'     => NULL,
-                'siteIP'   => "172.17.0.6",
-                'username' => $userName,
-                'InMB'     => NULL,
-                'OutMB'    => NULL,
-                'mac'      => "02-11-00-00-00-01",
-                'ap'       => "-----"
+                'start'               => $sessionData[0]['start'],
+                'stop'                => NULL,
+                'siteIP'              => "172.17.0.6",
+                'username'            => $userName,
+                'InMB'                => NULL,
+                'OutMB'               => NULL,
+                'mac'                 => "02-11-00-00-00-01",
+                'ap'                  => NULL,
+                'building_identifier' => TestConstants::BUILDING_ID
             ]
         ];
         self::assertEquals($sessionDataFixture, $sessionData);

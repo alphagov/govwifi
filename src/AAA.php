@@ -293,12 +293,15 @@ class AAA {
         if (self::AUTH_RESULT_ACCEPT == $this->result) {
             $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
             if ($this->user->login != "HEALTH") {
+                if (empty($this->buildingIdentifier)) {
+                    var_dump($this->getAp());
+                }
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
                 $dbLink = $db->getConnection();
                 $handle = $dbLink->prepare(
                         'insert into session ' .
-                        '(start, siteIP, username, mac, ap) ' .
+                        '(start, siteIP, username, mac, ap, building_identifier) ' .
                         'values (now(), :siteIP, :username, :mac, :ap, :building_identifier)');
                 $handle->bindValue(
                     ':siteIP', $this->siteIP, PDO::PARAM_STR);
@@ -365,9 +368,18 @@ class AAA {
         $possibleMac = $this->fixMac($calledStationId);
         if (17 === strlen($possibleMac)) {
             $this->ap = $possibleMac;
-        } else {
+        } else if (! empty($calledStationId)) {
             $this->buildingIdentifier = $calledStationId;
         }
+    }
+
+    /**
+     * Visible for testing
+     *
+     * @return string
+     */
+    public function getBuildingIdentifier() {
+        return $this->buildingIdentifier;
     }
 
     /**

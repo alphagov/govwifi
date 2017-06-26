@@ -87,8 +87,10 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             TestConstants::getInstance()->getAcceptanceTestUserName(),
             $result[0]['username']);
-        $this->assertEquals("02-11-00-00-00-01", $result[0]['mac']);
-        $this->assertEquals("172.17.0.6",        $result[0]['siteIP']);
+        $this->assertEquals("02-11-00-00-00-01",        $result[0]['mac']);
+        $this->assertEquals(TestConstants::BUILDING_ID, $result[0]['building_identifier']);
+        $this->assertEquals(null,                       $result[0]['ap']);
+        $this->assertEquals("172.17.0.6",               $result[0]['siteIP']);
     }
 
     // The order of the tests below matters (!)

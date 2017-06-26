@@ -19,13 +19,14 @@ class TestConstants {
     const RESULT_PLACEHOLDER              = "#RESULT#";
     const AUTH_RESULT_ACCEPT              = "Access-Accept";
     const AUTH_RESULT_REJECT              = "Access-Reject";
+    const BUILDING_ID                     = "AP-GROUP";
     const AUTHORIZATION_RESPONSE_TEMPLATE =
         "{\"control:Cleartext-Password\":\"" . self::CLEARTEXT_PASSWORD_PLACEHOLDER . "\"}";
     const USERNAME_PLACEHOLDER            = "#USERNAME#";
     const AUTHORIZATION_URL_TEMPLATE      = "/api/authorize/user/" . self::USERNAME_PLACEHOLDER
-        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6";
+        . "/mac/02-11-00-00-00-01/ap/" . self::BUILDING_ID . "/site/172.17.0.6";
     const POST_AUTH_URL_TEMPLATE          = "/api/post-auth/user/" . self::USERNAME_PLACEHOLDER
-        . "/mac/02-11-00-00-00-01/ap//site/172.17.0.6/result/#RESULT#";
+        . "/mac/02-11-00-00-00-01/ap/" . self::BUILDING_ID . "/site/172.17.0.6/result/#RESULT#";
     const ACCOUNTING_URL_TEMPLATE         = "/api/accounting/user/" . self::USERNAME_PLACEHOLDER
         . "/site/172.17.0.6";
     const ACCOUNTING_DATA_FILE_START      = "tests/acceptance/config/radius-accounting-start.json";
