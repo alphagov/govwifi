@@ -94,8 +94,7 @@ class Session {
         $handle = $dblink->prepare(
                 "update session set stop=now(), inMB=:inMB, outMB=:outMB "
                 . "where siteIP=:siteIP and username=:username "
-                . "and stop is null and mac=:mac and ap=:ap "
-                . "and building_identifier=:buildingId "
+                . "and stop is null and mac=:mac "
                 . "and start between :startmin and :startmax");
         // TODO (afoldesi-gds): Validate this logic.
         $startmin = strftime('%Y-%m-%d %H:%M:%S',$this->startTime-$window);
@@ -108,8 +107,6 @@ class Session {
         $handle->bindValue(':siteIP', $this->siteIP, PDO::PARAM_STR);
         $handle->bindValue(':username', $this->login, PDO::PARAM_STR);
         $handle->bindValue(':mac', $this->mac, PDO::PARAM_STR);
-        $handle->bindValue(':ap', $this->ap, PDO::PARAM_STR);
-        $handle->bindValue(':buildingId', $this->buildingIdentifier, PDO::PARAM_STR);
         $handle->bindValue(':inMB', $this->inMB(), PDO::PARAM_INT);
         $handle->bindValue(':outMB', $this->outMB(), PDO::PARAM_INT);
         $handle->execute();

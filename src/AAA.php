@@ -275,6 +275,9 @@ class AAA {
                             . $this->session->login . " "
                             . $this->session->id);
                     $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
+                } else {
+                    error_log("No previous record found for accounting interim request. ID ["
+                        . $this->session->id. "]");
                 }
                 break;
             default:
@@ -293,9 +296,6 @@ class AAA {
         if (self::AUTH_RESULT_ACCEPT == $this->result) {
             $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
             if ($this->user->login != "HEALTH") {
-                if (empty($this->buildingIdentifier)) {
-                    var_dump($this->getAp());
-                }
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
                 $dbLink = $db->getConnection();
