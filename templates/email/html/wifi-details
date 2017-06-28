@@ -7,6 +7,8 @@
 <p><strong>Your username: %LOGIN%</strong><br />
 <strong>Your password: %PASS%</strong></p>
 
+<p>Your password is case sensitive. It’s 3 short words without spaces. The first letter of each word is capitalised.</p>
+
 <p>When you arrive at a government building where GovWifi is available, go to your wifi settings, select GovWifi and enter your details.</p>
 
 <p>Scroll down to find instructions for your device, or view the instructions with screenshots online:&nbsp;<a href="https://www.gov.uk/govwifi">https://www.gov.uk/govwifi</a></p>
