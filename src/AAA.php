@@ -208,7 +208,7 @@ class AAA {
             return;
         }
         $this->session = new Session(
-                $this->user->login . $acct['Acct-Session-Id']['value'][0],
+                $this->user->login . md5($acct['Acct-Session-Id']['value'][0]),
                 Cache::getInstance());
 
         error_log("Acct type: " . $accountingType);
