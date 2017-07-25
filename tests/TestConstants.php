@@ -13,13 +13,17 @@ class TestConstants {
     const HTTP_OK                         = "HTTP/1.1 200 OK";
     const HTTP_NO_DATA                    = "HTTP/1.0 204 OK";
     const HTTP_11_NO_DATA                 = "HTTP/1.1 204 OK";
+    const HTTP_11_NOT_FOUND               = "HTTP/1.1 404 Not Found";
     const HEALTH_CHECK_USER_PASSWORD      = 'GS3EWA64EshRD8I0XdVl$dko';
     const BACKEND_API_PORT                = "8080";
     const CLEARTEXT_PASSWORD_PLACEHOLDER  = "#CLEARTEXT_PASSWORD#";
+    const STATION_PLACEHOLDER             = "#CALLED_STATION_ID#";
+    const MAC_PLACEHOLDER                 = "#CALLING_STATION_ID#";
     const RESULT_PLACEHOLDER              = "#RESULT#";
     const AUTH_RESULT_ACCEPT              = "Access-Accept";
     const AUTH_RESULT_REJECT              = "Access-Reject";
     const BUILDING_ID                     = "AP-GROUP";
+    const ALTERNATIVE_BUILDING_ID         = "ALTERNATIVE-ID";
     const AUTHORIZATION_RESPONSE_TEMPLATE =
         "{\"control:Cleartext-Password\":\"" . self::CLEARTEXT_PASSWORD_PLACEHOLDER . "\"}";
     const USERNAME_PLACEHOLDER            = "#USERNAME#";
@@ -174,11 +178,18 @@ class TestConstants {
      *
      * @param string $accountingType
      * @param string $username
+     * @param string $calledStationId
+     * @param string $callingStationId
      * @return string the json data
      * @throws Exception if the accounting type is not in the list defined in class AAA,
      * or there's no file for the given type
      */
-    public static function getAccountingJsonForType($accountingType, $username) {
+    public static function getAccountingJsonForType(
+            $accountingType,
+            $username,
+            $calledStationId = "00-0c-29-89-85-d9",
+            $callingStationId = "8c-3a-e3-6c-65-d9") {
+
         if (!in_array($accountingType, AAA::ACCEPTED_ACCOUNTING_TYPES)) {
             throw new Exception("Accounting type not recognised. [" . $accountingType . "]");
         }
@@ -209,7 +220,15 @@ class TestConstants {
             str_replace(
                 self::TIMESTAMP_PLACEHOLDER,
                 date('M d Y H:i:s T', time()),
-                $jsonData
+                str_replace(
+                    self::STATION_PLACEHOLDER,
+                    $calledStationId,
+                    str_replace(
+                        self::MAC_PLACEHOLDER,
+                        $callingStationId,
+                        $jsonData
+                    )
+                )
             )
         );
     }
