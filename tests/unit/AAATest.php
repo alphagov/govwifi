@@ -98,11 +98,12 @@ class AAATest extends PHPUnit_Framework_TestCase {
             ],
             $aaa->processRequest()
         );
-        self::assertEquals(array(), $this->getSessionDataForUser(Config::HEALTH_CHECK_USER));
+        self::assertEquals(array(), $this->getSessionDataForUser(Config::HEALTH_CHECK_USER, "bla"));
     }
 
     function testProcessPostAuthRequestNormalUser() {
         $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $mac = "02-11-00-00-00-01";
         $aaa = new AAA(TestConstants::postAuthUrlForUser($userName), "");
         $this->assertEquals(
             [
@@ -114,7 +115,7 @@ class AAATest extends PHPUnit_Framework_TestCase {
             ],
             $aaa->processRequest()
         );
-        $sessionData = $this->getSessionDataForUser($userName);
+        $sessionData = $this->getSessionDataForUser($userName, $mac);
         $sessionDataFixture = [
             0 => [
                 'start'               => $sessionData[0]['start'],
@@ -123,7 +124,7 @@ class AAATest extends PHPUnit_Framework_TestCase {
                 'username'            => $userName,
                 'InMB'                => NULL,
                 'OutMB'               => NULL,
-                'mac'                 => "02-11-00-00-00-01",
+                'mac'                 => $mac,
                 'ap'                  => NULL,
                 'building_identifier' => TestConstants::BUILDING_ID
             ]
@@ -162,20 +163,191 @@ class AAATest extends PHPUnit_Framework_TestCase {
         new AAA(self::POST_AUTH_MALFORMED_URL, "");
     }
 
+    function testAccountingStartJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_START, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingInterimJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_INTERIM, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingStopJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_STOP, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingOnJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_ON, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingOffJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_OFF, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingStopForNoStartJsonHandled() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_STOP, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NOT_FOUND,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+    }
+
+    function testAccountingStopForInvalidUserJsonHandled() {
+        $userName = "INVALI";
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_START, $userName));
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NOT_FOUND,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertFalse($aaa->user->validUser);
+    }
+
+    function testAccountingStartUpdatesSession() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $mac = "02-11-00-00-00-01";
+        $bbb = new AAA(TestConstants::postAuthUrlForUser($userName), "");
+        $bbb->processRequest();
+
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(
+                AAA::ACCOUNTING_TYPE_START,
+                $userName,
+                TestConstants::ALTERNATIVE_BUILDING_ID,
+                $mac
+            )
+        );
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NO_DATA,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+        self::assertTrue($aaa->user->validUser);
+        self::assertEquals(AAA::HTTP_RESPONSE_NO_CONTENT, $aaa->getResponseHeader());
+
+
+        $sessionData = $this->getSessionDataForUser($userName, $mac);
+        $sessionDataFixture = [
+            0 => [
+                'start'               => $sessionData[0]['start'],
+                'stop'                => NULL,
+                'siteIP'              => "172.17.0.6",
+                'username'            => $userName,
+                'InMB'                => 0,
+                'OutMB'               => 0,
+                'mac'                 => $mac,
+                'ap'                  => "",
+                'building_identifier' => TestConstants::ALTERNATIVE_BUILDING_ID
+            ]
+        ];
+        self::assertEquals($sessionDataFixture, $sessionData);
+
+    }
+
     /**
      * Retrieves the stored session from the database for the username provided.
      *
-     * @param $username
+     * @param string $username
+     * @param string $mac
      * @return array
      */
-    private function getSessionDataForUser($username) {
+    private function getSessionDataForUser($username, $mac) {
         $statement = DB::getInstance()->getConnection()->prepare(
-            "SELECT * FROM session WHERE username = :username ORDER BY start DESC LIMIT 1");
-        $statement->bindValue(
-            ":username",
-            $username,
-            PDO::PARAM_STR
-        );
+            "SELECT * FROM session WHERE username = :username AND mac = :mac ORDER BY start DESC LIMIT 1");
+        $statement->bindValue(":username", $username, PDO::PARAM_STR);
+        $statement->bindValue(":mac", $mac, PDO::PARAM_STR);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
     }

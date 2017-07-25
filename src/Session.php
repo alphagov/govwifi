@@ -87,28 +87,36 @@ class Session {
         $this->cache->set($this->id, $this->sessionRecord());
     }
 
-    public function writeToDB() {
+    public function writeToDB($stop = true) {
         $window = 30; // Must match a session that starts within x seconds of the authentication
+        $stopField = "";
+        if ($stop) {
+            $stopField = "stop=now(),";
+        }
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare(
-                "update session set stop=now(), inMB=:inMB, outMB=:outMB "
+        $dbLink = $db->getConnection();
+        $handle = $dbLink->prepare(
+                "update session set " . $stopField .
+                    " inMB=:inMB, outMB=:outMB, building_identifier=:buildingID "
                 . "where siteIP=:siteIP and username=:username "
-                . "and stop is null and mac=:mac "
-                . "and start between :startmin and :startmax");
-        // TODO (afoldesi-gds): Validate this logic.
-        $startmin = strftime('%Y-%m-%d %H:%M:%S',$this->startTime-$window);
-        $startmax = strftime('%Y-%m-%d %H:%M:%S',$this->startTime+$window);
+                    . "and stop is null and mac=:mac "
+                    . "and start between :startmin and :startmax");
+        // Some (300/11500) sessions are started multiple times in the same second, can
+        // NOT use "order by start desc limit 1" here for now.
+        // TODO (afoldesi-gds): Validate this logic further.
+        $startMin = strftime('%Y-%m-%d %H:%M:%S',$this->startTime-$window);
+        $startMax = strftime('%Y-%m-%d %H:%M:%S',$this->startTime+$window);
         error_log(
                 "Updating record between "
-                . $startmin. " and ".$startmax." for ".$this->login);
-        $handle->bindValue(':startmin', $startmin , PDO::PARAM_STR);
-        $handle->bindValue(':startmax', $startmax , PDO::PARAM_STR);
-        $handle->bindValue(':siteIP', $this->siteIP, PDO::PARAM_STR);
-        $handle->bindValue(':username', $this->login, PDO::PARAM_STR);
-        $handle->bindValue(':mac', $this->mac, PDO::PARAM_STR);
-        $handle->bindValue(':inMB', $this->inMB(), PDO::PARAM_INT);
-        $handle->bindValue(':outMB', $this->outMB(), PDO::PARAM_INT);
+                . $startMin . " and " . $startMax . " for " . $this->login);
+        $handle->bindValue(':startmin',   $startMin,                 PDO::PARAM_STR);
+        $handle->bindValue(':startmax',   $startMax,                 PDO::PARAM_STR);
+        $handle->bindValue(':siteIP',     $this->siteIP,             PDO::PARAM_STR);
+        $handle->bindValue(':username',   $this->login,              PDO::PARAM_STR);
+        $handle->bindValue(':mac',        $this->mac,                PDO::PARAM_STR);
+        $handle->bindValue(':inMB',       $this->inMB(),             PDO::PARAM_INT);
+        $handle->bindValue(':outMB',      $this->outMB(),            PDO::PARAM_INT);
+        $handle->bindValue(':buildingID', $this->buildingIdentifier, PDO::PARAM_STR);
         $handle->execute();
     }
 }

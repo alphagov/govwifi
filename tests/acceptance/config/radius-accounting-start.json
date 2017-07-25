@@ -26,13 +26,13 @@
     "Called-Station-Id": {
         "type": "string",
         "value": [
-            "00-0c-29-89-85-d9"
+            "#CALLED_STATION_ID#"
         ]
     },
     "Calling-Station-Id": {
         "type": "string",
         "value": [
-            "8c-3a-e3-6c-65-d9"
+            "#CALLING_STATION_ID#"
         ]
     },
     "NAS-Identifier": {
