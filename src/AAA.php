@@ -203,12 +203,18 @@ class AAA {
         $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
 
         if (! in_array($accountingType, self::ACCEPTED_ACCOUNTING_TYPES)) {
-            // Silently fail if the accounting request type is not recognized.
             error_log("Accounting request type not recognised: [" . $accountingType . "]");
             return;
         }
+
+        if (! $this->user->validUser) {
+            error_log("Skip Accounting [" . $accountingType .
+                "] for invalid user [" . $this->user->login . "]");
+            return;
+        }
+
         $this->session = new Session(
-                $this->user->login . $acct['Acct-Session-Id']['value'][0],
+                $this->user->login . md5($acct['Acct-Session-Id']['value'][0]),
                 Cache::getInstance());
 
         error_log("Acct type: " . $accountingType);
