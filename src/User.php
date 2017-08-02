@@ -17,6 +17,10 @@ class User {
      */
     public $sponsor;
     public $email;
+    /**
+     * @var bool
+     */
+    public $validUser;
 
     /**
      * @var Cache
@@ -29,8 +33,9 @@ class User {
     private $config;
 
     public function __construct(Cache $cache, Config $config) {
-        $this->cache  = $cache;
-        $this->config = $config;
+        $this->cache     = $cache;
+        $this->config    = $config;
+        $this->validUser = false;
     }
 
     /**
@@ -50,7 +55,7 @@ class User {
                            $senderName = "",
                            $journey = SmsRequest::SMS_JOURNEY_TERMS) {
         $this->setUsername();
-        $this->loadRecord();
+        $this->loadRecord(true);
         if ($force) {
             $this->newPassword();
         }
@@ -116,10 +121,14 @@ class User {
         $this->password = $this->generateRandomWifiPassword();
     }
 
-    public function loadRecord() {
-        # This function looks for an existing password entry for this username
-        # if it finds it and force is false then it will return the same password
-        # otherwise it will return a randomly generated one
+    /**
+     * Tries to load the user record based on their username, first from the cache,
+     * if not found then from the database directly.
+     *
+     * @param bool $force if true it will generate a new password for the user if
+     * it was not found - so the logic can be called from signup.
+     */
+    public function loadRecord($force = false) {
         $db = DB::getInstance();
         $dblink = $db->getConnection();
         $userRecord = false;
@@ -151,14 +160,17 @@ class User {
 
         if ($userRecord) {
             error_log("User record loaded.");
+            $this->validUser = true;
             $this->password = $userRecord['password'];
             $this->identifier = new Identifier($userRecord['contact']);
             $this->sponsor = new Identifier($userRecord['sponsor']);
             $this->email = $userRecord['email'];
-        } else {
-            //TODO: wwhat?
+        } else if ($force) {
             error_log("No previous user record found, generating new password.");
             $this->newPassword();
+            $this->validUser = true;
+        } else {
+            error_log("User record not found for username [" . $this->login . "]");
         }
     }
 

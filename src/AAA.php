@@ -203,12 +203,18 @@ class AAA {
         $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
 
         if (! in_array($accountingType, self::ACCEPTED_ACCOUNTING_TYPES)) {
-            // Silently fail if the accounting request type is not recognized.
             error_log("Accounting request type not recognised: [" . $accountingType . "]");
             return;
         }
+
+        if (! $this->user->validUser) {
+            error_log("Skip Accounting [" . $accountingType .
+                "] for invalid user [" . $this->user->login . "]");
+            return;
+        }
+
         $this->session = new Session(
-                $this->user->login . $acct['Acct-Session-Id']['value'][0],
+                $this->user->login . md5($acct['Acct-Session-Id']['value'][0]),
                 Cache::getInstance());
 
         error_log("Acct type: " . $accountingType);
@@ -216,15 +222,17 @@ class AAA {
             case self::ACCOUNTING_TYPE_START:
             case self::ACCOUNTING_TYPE_ON:
                 // Acct Start - Store session in Memcache
-                $this->session->login = $this->user->login;
-                $this->session->startTime = time();
                 $this->setMac($acct['Calling-Station-Id']['value'][0]);
                 $this->setAp($acct['Called-Station-Id']['value'][0]);
-                $this->session->mac = $this->getMac();
-                $this->session->ap = $this->getAp();
+
+                $this->session->login              = $this->user->login;
+                $this->session->startTime          = time();
+                $this->session->mac                = $this->getMac();
+                $this->session->ap                 = $this->getAp();
                 $this->session->buildingIdentifier = $this->buildingIdentifier;
-                $this->session->siteIP = $this->siteIP;
+                $this->session->siteIP             = $this->siteIP;
                 $this->session->writeToCache();
+                $this->session->writeToDB(false);
                 error_log(
                         "Accounting start: "
                         . "[" . $accountingType . "] "
@@ -374,12 +382,21 @@ class AAA {
     }
 
     /**
-     * Visible for testing
+     * Visible for testing.
      *
      * @return string
      */
     public function getBuildingIdentifier() {
         return $this->buildingIdentifier;
+    }
+
+    /**
+     * Visible for testing.
+     *
+     * @return string
+     */
+    public function getResponseHeader() {
+       return $this->responseHeader;
     }
 
     /**
