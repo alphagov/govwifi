@@ -18,14 +18,14 @@ This repository contains the backend API logic responsible for:
 - generation of automated, specific reports upon request from administrators,
 - handling of user accounts,
 - sending out surveys,
-- generating reports for[Performance Platform](https://www.gov.uk/performance/govwifi).
+- generating reports for [Performance Platform](https://www.gov.uk/performance/govwifi).
 
 
 AAA
 ---
 The main functionality of the service is the authentication of users by their unique username / password pair. The 
-backend API sits behind a set of[FreeRADIUS](http://freeradius.org/)servers, making use of
-the[REST module](http://networkradius.com/doc/3.0.10/raddb/mods-available/rest.html)to make the API calls.
+backend API sits behind a set of [FreeRADIUS](http://freeradius.org/) servers, making use of
+the [REST module](http://networkradius.com/doc/3.0.10/raddb/mods-available/rest.html) to make the API calls.
 
 The entry point for the API calls the /api/api.php. The appropriate requests are routed to this entry point by Apache
 configuration rules. The supported request types are:
@@ -33,9 +33,9 @@ configuration rules. The supported request types are:
 - post-auth
 - accounting
 
-In any of these cases when user data is loaded from the database it is saved then
-to[cache.](https://github.com/alphagov/govwifi/blob/master/src/Cache.php)These functionalities are handled by
-the[AAA class](https://github.com/alphagov/govwifi/blob/master/src/AAA.php)as follows:
+In any of these cases when user data is loaded from the database it is saved then to
+[cache.](https://github.com/alphagov/govwifi/blob/master/src/Cache.php) These functionalities are handled by the
+[AAA class](https://github.com/alphagov/govwifi/blob/master/src/AAA.php) as follows:
 
 Authorize
 
@@ -60,14 +60,14 @@ Accounting-On and Accounting-Off which correspond to Start and Stop respectively
 The accounting data is POST-ed in these requests, in JSON format,
 [see examples here.](https://github.com/alphagov/govwifi/tree/master/tests/acceptance/config)
 
-Upon a**Start**request The relevant parts of the data is saved
-to[cache](https://github.com/alphagov/govwifi/blob/master/src/Cache.php)
+Upon a **Start** request The relevant parts of the data is saved
+to [cache](https://github.com/alphagov/govwifi/blob/master/src/Cache.php)
 and the session record in the database is also updated to cater for building identifiers that are only sent in the
-accounting requests. We currently use[Memcached](https://memcached.org/)for caching.
+accounting requests. We currently use [Memcached](https://memcached.org/) for caching.
 
-In case of**Interim**requests only the cache is updated.
+In case of **Interim** requests only the cache is updated.
 
-When a**Stop**request is received the relevant data is removed from the cache and the session record in the database is
+When a **Stop** request is received the relevant data is removed from the cache and the session record in the database is
 finalised.
 
 Site administration
