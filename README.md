@@ -91,8 +91,8 @@ The actual handling of the incoming and outgoing emails is done by the
 Currently we use separate providers for incoming and outgoing text messages. This is likely to change in the near future
 as Notify has recently added support for incoming SMS.
 
-The incoming endpoint is [/sms/](https://github.com/alphagov/govwifi/blob/master/src/sms/index.php) Which handles text
-messages sent by Firetext.
+The incoming endpoint is [/sms/](https://github.com/alphagov/govwifi/blob/master/src/sms/index.php) which handles text
+messages sent by the incoming SMS provider.
 
 Our outgoing provider is [GovUK Notify](https://www.notifications.service.gov.uk/). We're using of the
 [client library](https://github.com/alphagov/notifications-php-client) they provide.
@@ -131,7 +131,7 @@ to test different versions.
 Timed jobs
 ----------
 Timed jobs are called from cron, executed from the
-[management instance](https://github.com/alphagov/govwifi-terraform/blob/master/govwifi-backend/management.tf)running in
+[management instance](https://github.com/alphagov/govwifi-terraform/blob/master/govwifi-backend/management.tf) running in
 the same region as the backends.
 
 Surveys
@@ -155,6 +155,6 @@ specific reports are:
 - [Completion rate of the registration](https://github.com/alphagov/govwifi/blob/master/src/ReportCompletionRate.php)
 - [Active locations](https://github.com/alphagov/govwifi/blob/master/src/ReportActiveLocations.php)
 
-The reports are called daily weekly or monthly as a timed job via the performanceplatform
+The reports are called daily, weekly or monthly as a timed job via the performanceplatform
 [entry point](https://github.com/alphagov/govwifi/blob/master/src/timedjobs/performanceplatform/index.php).
 There are no monthly reports at the moment.
