@@ -35,9 +35,9 @@ The appropriate requests are routed to this entry point by Apache configuration 
 
 In any of these cases when user data is loaded from the database it is then saved to
 [cache.](https://github.com/alphagov/govwifi/blob/master/src/Cache.php) which currently uses
-[Memcached](https://memcached.org/)[Memcached](https://memcached.org/) provided by
-[AWS Elasticache](https://aws.amazon.com/elasticache/). The functionalities are handled by the
-[AAA class](https://github.com/alphagov/govwifi/blob/master/src/AAA.php) as follows:
+[Memcached](https://memcached.org/) provided by [AWS Elasticache](https://aws.amazon.com/elasticache/).
+The functionalities are handled by the [AAA class](https://github.com/alphagov/govwifi/blob/master/src/AAA.php) as
+follows:
 
 **Authorize**
 
@@ -66,7 +66,7 @@ The accounting data is POST-ed in these requests, in JSON format,
 Upon a **Start** request the relevant parts of the data is saved
 to [cache](https://github.com/alphagov/govwifi/blob/master/src/Cache.php)
 and the session record in the database is also updated to cater for building identifiers that are only sent in the
-accounting requests. We currently use [Memcached](https://memcached.org/) for caching.
+accounting requests.
 
 In case of **Interim** requests only the cache is updated.
 
@@ -77,7 +77,7 @@ External API integrations
 -------------------------
 **Emails**
 
-For both incoming and outgoing email support we use [Amazon's SES.](https://aws.amazon.com/ses/)
+For both incoming and outgoing email support we use [Amazon's SES](https://aws.amazon.com/ses/).
 The incoming endpoint is [/sns/](https://github.com/alphagov/govwifi/blob/master/src/sns/index.php) - which is in fact a
 notifications endpoint for the [Simple Notifications Service](https://aws.amazon.com/sns/). When an email is received by
 one of the endpoints defined in the
@@ -85,7 +85,7 @@ one of the endpoints defined in the
 notification is pushed to the endpoint above containing the email's metadata. This is then processed by
 [SnsEmailProvider](https://github.com/alphagov/govwifi/blob/master/src/providers/SnsEmailProvider.php).
 
-The actual handling of the incoming and outgoing emails is done by the
+The actual handling of the incoming and outgoing email logic is done by the
 [EmailRequest](https://github.com/alphagov/govwifi/blob/master/src/EmailRequest.php) and
 [EmailResponse](https://github.com/alphagov/govwifi/blob/master/src/EmailResponse.php) classes respectively.
 
@@ -127,7 +127,7 @@ There are currently 3 journeys by which a [user can register](https://www.gov.uk
 These require handling of incoming and outgoing text messages as well as emails. In case of user registration we are
 not using attachments in any way.
 The email templates live in the [source](https://github.com/alphagov/govwifi/tree/master/templates/email) however for
-the text messages we're using the functionalities provided by GovUk Notify
+the text messages we're using the functionalities provided by GovUK Notify
 [platform](https://www.notifications.service.gov.uk) where separate staging and live environments are set up in order
 to test different versions.
 
