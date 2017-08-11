@@ -27,14 +27,16 @@ The main functionality of the service is the authentication of users by their un
 backend API sits behind a set of [FreeRADIUS](http://freeradius.org/) servers, making use of
 the [REST module](http://networkradius.com/doc/3.0.10/raddb/mods-available/rest.html) to make the API calls.
 
-The entry point for the API calls the /api/api.php. The appropriate requests are routed to this entry point by Apache
-configuration rules. The supported request types are:
+The entry point for the API calls [/api/api.php](https://github.com/alphagov/govwifi/blob/master/src/api/api.php).
+The appropriate requests are routed to this entry point by Apache configuration rules. The supported request types are:
 - authorize
 - post-auth
 - accounting
 
-In any of these cases when user data is loaded from the database it is saved then to
-[cache.](https://github.com/alphagov/govwifi/blob/master/src/Cache.php) These functionalities are handled by the
+In any of these cases when user data is loaded from the database it is then saved to
+[cache.](https://github.com/alphagov/govwifi/blob/master/src/Cache.php) which currently uses
+[Memcached](https://memcached.org/)[Memcached](https://memcached.org/) provided by
+[AWS Elasticache](https://aws.amazon.com/elasticache/). The functionalities are handled by the
 [AAA class](https://github.com/alphagov/govwifi/blob/master/src/AAA.php) as follows:
 
 **Authorize**
@@ -43,12 +45,13 @@ Currently this is the very simple matter of checking for the health check user a
 returning the user's password to be checked on the RADIUS side.
 This is the point where we could implement building-specific restrictions, for example based on the user's signup
 journey (email or text); or, in case of email registrations, the specific email domain the user has signed up with.
+We could also consider removing the special case for health check.
 
 **Post-Auth**
 
 This is a ping-back from the RADIUS server to confirm if the authentication was successful. The result is
 "Access-Accept" if so, "Access-Reject" otherwise. At this point, if it was successful we start a session for the user
-(add a new session record) with the current time as start and other user and site-specific values.
+(add a new session record to the database) with the current time as start and other user and site-specific values.
 The response header sent back to the RADIUS server is 204 OK (No content) in either of the above cases, however it
 is 404 (Not found) if the result received was not recognised.
 
@@ -60,7 +63,7 @@ Accounting-On and Accounting-Off which correspond to Start and Stop respectively
 The accounting data is POST-ed in these requests, in JSON format,
 [see examples here.](https://github.com/alphagov/govwifi/tree/master/tests/acceptance/config)
 
-Upon a **Start** request The relevant parts of the data is saved
+Upon a **Start** request the relevant parts of the data is saved
 to [cache](https://github.com/alphagov/govwifi/blob/master/src/Cache.php)
 and the session record in the database is also updated to cater for building identifiers that are only sent in the
 accounting requests. We currently use [Memcached](https://memcached.org/) for caching.
@@ -74,8 +77,8 @@ External API integrations
 -------------------------
 **Emails**
 
-For both incoming and outgoing email support we user [Amazon's SES.](https://aws.amazon.com/ses/)
-The incoming endpoint is [/sns](https://github.com/alphagov/govwifi/blob/master/src/sns/index.php) - which is in fact a
+For both incoming and outgoing email support we use [Amazon's SES.](https://aws.amazon.com/ses/)
+The incoming endpoint is [/sns/](https://github.com/alphagov/govwifi/blob/master/src/sns/index.php) - which is in fact a
 notifications endpoint for the [Simple Notifications Service](https://aws.amazon.com/sns/). When an email is received by
 one of the endpoints defined in the
 [SES email configuration](https://github.com/alphagov/govwifi-terraform/blob/master/govwifi-emails/emails.tf) a
@@ -94,7 +97,7 @@ as Notify has recently added support for incoming SMS.
 The incoming endpoint is [/sms/](https://github.com/alphagov/govwifi/blob/master/src/sms/index.php) which handles text
 messages sent by the incoming SMS provider.
 
-Our outgoing provider is [GovUK Notify](https://www.notifications.service.gov.uk/). We're using of the
+Our outgoing provider is [GovUK Notify](https://www.notifications.service.gov.uk/). We're using the
 [client library](https://github.com/alphagov/notifications-php-client) they provide.
 
 The incoming and outgoing logic is handled by the
@@ -105,10 +108,10 @@ Site administration
 -------------------
 Authorised administrators can talk to the automated system via the newsite@ email address to register a new location or
 to change an existing one. Full documentation of the commands and supported automated functionalities is
-[here](https://www.gov.uk/guidance/set-up-govwifi-on-your-infrastructure)
+[here](https://www.gov.uk/guidance/set-up-govwifi-on-your-infrastructure).
 
-Administrators have to sign up with the GovWifi support team directly. The main reason is to keep control of who's
-granted privileged access to the system within the team. Hence the process of creating "Organisations" and admins
+Administrators have to sign up with the GovWifi support team directly. The main reason for this is to keep control of
+who's granted privileged access to the system within the team. Hence the process of creating "Organisations" and admins
 belonging to these is manual.
 
 We are in the process of planning a support portal where the admin and organisation setup will be simplified, as well
@@ -116,7 +119,7 @@ as the administration of the existing sites.
 
 User account handling
 ---------------------
-There are currently 3 journeys by which a [user can register](https://www.gov.uk/govwifi)
+There are currently 3 journeys by which a [user can register](https://www.gov.uk/govwifi):
 - Self-signup
 - Sponsored
 - Text message
@@ -138,7 +141,8 @@ Surveys
 -------
 Automatic surveys are sent out after registration to measure user satisfaction and gather feedback - as the registration
 is really the only point when we're in communication with our end users. The
-[entry point is a timed job](https://github.com/alphagov/govwifi/blob/master/src/timedjobs/survey/index.php).
+[entry point is a timed job](https://github.com/alphagov/govwifi/blob/master/src/timedjobs/survey/index.php). Logic is
+handled by the [Survey class](https://github.com/alphagov/govwifi/blob/master/src/Survey.php).
 
 Integration with Performance Platform
 -------------------------------------
