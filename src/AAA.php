@@ -413,11 +413,14 @@ class AAA {
 
         // If this matches a user account continue
         if (isset($this->user->identifier)
-            && $this->user->identifier->text) {
+            && !empty($this->user->identifier->text)
+            && $this->user->validUser) {
             // Logic for restricted journey may come here
             // Eg test emails against specific regex, lock out SMS-registered users, etc.
             $this->authorizeResponse(TRUE);
+            return;
         }
+        $this->authorizeResponse(FALSE);
     }
 
     private function authorizeResponse($accept) {
