@@ -170,7 +170,11 @@ class User {
             $this->newPassword();
             $this->validUser = true;
         } else {
-            error_log("User record not found for username [" . $this->login . "]");
+            if (! empty($this->login)) {
+                error_log("User record not found for username [" . $this->login . "]");
+            } else {
+                error_log("User record not found for contact [" . $this->identifier->text . "]");
+            }
         }
     }
 

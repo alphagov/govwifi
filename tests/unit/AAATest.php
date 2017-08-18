@@ -86,6 +86,35 @@ class AAATest extends PHPUnit_Framework_TestCase {
         );
     }
 
+    function testProcessAuthorisationRequestNormalUser() {
+        $aaa = new AAA(TestConstants::authorisationUrlForUser(TestConstants::getInstance()->getUnitTestUserName()), "");
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_OK,
+                    "Content-Type: application/json",
+                ],
+                'body' => TestConstants::authorisationResponseForPassword(
+                    TestConstants::getInstance()->getUnitTestUserPassword())
+            ],
+            $aaa->processRequest()
+        );
+    }
+
+    function testProcessAuthRejectRequestNormalUser() {
+        $aaa = new AAA(TestConstants::authorisationUrlForUser("INVALI"), "");
+        $this->assertEquals(
+            [
+                'headers' => [
+                    TestConstants::HTTP_11_NOT_FOUND,
+                    "Content-Type: application/json",
+                ],
+                'body' => ''
+            ],
+            $aaa->processRequest()
+        );
+    }
+
     function testProcessPostAuthRequestHealthCheckDoesNotStartASession() {
         $aaa = new AAA(TestConstants::postAuthUrlForUser(Config::HEALTH_CHECK_USER), "");
         $this->assertEquals(
