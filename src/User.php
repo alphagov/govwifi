@@ -172,8 +172,10 @@ class User {
         } else {
             if (! empty($this->login)) {
                 error_log("User record not found for username [" . $this->login . "]");
-            } else {
+            } else if (isset($this->identifier)) {
                 error_log("User record not found for contact [" . $this->identifier->text . "]");
+            } else {
+                error_log("User record not found.");
             }
         }
     }
