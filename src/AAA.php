@@ -288,9 +288,6 @@ class AAA {
                         . $this->session->id. "]");
                 }
                 break;
-            default:
-                error_log("Accounting request type not recognised: (default) [" . $accountingType . "]");
-                break;
         }
     }
 
