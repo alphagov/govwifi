@@ -18,8 +18,32 @@ class AAATest extends PHPUnit_Framework_TestCase {
     const AUTHENTICATION_URL   = "/api/authenticate/user/HEALTH/mac/02-00-00-00-00-01/"
         . "site/172.17.0.6";
 
+    function setUp() {
+        $_SERVER['SERVER_PROTOCOL'] = AAA::DEFAULT_HTTP_PROTOCOL;
+    }
+
     function testClassInstantiates() {
         $this->assertInstanceOf(AAA::class, new AAA(self::AUTHORISATION_URL, ""));
+    }
+
+    function testInvalidAccountingTypesCauses404() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(TestConstants::accountingUrlForUser($userName), "");
+        $this->assertArraySubset(['headers' => ['HTTP/1.1 404 Not Found']], $aaa->processRequest());
+    }
+
+    function testPostAuthWithNoResultGives404() {
+        $aaa = new AAA(self::AUTHORISATION_URL, "");
+        $aaa->postAuth();
+        self::assertEquals($aaa->getResponseHeader(), AAA::HTTP_RESPONSE_NOT_FOUND);
+    }
+
+    function testInterimAccountingType() {
+        $userName = TestConstants::getInstance()->getUnitTestUserName();
+        $aaa = new AAA(
+            TestConstants::accountingUrlForUser($userName),
+            TestConstants::getAccountingJsonForType(AAA::ACCOUNTING_TYPE_INTERIM, $userName));
+        $this->assertArraySubset(['headers' => ['HTTP/1.1 404 Not Found']], $aaa->processRequest());
     }
 
     function testAuthorisationUrlIsParsedProperly() {
