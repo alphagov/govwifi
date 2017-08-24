@@ -247,10 +247,8 @@ class AAA {
                 // If there is no start record do nothing and return the default error message.
                 // The RADIUS frontend will not respond to the client if this happens.
                 if ($this->session->startTime) {
-                    $this->session->inOctets +=
-                            $acct['Acct-Input-Octets']['value'][0];
-                    $this->session->outOctets +=
-                            $acct['Acct-Output-Octets']['value'][0];
+                    $this->session->inOctets += $acct['Acct-Input-Octets']['value'][0];
+                    $this->session->outOctets += $acct['Acct-Output-Octets']['value'][0];
                     $this->session->stopTime = time();
                     $this->session->deleteFromCache();
                     error_log(
@@ -273,10 +271,8 @@ class AAA {
             case self::ACCOUNTING_TYPE_INTERIM:
                 // Acct Interim - if there is no start record do nothing.
                 if ($this->session->startTime) {
-                    $this->session->inOctets +=
-                            $acct['Acct-Input-Octets']['value'][0];
-                    $this->session->outOctets +=
-                            $acct['Acct-Output-Octets']['value'][0];
+                    $this->session->inOctets += $acct['Acct-Input-Octets']['value'][0];
+                    $this->session->outOctets += $acct['Acct-Output-Octets']['value'][0];
                     $this->session->writeToCache();
                     error_log(
                             "Accounting update: "
