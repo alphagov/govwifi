@@ -4,8 +4,8 @@
 <p>GovWifi is a secure wifi service.</p>
 
 <p>You only need to register once. You&rsquo;ll then access GovWifi wherever it&rsquo;s available.</p>
-<p><strong>Your username: %LOGIN%</strong><br />
-<strong>Your password: %PASS%</strong></p>
+<p>Your username: <strong>%LOGIN%</strong><br />
+Your password: <strong>%PASS%</strong></p>
 
 <p>These details are unique to you. Your password is case sensitive. It&rsquo;s 3 words without spaces. The first letter of each word is capitalised.</p>
 
@@ -100,4 +100,4 @@
 <p>Having problems connecting? Contact the helpdesk in your building. </p>
 <p>&nbsp;</p>
 
-<p>By connecting to GovWifi, you agree to the terms and conditions:&nbsp;<a href="https://www.gov.uk/govwifi">https://www.gov.uk/govwifi</a></p>
+<p>By connecting to GovWifi, you agree to the terms and conditions:&nbsp;<a href="https://www.gov.uk/govwifi-terms">https://www.gov.uk/govwifi-terms</a></p>
