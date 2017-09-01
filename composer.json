@@ -1,7 +1,7 @@
 {
     "require": {
         "php-http/guzzle6-adapter": "^1.1",
-        "alphagov/notifications-php-client": "dev-master",
+        "alphagov/notifications-php-client": "^1.1",
         "aws/aws-sdk-php": "^3.19",
         "swiftmailer/swiftmailer": "@stable",
         "setasign/fpdf": "1.8.1"

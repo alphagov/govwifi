@@ -4,21 +4,21 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7d899307e09c8269b7db0f617d6addcf",
-    "content-hash": "53f028eaf6934ae8d73554b7d0392f23",
+    "hash": "68a01d566c93897cc7452c326209b8e9",
+    "content-hash": "54bd8ed053ae2523ce7bb199051cab66",
     "packages": [
         {
             "name": "alphagov/notifications-php-client",
-            "version": "dev-master",
+            "version": "1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/alphagov/notifications-php-client.git",
-                "reference": "7b188c50b4ac4bc1007c2fd480e23ecfa46bf72d"
+                "reference": "cae2548d8e1db11fe552c8f4416275baeba1e424"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/ff9146fb64e7f285e9d7b0b91097ba8e0f1a41bd",
-                "reference": "7b188c50b4ac4bc1007c2fd480e23ecfa46bf72d",
+                "url": "https://api.github.com/repos/alphagov/notifications-php-client/zipball/cae2548d8e1db11fe552c8f4416275baeba1e424",
+                "reference": "cae2548d8e1db11fe552c8f4416275baeba1e424",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +57,7 @@
                 }
             ],
             "description": "PHP client for GOV.UK Notifications",
-            "time": "2016-10-05 14:27:24"
+            "time": "2017-05-24 10:02:18"
         },
         {
             "name": "aws/aws-sdk-php",
@@ -2023,7 +2023,6 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "alphagov/notifications-php-client": 20,
         "swiftmailer/swiftmailer": 0
     },
     "prefer-stable": false,

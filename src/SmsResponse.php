@@ -30,7 +30,6 @@ class SmsResponse {
     private function send() {
         $config = Config::getInstance();
         $notifyClient = new NotifyClient([
-            'serviceId'     => $config->values['notify']['serviceId'],
             'apiKey'        => $config->values['notify']['apiKey'],
             'httpClient'    => new Guzzle6Client]);
 
@@ -41,7 +40,8 @@ class SmsResponse {
                     $this->personalisation);
             error_log("SMS sent. " . json_encode($response));
         } catch (NotifyException $e) {
-            error_log("Exception from Notify: " . var_export($e, true));
+            error_log("Exception from Notify: (" . $this->destinationNumber. ") [" . $e->getCode(). "] " .
+                $e->getMessage());
         }
     }
 
