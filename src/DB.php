@@ -34,7 +34,7 @@ class DB {
      */
     public static function getInstance($dbType = self::DB_TYPE_DEFAULT) {
         if (!in_array($dbType, self::ALLOWED_DB_TYPES)) {
-            throw new GovWifiException("DB type not recognised. [" . $dbType . "]");
+            throw new GovWifiException("DB type not recognized. [" . $dbType . "]");
         }
         if (empty(self::$instances[ $dbType ])) {
             self::$instances[ $dbType ] = new self($dbType);
