@@ -8,7 +8,7 @@ use PDOException;
 /**
  * Class DB
  *
- * Singleton. Manages the database connections.
+ * Manages the database connections.
  *
  * @package Alphagov\GovWifi
  */
@@ -27,10 +27,10 @@ class DB {
     private $dbName;
 
     /**
-     * Creates or returns an existing DB instance if on has been created previously.
-     * @param int $dbType They type of the database connection to be used.
+     * Creates or returns an existing DB instance if one has been created previously.
+     * @param int $dbType The type of the database connection to be used.
      * @return DB the db instance with a connection to the database defined by the type above.
-     * @throws GovWifiException if the db type is not in the allowed list.
+     * @throws GovWifiException if the DB type is not in the allowed list.
      */
     public static function getInstance($dbType = self::DB_TYPE_DEFAULT) {
         if (!in_array($dbType, self::ALLOWED_DB_TYPES)) {
@@ -42,7 +42,11 @@ class DB {
         return self::$instances[ $dbType ];
     }
 
-    // Constructor
+    /**
+     * Private constructor.
+     *
+     * @param int $dbType The type of the database connection, expected to be one of the allowed types.
+     */
     private function __construct($dbType) {
         try {
             $this->setCredentials($dbType);
@@ -89,6 +93,9 @@ class DB {
     // Magic method clone is empty to prevent duplication of connection
     private function __clone() { }
 
+    /**
+     * @return PDO The current database connection object.
+     */
     public function getConnection() {
         return $this->connection;
     }
