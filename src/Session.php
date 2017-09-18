@@ -98,6 +98,7 @@ class Session {
         if (! empty($this->ap)) {
             $addAP = true;
             $apText = " and ap=:ap ";
+            error_log("Added AP: [" . $this->ap. "]");
         }
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
