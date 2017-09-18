@@ -232,7 +232,9 @@ class AAA {
                 $this->session->buildingIdentifier = $this->buildingIdentifier;
                 $this->session->siteIP             = $this->siteIP;
                 $this->session->writeToCache();
-                $this->session->writeToDB(false);
+                if (! empty($this->buildingIdentifier)) {
+                    $this->session->writeToDB(false);
+                }
                 error_log(
                         "Accounting start: "
                         . "[" . $accountingType . "] "

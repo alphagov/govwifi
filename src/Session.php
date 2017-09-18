@@ -93,13 +93,19 @@ class Session {
         if ($stop) {
             $stopField = "stop=now(),";
         }
+        $addAP = false;
+        $apText = "";
+        if (! empty($this->ap)) {
+            $addAP = true;
+            $apText = " and ap=:ap ";
+        }
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
         $handle = $dbLink->prepare(
                 "update session set " . $stopField .
                     " inMB=:inMB, outMB=:outMB, building_identifier=:buildingID "
                 . "where siteIP=:siteIP and username=:username "
-                    . "and stop is null and mac=:mac "
+                    . "and stop is null and mac=:mac " . $apText
                     . "and start between :startmin and :startmax");
         // Some (300/11500) sessions are started multiple times in the same second, can
         // NOT use "order by start desc limit 1" here for now.
@@ -114,6 +120,9 @@ class Session {
         $handle->bindValue(':siteIP',     $this->siteIP,             PDO::PARAM_STR);
         $handle->bindValue(':username',   $this->login,              PDO::PARAM_STR);
         $handle->bindValue(':mac',        $this->mac,                PDO::PARAM_STR);
+        if ($addAP) {
+            $handle->bindValue(':ap',     $this->ap,                 PDO::PARAM_STR);
+        }
         $handle->bindValue(':inMB',       $this->inMB(),             PDO::PARAM_INT);
         $handle->bindValue(':outMB',      $this->outMB(),            PDO::PARAM_INT);
         $handle->bindValue(':buildingID', $this->buildingIdentifier, PDO::PARAM_STR);
