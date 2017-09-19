@@ -2,6 +2,7 @@
 namespace Alphagov\GovWifi;
 
 use PDO;
+use PDOException;
 
 class Session {
     public $id;
@@ -93,40 +94,43 @@ class Session {
         if ($stop) {
             $stopField = "stop=now(),";
         }
-        $addAP = false;
-        $apText = "";
-        if (! empty($this->ap)) {
-            $addAP = true;
-            $apText = " and ap=:ap ";
-            error_log("Added AP: [" . $this->ap. "]");
-        }
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
         $handle = $dbLink->prepare(
                 "update session set " . $stopField .
-                    " inMB=:inMB, outMB=:outMB, building_identifier=:buildingID "
-                . "where siteIP=:siteIP and username=:username "
-                    . "and stop is null and mac=:mac " . $apText
-                    . "and start between :startmin and :startmax");
+                " inMB=:inMB, outMB=:outMB, building_identifier=:buildingID " .
+                "where siteIP=:siteIP and username=:username " .
+                    "and stop is null and mac=:mac " .
+                    "and start between :startmin and :startmax");
         // Some (300/11500) sessions are started multiple times in the same second, can
         // NOT use "order by start desc limit 1" here for now.
         // TODO (afoldesi-gds): Validate this logic further.
         $startMin = strftime('%Y-%m-%d %H:%M:%S',$this->startTime-$window);
         $startMax = strftime('%Y-%m-%d %H:%M:%S',$this->startTime+$window);
         error_log(
-                "Updating record between "
-                . $startMin . " and " . $startMax . " for " . $this->login);
+                "Updating record between " .
+                $startMin . " and " . $startMax . " for " . $this->login);
         $handle->bindValue(':startmin',   $startMin,                 PDO::PARAM_STR);
         $handle->bindValue(':startmax',   $startMax,                 PDO::PARAM_STR);
         $handle->bindValue(':siteIP',     $this->siteIP,             PDO::PARAM_STR);
         $handle->bindValue(':username',   $this->login,              PDO::PARAM_STR);
         $handle->bindValue(':mac',        $this->mac,                PDO::PARAM_STR);
-        if ($addAP) {
-            $handle->bindValue(':ap',     $this->ap,                 PDO::PARAM_STR);
-        }
         $handle->bindValue(':inMB',       $this->inMB(),             PDO::PARAM_INT);
         $handle->bindValue(':outMB',      $this->outMB(),            PDO::PARAM_INT);
         $handle->bindValue(':buildingID', $this->buildingIdentifier, PDO::PARAM_STR);
-        $handle->execute();
+        $success = false;
+        try {
+            $success = $handle->execute();
+        } catch (PDOException $e) {
+            error_log("Exception while updating session: " .
+                $e->getMessage() . "|Trace: " . implode("|" . $e->getTrace()));
+        }
+        if ($success) {
+            error_log("Session record updated. " .
+                $startMin . " and " . $startMax . " for " . $this->login);
+        } else {
+            error_log("Session update failed. " .
+                $startMin . " and " . $startMax . " for " . $this->login);
+        }
     }
 }
