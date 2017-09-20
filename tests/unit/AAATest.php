@@ -314,7 +314,7 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             [
                 'headers' => [
-                    TestConstants::HTTP_11_NOT_FOUND,
+                    TestConstants::HTTP_11_NO_DATA,
                     "Content-Type: application/json",
                 ],
                 'body' => ''

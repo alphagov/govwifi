@@ -266,6 +266,7 @@ class AAA {
                 } else {
                     error_log("No previous record found for accounting stop request. ID ["
                         . $this->session->id. "]");
+                    $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
                 }
                 break;
             case self::ACCOUNTING_TYPE_INTERIM:
