@@ -11,12 +11,13 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
     if (! empty($_REQUEST['period'])) {
         $period = $_REQUEST['period'];
     }
+    $dbInstance = DB::getInstance(DB::DB_TYPE_READ_REPLICA);
     // TODO: move logic to controller.
     switch ($period) {
         case "daily":
-            $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), DB::getInstance());
-            $reportAccountUsage = new ReportAccountUsage(Config::getInstance(), DB::getInstance());
-            $reportActiveLocations = new ReportActiveLocations(Config::getInstance(), DB::getInstance());
+            $reportVolumetrics = new ReportVolumetrics(Config::getInstance(), $dbInstance);
+            $reportAccountUsage = new ReportAccountUsage(Config::getInstance(), $dbInstance);
+            $reportActiveLocations = new ReportActiveLocations(Config::getInstance(), $dbInstance);
 
             if (! empty($_REQUEST['days']) && is_numeric($_REQUEST['days'])) {
                 for ($i = intval($_REQUEST['days']); $i >= 1; $i--) {
@@ -43,8 +44,8 @@ if (! empty($_REQUEST['key']) && Config::getInstance()->values["frontendApiKey"]
             }
             break;
         case "weekly":
-            $reportCompletionRate = new ReportCompletionRate(Config::getInstance(), DB::getInstance());
-            $reportUniqueUsers = new ReportUniqueUsers(Config::getInstance(), DB::getInstance());
+            $reportCompletionRate = new ReportCompletionRate(Config::getInstance(), $dbInstance);
+            $reportUniqueUsers = new ReportUniqueUsers(Config::getInstance(), $dbInstance);
             if (! empty($_REQUEST['date'])) {
                 $reportCompletionRate->sendMetrics($_REQUEST['date']);
                 $reportUniqueUsers->sendMetrics($_REQUEST['date']);
