@@ -118,16 +118,20 @@ class Session {
         $handle->bindValue(':inMB',       $this->inMB(),             PDO::PARAM_INT);
         $handle->bindValue(':outMB',      $this->outMB(),            PDO::PARAM_INT);
         $handle->bindValue(':buildingID', $this->buildingIdentifier, PDO::PARAM_STR);
-        $success = false;
+        $affectedRows = 0;
         try {
-            $success = $handle->execute();
+            $dbLink->beginTransaction();
+            $handle->execute();
+            $affectedRows = $handle->rowCount();
+            $dbLink->commit();
         } catch (PDOException $e) {
+            $dbLink->rollBack();
             error_log("Exception while updating session: " .
                 $e->getMessage() . "|Trace: " . implode("|" . $e->getTrace()));
         }
-        if ($success) {
+        if ($affectedRows > 0) {
             error_log("Session record updated. " .
-                $startMin . " and " . $startMax . " for " . $this->login);
+                $startMin . " and " . $startMax . " for " . $this->login . " Rows: " . $affectedRows);
         } else {
             error_log("Session update failed. " .
                 $startMin . " and " . $startMax . " for " . $this->login);
