@@ -80,6 +80,22 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             implode(",", $this->emailRequest->uniqueContactList()));
     }
 
+    function testContactListFromBase64EncodedEmail() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_BASE64) . "\n";
+        $this->emailRequest->setEmailBody($body);
+        $this->assertEquals(
+            implode(",", array(self::CONTACT_EMAIL, self::CONTACT_NUMBER)),
+            implode(",", $this->emailRequest->uniqueContactList()));
+    }
+
+    function testContactListFromBase64EncodedEmailHTMLOnly() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_SPONSOR_BASE64_H) . "\n";
+        $this->emailRequest->setEmailBody($body);
+        $this->assertEquals(
+            implode(",", array(self::CONTACT_EMAIL, self::CONTACT_NUMBER)),
+            implode(",", $this->emailRequest->uniqueContactList()));
+    }
+
     function testNewSiteIpSelection() {
         $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_IP) . "\n";
         $this->emailRequest->setEmailBody($body);
@@ -102,4 +118,5 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
             $this->emailRequest->ipList()
         );
     }
+
 }

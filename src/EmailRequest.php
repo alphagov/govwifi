@@ -8,6 +8,7 @@ use PDOException;
 class EmailRequest extends GovWifiBase {
     const CONTENT_PLAIN_TEXT = "content-type: text/plain";
     const CONTENT_HTML       = "content-type: text/html";
+    const CONTENT_BASE64     = "content-transfer-encoding: base64";
 
     /**
      * @var Identifier
@@ -423,12 +424,11 @@ class EmailRequest extends GovWifiBase {
      * @param $email
      */
     public function setEmailBody($email) {
-        $email = strtolower($email);
         $body  = $this->extractTextBody($email);
         if (empty($body)) {
             $body = $email;
         }
-        $this->emailBody = strip_tags($body);
+        $this->emailBody = strtolower(strip_tags($body));
     }
 
     /**
@@ -443,9 +443,9 @@ class EmailRequest extends GovWifiBase {
         $boundary      = "";
         $matches       = [];
 
-        if (preg_match("/boundary=\"(.*)\"/", $email, $matches)) {
+        if (preg_match("/boundary=\"(.*)\"/i", $email, $matches)) {
             $boundary = $matches[1];
-        } else if (preg_match("/boundary=([A-Za-z0-9_\-]+)/", $email, $matches)) {
+        } else if (preg_match("/boundary=([A-Za-z0-9_\-]+)/i", $email, $matches)) {
             $boundary = $matches[1];
         }
 
@@ -457,13 +457,20 @@ class EmailRequest extends GovWifiBase {
                 }
             }
         } else {
-            if (! strpos($email, self::CONTENT_PLAIN_TEXT) == false) {
-                $body = $this->ignoreSignature($email);
-            } else if (! strpos($email, self::CONTENT_HTML) == false) {
-                $body = $this->ignoreSignature($email);
+            if (! stripos($email, self::CONTENT_PLAIN_TEXT) == false) {
+                $body = $this->postProcess($email);
+            } else if (! stripos($email, self::CONTENT_HTML) == false) {
+                $body = $this->postProcess($email);
             }
         }
         return $body;
+    }
+
+    private function postProcess($emailBody) {
+        if (! stripos($emailBody, self::CONTENT_BASE64) == false) {
+            $emailBody = base64_decode(preg_replace("/content.*\r?\n/i", '', $emailBody));
+        }
+        return $this->ignoreSignature(strip_tags($emailBody));
     }
 
     private function ignoreSignature($emailBody) {
