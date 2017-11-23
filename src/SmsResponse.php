@@ -133,7 +133,7 @@ class SmsResponse {
             case (preg_match("/(2|ios|ipad|iphone|ipod)/i", $os) ? true : false):
                 return $config->values['notify'][$journey . 'creds-iphone'];
                 break;
-            case (preg_match("/blackberry/i", $os) ? true : false):
+            case (preg_match("/(5|blackberry)/i", $os) ? true : false):
                 return $config->values['notify'][$journey . 'creds-blackberry'];
                 break;
             default:
