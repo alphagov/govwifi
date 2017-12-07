@@ -47,24 +47,24 @@
 									</ServerValidation>
 									<FastReconnect>true</FastReconnect>
 									<InnerEapOptional>false</InnerEapOptional>
+									<Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
+										<Type>26</Type>
+										<EapType xmlns="http://www.microsoft.com/provisioning/MsChapV2ConnectionPropertiesV1">
+											<UseWinLogonCredentials>false</UseWinLogonCredentials>
+										</EapType>
+									</Eap>
+									<EnableQuarantineChecks>false</EnableQuarantineChecks>
+									<RequireCryptoBinding>false</RequireCryptoBinding>
+									<PeapExtensions>
+										<PerformServerValidation xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</PerformServerValidation>
+										<AcceptServerName xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</AcceptServerName>
+										<IdentityPrivacy xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">
+											<EnableIdentityPrivacy>true</EnableIdentityPrivacy>
+											<AnonymousUserName>anonymous</AnonymousUserName>
+										</IdentityPrivacy>
+									</PeapExtensions>
 								</EapType>
 							</Eap>
-							<Eap xmlns="http://www.microsoft.com/provisioning/BaseEapConnectionPropertiesV1">
-								<Type>26</Type>
-								<EapType xmlns="http://www.microsoft.com/provisioning/MsChapV2ConnectionPropertiesV1">
-									<UseWinLogonCredentials>false</UseWinLogonCredentials>
-								</EapType>
-							</Eap>
-							<EnableQuarantineChecks>false</EnableQuarantineChecks>
-							<RequireCryptoBinding>false</RequireCryptoBinding>
-							<PeapExtensions>
-								<PerformServerValidation xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</PerformServerValidation>
-								<AcceptServerName xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">true</AcceptServerName>
-								<IdentityPrivacy xmlns="http://www.microsoft.com/provisioning/MsPeapConnectionPropertiesV2">
-									<EnableIdentityPrivacy>true</EnableIdentityPrivacy>
-									<AnonymousUserName>anonymous</AnonymousUserName>
-								</IdentityPrivacy>
-							</PeapExtensions>
 						</Config>
 					</EapHostConfig>
 				</EAPConfig>
