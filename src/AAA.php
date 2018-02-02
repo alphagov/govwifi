@@ -134,7 +134,6 @@ class AAA {
                 case self::URL_SITE:
                     $this->siteIP = $parts[$x + 1];
                     $this->site = new Site;
-                    $this->site->loadByIp($this->siteIP);
                     break;
                 case self::URL_RESULT:
                     $this->result = $parts[$x + 1];
