@@ -133,7 +133,6 @@ class AAA {
                     break;
                 case self::URL_SITE:
                     $this->siteIP = $parts[$x + 1];
-                    $this->site = new Site;
                     break;
                 case self::URL_RESULT:
                     $this->result = $parts[$x + 1];
@@ -301,8 +300,7 @@ class AAA {
             if ($this->user->login != "HEALTH") {
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
-                $dbLink = $db->getConnection();
-                $handle = $dbLink->prepare(
+                $handle = $db->getConnection()->prepare(
                         'insert into session ' .
                         '(start, siteIP, username, mac, ap, building_identifier) ' .
                         'values (now(), :siteIP, :username, :mac, :ap, :building_identifier)');

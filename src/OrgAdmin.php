@@ -14,10 +14,9 @@ class OrgAdmin {
 
     public function __construct($email) {
         $db = DB::getInstance();
-        $dbLink = $db->getConnection();
-        
+
         $this->email = $email;
-        $handle = $dbLink->prepare(
+        $handle = $db->getConnection()->prepare(
                 'select id, mobile, orgname, name, email_manager_address from orgs_admins_view ' .
                 'where email=?');
         $handle->bindValue(1, $this->email, PDO::PARAM_STR);

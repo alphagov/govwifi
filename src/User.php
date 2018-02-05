@@ -89,10 +89,9 @@ class User {
 
     private function radiusDbWrite() {
         $db = DB::getInstance();
-        $dbLink = $db->getConnection();
 
         // Insert user record
-        $handle = $dbLink->prepare(
+        $handle = $db->getConnection()->prepare(
                 'insert into userdetails (username, contact, sponsor, password, email) '
                 . 'VALUES (:login, :contact, :sponsor, :password, :email) '
                 . 'ON DUPLICATE KEY UPDATE email=:email, password=:password');
@@ -130,7 +129,6 @@ class User {
      */
     public function loadRecord($force = false) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
         $userRecord = false;
 
         if ($this->login) {
@@ -138,7 +136,7 @@ class User {
             $userRecord = $this->cache->get($this->login);
 
             if (! $userRecord) {
-                $handle = $dblink->prepare(
+                $handle = $db->getConnection()->prepare(
                         'select * from userdetails where username=?');
                 $handle->bindValue(1, $this->login, PDO::PARAM_STR);
                 $handle->execute();
@@ -151,7 +149,7 @@ class User {
             }
         } else if (isset($this->identifier) && $this->identifier->validMobile) {
             error_log("Loading user record for mobile: " . $this->identifier->text);
-            $handle = $dblink->prepare(
+            $handle = $db->getConnection()->prepare(
                     'select * from userdetails where contact=?');
             $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
             $handle->execute();
@@ -182,8 +180,8 @@ class User {
 
     private function usernameIsUnique($uname) {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare('select count(username) as unamecount '
+
+        $handle = $db->getConnection()->prepare('select count(username) as unamecount '
                 . 'from userdetails where username=?');
         $handle->bindValue(1, $uname, PDO::PARAM_STR);
         $handle->execute();
@@ -197,8 +195,8 @@ class User {
 
     private function setUsername() {
         $db = DB::getInstance();
-        $dblink = $db->getConnection();
-        $handle = $dblink->prepare('select distinct username '
+
+        $handle = $db->getConnection()->prepare('select distinct username '
                 . 'from userdetails where contact=?');
         $handle->bindValue(1, $this->identifier->text, PDO::PARAM_STR);
         $handle->execute();

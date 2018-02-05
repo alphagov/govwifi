@@ -53,7 +53,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(Config::HEALTH_CHECK_USER, $aaa->user->login);
         $this->assertEquals("02-00-00-00-00-01",       $aaa->getMac());
         $this->assertEquals("02-00-00-42-00-01",       $aaa->getAp());
-        $this->assertInstanceOf(Site::class,           $aaa->site);
     }
 
     function testPostAuthAcceptUrlIsParsedProperly() {
@@ -63,7 +62,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(Config::HEALTH_CHECK_USER, $aaa->user->login);
         $this->assertEquals("02-00-00-00-00-01",       $aaa->getMac());
         $this->assertEquals("02-00-00-42-00-01",       $aaa->getAp());
-        $this->assertInstanceOf(Site::class,           $aaa->site);
         $this->assertEquals("Access-Accept",           $aaa->result);
     }
 
@@ -74,7 +72,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(Config::HEALTH_CHECK_USER, $aaa->user->login);
         $this->assertEquals("02-00-00-00-00-01",       $aaa->getMac());
         $this->assertEquals("02-00-00-42-00-01",       $aaa->getAp());
-        $this->assertInstanceOf(Site::class,           $aaa->site);
         $this->assertEquals("Access-Reject",           $aaa->result);
     }
 
@@ -92,7 +89,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $this->assertEquals(
             TestConstants::BUILDING_ID,
             $aaa->getBuildingIdentifier());
-        $this->assertInstanceOf(Site::class,           $aaa->site);
     }
 
     function testProcessAuthorisationRequestHealthCheck() {
