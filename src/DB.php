@@ -48,20 +48,7 @@ class DB {
      * @param int $dbType The type of the database connection, expected to be one of the allowed types.
      */
     private function __construct($dbType) {
-        try {
-            $this->setCredentials($dbType);
-            $this->connection = new PDO(
-                    'mysql:host=' . $this->hostname
-                    . '; dbname=' . $this->dbName
-                    . '; charset=utf8mb4',
-                    $this->username,
-                    $this->password,
-                    array(
-                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-                        PDO::ATTR_PERSISTENT => false));
-        } catch (PDOException $e) {
-            error_log($e->getMessage());
-        }
+        $this->setCredentials($dbType);
     }
 
     /**
@@ -97,6 +84,21 @@ class DB {
      * @return PDO The current database connection object.
      */
     public function getConnection() {
+        if (empty($this->connection)) {
+            try {
+                $this->connection = new PDO(
+                    'mysql:host=' . $this->hostname
+                    . '; dbname=' . $this->dbName
+                    . '; charset=utf8mb4',
+                    $this->username,
+                    $this->password,
+                    array(
+                        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                        PDO::ATTR_PERSISTENT => false));
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+            }
+        }
         return $this->connection;
     }
 }
