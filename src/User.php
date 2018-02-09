@@ -6,7 +6,7 @@ use PDO;
 
 class User {
     const RANDOM_BYTES_LENGTH_MULTIPLIER = 4;
-    const VALID_USERNAME_REGEX = "/[a-zA-Z]{5,6}/";
+    const VALID_USERNAME_REGEX = "/^[a-zA-Z]{5,6}$/";
     /**
      * @var Identifier
      */
@@ -174,7 +174,7 @@ class User {
             } else if (isset($this->identifier)) {
                 error_log("User record not found for contact [" . $this->identifier->text . "]");
             } else {
-                error_log("User record not found.");
+                error_log("User record not found. Empty user details.");
             }
         }
     }
