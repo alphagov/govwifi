@@ -6,6 +6,7 @@ use PDO;
 
 class User {
     const RANDOM_BYTES_LENGTH_MULTIPLIER = 4;
+    const VALID_USERNAME_REGEX = "/[a-zA-Z]{5,6}/";
     /**
      * @var Identifier
      */
@@ -131,7 +132,7 @@ class User {
         $db = DB::getInstance();
         $userRecord = false;
 
-        if ($this->login) {
+        if (!empty($this->login) && preg_match(self::VALID_USERNAME_REGEX, $this->login)) {
             error_log("Loading user record for login: " . $this->login);
             $userRecord = $this->cache->get($this->login);
 
