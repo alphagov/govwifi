@@ -9,8 +9,9 @@ class IdentifierTest extends PHPUnit_Framework_TestCase {
     const UK_MOBILE = "07766554433";
     const ITL_MOBILE_WITH_SPACES = "+44 7766 554 433";
     const UK_MOBILE_WITH_SPACES = "077 6655 4433";
-    const EMAIL = "test.EMAILaddress@test.DOMAIN.com";
-    const EMAIL_LOWERCASE = "test.emailaddress@test.domain.com";
+    const EMAIL = "test.EMAIL'add-ress.1@test.DOMAIN.com";
+    const EMAIL_LOWERCASE = "test.email'add-ress.1@test.domain.com";
+    const EMAIL_WITH_AT_SIGN = "test.&.add-ress.3@test3.domain.com";
 
     function testClassInstantiates() {
         $this->assertInstanceOf(Identifier::class, new Identifier(self::ITL_MOBILE));
@@ -72,5 +73,12 @@ class IdentifierTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($identifier->validMobile);
         $this->assertFalse($identifier->validEmail);
         $this->assertEquals(Config::HEALTH_CHECK_USER, $identifier->text);
+    }
+
+    function testAtSignInEmailAddress() {
+        $identifier = new Identifier(self::EMAIL_WITH_AT_SIGN);
+        $this->assertTrue($identifier->validEmail);
+        $this->assertFalse($identifier->validMobile);
+        $this->assertEquals($identifier->text, self::EMAIL_WITH_AT_SIGN);
     }
 }

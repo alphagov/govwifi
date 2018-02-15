@@ -103,7 +103,7 @@ class Identifier {
      */
     private function fixUpEmailAddress($email) {
         preg_match_all(
-            '/[A-Za-z0-9\_\+\.\'-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+/',
+            '/[A-Za-z0-9\_\+\.\'\-&]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+/',
             $email,
             $matches);
         return strtolower($matches[0][0]);
