@@ -4,7 +4,7 @@ eapol_test \
   -r1 \
   -t5 \
   -c $TEST_DIR/config/currentconfig.conf \
-  -a `cat /etc/hosts | grep -m 1 $FRONTEND_CONTAINER | awk '{ print $1 }'` \
+  -a $FRONTEND_CONTAINER_IP \
   -s $RADIUS_KEY \
   > $TEST_DIR/testresults.txt
 # TODO: maybe connect up a directory in the host machine with the container to retain
