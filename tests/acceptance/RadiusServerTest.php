@@ -24,7 +24,7 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
         );
         file_put_contents(self::CONFIG_FILE, $configuration);
 
-        $this->assertEquals(self::SUCCESS_LINE, exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
+        $this->assertEquals(self::SUCCESS_LINE, $this->runEAPOverLanTest());
     }
 
     /**
@@ -39,7 +39,7 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
         );
         file_put_contents(self::CONFIG_FILE, $configuration);
 
-        $this->assertEquals(self::SUCCESS_LINE, exec("/bin/bash " . self::EAPOL_TEST_RUNNER));
+        $this->assertEquals(self::SUCCESS_LINE, $this->runEAPOverLanTest());
     }
 
     /**
@@ -49,5 +49,23 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
         @file_get_contents(TestConstants::REQUEST_PROTOCOL
             . TestConstants::getInstance()->getFrontendContainer() . "/");
         $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
+    }
+
+    /**
+     * @return string
+     */
+    private function runEAPOverLanTest()
+    {
+        \putenv("FRONTEND_CONTAINER_IP={$this->frontendContainerIp()}");
+        return \exec("/bin/bash " . self::EAPOL_TEST_RUNNER);
+    }
+
+    /**
+     * @return string
+     */
+    private function frontendContainerIp()
+    {
+        $containerName = \getenv('FRONTEND_CONTAINER');
+        return \gethostbyname($containerName);
     }
 }
