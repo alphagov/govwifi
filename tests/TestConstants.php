@@ -14,7 +14,7 @@ class TestConstants {
     const HTTP_NO_DATA                    = "HTTP/1.0 204 OK";
     const HTTP_11_NO_DATA                 = "HTTP/1.1 204 OK";
     const HTTP_11_NOT_FOUND               = "HTTP/1.1 404 Not Found";
-    const HEALTH_CHECK_USER_PASSWORD      = 'GS3EWA64EshRD8I0XdVl$dko';
+    const HEALTH_CHECK_USER_PASSWORD      = 'test123';
     const BACKEND_API_PORT                = "8080";
     const CLEARTEXT_PASSWORD_PLACEHOLDER  = "#CLEARTEXT_PASSWORD#";
     const STATION_PLACEHOLDER             = "#CALLED_STATION_ID#";
