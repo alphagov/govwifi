@@ -196,6 +196,19 @@ class AAATest extends PHPUnit_Framework_TestCase {
         );
     }
 
+    function testPostAuthSavesLastLogin() {
+        $this->clearLastLoginForTestUser();
+
+        $postAuthRequestUrl = TestConstants::postAuthUrlForUser(
+            TestConstants::getInstance()->getUnitTestUserName(),
+            TestConstants::AUTH_RESULT_ACCEPT
+        );
+        $aaa = new AAA($postAuthRequestUrl, "");
+        $aaa->processRequest();
+
+        $this->assertNotNull($this->fetchLastLoginForTestUser());
+    }
+
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Request type [authenticate] is not recognized.
@@ -399,5 +412,21 @@ class AAATest extends PHPUnit_Framework_TestCase {
         $statement->bindValue(":mac", $mac, PDO::PARAM_STR);
         $statement->execute();
         return $statement->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    private function clearLastLoginForTestUser() {
+        $db = DB::getInstance()->getConnection();
+        $handle = $db->prepare('UPDATE userdetails SET last_login = NULL WHERE username = :username');
+        $handle->execute([':username' => TestConstants::getInstance()->getUnitTestUserName()]);
+    }
+
+    /**
+     * @return string
+     */
+    private function fetchLastLoginForTestUser() {
+        $db = DB::getInstance()->getConnection();
+        $handle = $db->prepare('SELECT last_login FROM userdetails WHERE username = :username');
+        $handle->execute([':username' => TestConstants::getInstance()->getUnitTestUserName()]);
+        return $handle->fetchColumn(0);
     }
 }
