@@ -316,12 +316,22 @@ class AAA {
                     ':building_identifier', $this->buildingIdentifier, PDO::PARAM_STR);
 
                 $handle->execute();
+
+                $this->updateUserLastLogin();
             }
         } else if (self::AUTH_RESULT_REJECT == $this->result) {
             $this->responseHeader = self::HTTP_RESPONSE_NO_CONTENT;
         } else {
             $this->responseHeader = self::HTTP_RESPONSE_NOT_FOUND;
         }
+    }
+
+    private function updateUserLastLogin() {
+        $db = DB::getInstance()->getConnection();
+        $handle = $db->prepare(
+            'update userdetails set last_login=NOW() where username = :username'
+        );
+        $handle->execute([':username' => $this->user->login]);
     }
 
     private function fixMac($mac) {
