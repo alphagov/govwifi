@@ -27,10 +27,10 @@ class ReportAccountUsage extends PerformancePlatformReport {
         ];
 
         $sql = "SELECT count(distinct(username)) as total, "
-            . "count(distinct(concat_ws('-', session.username, site.address))) as per_site FROM session "
-            . "LEFT JOIN siteip ON (siteip.ip = session.siteIP) "
+            . "count(distinct(concat_ws('-', sessions.username, site.address))) as per_site FROM sessions "
+            . "LEFT JOIN siteip ON (siteip.ip = sessions.siteIP) "
             . "LEFT JOIN site ON (siteip.site_id = site.id) WHERE "
-            . "site.org_id IS NOT NULL AND date(session.start) = '" . $date . "' GROUP BY date(start)";
+            . "site.org_id IS NOT NULL AND date(sessions.start) = '" . $date . "' GROUP BY date(start)";
 
         $results = $this->runQuery($sql);
         $total   = intval($results[0]['total']);

@@ -247,8 +247,6 @@ class AAA {
                 // If there is no start record do nothing and return the default error message.
                 // The RADIUS frontend will not respond to the client if this happens.
                 if ($this->session->startTime) {
-                    $this->session->inOctets += $acct['Acct-Input-Octets']['value'][0];
-                    $this->session->outOctets += $acct['Acct-Output-Octets']['value'][0];
                     $this->session->stopTime = time();
                     $this->session->deleteFromCache();
                     error_log(
@@ -256,8 +254,6 @@ class AAA {
                             . "[" . $accountingType . "] "
                             . $this->session->login . " "
                             . $this->session->id
-                            . " InMB: " . $this->session->inMB()
-                            . " OutMB: " . $this->session->outMB()
                             . " site: " . $this->session->siteIP
                             . " mac: " . $this->session->mac
                             . " ap: " . $this->session->ap);
@@ -272,8 +268,6 @@ class AAA {
             case self::ACCOUNTING_TYPE_INTERIM:
                 // Acct Interim - if there is no start record do nothing.
                 if ($this->session->startTime) {
-                    $this->session->inOctets += $acct['Acct-Input-Octets']['value'][0];
-                    $this->session->outOctets += $acct['Acct-Output-Octets']['value'][0];
                     $this->session->writeToCache();
                     error_log(
                             "Accounting update: "
@@ -301,7 +295,7 @@ class AAA {
                 // insert a new entry into session (unless it's a health check)
                 $db = DB::getInstance();
                 $handle = $db->getConnection()->prepare(
-                        'insert into session ' .
+                        'insert into sessions ' .
                         '(start, siteIP, username, mac, ap, building_identifier) ' .
                         'values (now(), :siteIP, :username, :mac, :ap, :building_identifier)');
                 $handle->bindValue(

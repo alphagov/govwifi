@@ -47,7 +47,7 @@ class Report {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
         $sql = "select name, count(distinct username) as usercount
-                from logs
+                from session_logs
                 where start > DATE_SUB(NOW(), INTERVAL 30 DAY)
                 group by shortname
                 having usercount > 2 order by usercount desc";
@@ -65,7 +65,7 @@ class Report {
         $dbLink = $db->getConnection();
         $sql = "select org.name, sum(total) as usercount 
                 from 
-                (select siteIP, count(distinct(username)) as total from session group by siteIP) t1 
+                (select siteIP, count(distinct(username)) as total from sessions group by siteIP) t1 
                 left join siteip on (siteip.ip = t1.siteIP) 
                 left join site on (siteip.site_id = site.id) 
                 left join organisation org on (site.org_id = org.id) 
@@ -82,8 +82,8 @@ class Report {
     function byOrgId() {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start, username, shortname, InMB, OutMB
-                from logs
+        $sql = "select start, username, shortname
+                from session_logs
                 where org_id = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
@@ -95,16 +95,14 @@ class Report {
         $this->columns = array(
             "Date/Time",
             "Username",
-            "Site Name",
-            "Up MB",
-            "Down MB");
+            "Site Name");
     }
 
     function bySite($siteShortName) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start, stop, username, InMB, OutMB, mac, ap
-                from logs where org_id = ? and shortname = ?";
+        $sql = "select start, stop, username, mac, ap
+                from session_logs where org_id = ? and shortname = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $this->orgAdmin->orgId, PDO::PARAM_INT);
         $handle->bindValue(2, $siteShortName, PDO::PARAM_INT);
@@ -115,8 +113,6 @@ class Report {
             "Start",
             "Stop",
             "Username",
-            "Up MB",
-            "Down MB",
             "MAC",
             "AP");
     }
@@ -124,7 +120,7 @@ class Report {
     function byUser($userName) {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
-        $sql = "select start, stop, contact, sponsor from logs where username = ?";
+        $sql = "select start, stop, contact, sponsor from session_logs where username = ?";
         $handle = $dbLink->prepare($sql);
         $handle->bindValue(1, $userName, PDO::PARAM_INT);
         $handle->execute();
@@ -147,7 +143,7 @@ class Report {
         }
         $sql = 'select count(distinct(username)) as Users,
                 date(start) as Date
-                from logs where org_id = ? '
+                from session_logs where org_id = ? '
                 . $siteSql
                 . ' and start > DATE_SUB(NOW(), INTERVAL 30 DAY)
                 group by Date order by Date desc';

@@ -149,14 +149,14 @@ class Survey extends GovWifiBase {
     public function getContactDetails($loginSuccessful, $contactCondition, $surveyConfig,
                                       $sponsoredOnly = false, $sponsored = false) {
         $sql = "SELECT distinct(userdetails.contact), userdetails.username FROM userdetails " .
-            "LEFT JOIN logs ON userdetails.username = logs.username ".
+            "LEFT JOIN session_logs ON userdetails.username = session_logs.username ".
             "LEFT JOIN survey_logs " .
                 "ON (userdetails.username = survey_logs.username " .
                 "AND survey_logs.survey_setting_id = ?) " .
             "WHERE ".
             "survey_logs.username IS NULL AND " .
             "NOT userdetails.survey_opt_out AND " .
-            "logs.username IS " . ($loginSuccessful ? "NOT " : "") . "NULL AND " .
+            "session_logs.username IS " . ($loginSuccessful ? "NOT " : "") . "NULL AND " .
             ($sponsoredOnly ?
                 ($sponsored ?
                     " userdetails.contact <> userdetails.sponsor AND " :

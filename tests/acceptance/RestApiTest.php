@@ -76,7 +76,7 @@ class RestApiTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("", $response);
 
         $statement = DB::getInstance()->getConnection()->prepare(
-            "SELECT * FROM session WHERE username = :username ORDER BY start DESC LIMIT 1");
+            "SELECT * FROM sessions WHERE username = :username ORDER BY start DESC LIMIT 1");
         $statement->bindValue(
             ":username",
             TestConstants::getInstance()->getAcceptanceTestUserName(),

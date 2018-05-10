@@ -31,7 +31,7 @@ class ReportActiveLocations extends PerformancePlatformReport {
         // Deliberately not checking if the site is hidden.
         $sql = "SELECT count(1) AS `count` FROM (" .
             "SELECT count(distinct(username)) users, address FROM " .
-                "session LEFT JOIN siteip ON (siteip.ip = session.siteIP) " .
+                "sessions LEFT JOIN siteip ON (siteip.ip = sessions.siteIP) " .
                 "LEFT JOIN site ON (siteip.site_id = site.id) " .
                 "WHERE date(start) = '" . $date . "' GROUP BY address " .
                 "HAVING users >= " . self::MINIMUM_NUMBER_OF_USERS . ") foo;";

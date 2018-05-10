@@ -6,7 +6,13 @@ use PDOException;
 
 class Session {
     public $id;
+    /**
+     * @deprecated
+     */
     public $inOctets;
+    /**
+     * @deprecated
+     */
     public $outOctets;
     public $login;
     public $startTime;
@@ -36,8 +42,6 @@ class Session {
     public function sessionRecord() {
         $sessionRecord = array();
         $sessionRecord['login']               = $this->login;
-        $sessionRecord['InO']                 = $this->inOctets;
-        $sessionRecord['OutO']                = $this->outOctets;
         $sessionRecord['Start']               = $this->startTime;
         $sessionRecord['siteIP']              = $this->siteIP;
         $sessionRecord['mac']                 = $this->mac;
@@ -46,10 +50,18 @@ class Session {
         return $sessionRecord;
     }
 
+    /**
+     * @deprecated
+     * @return float
+     */
     public function inMB() {
         return round($this->inOctets / 1000000);
     }
 
+    /**
+     * @deprecated
+     * @return float
+     */
     public function outMB() {
         return round($this->outOctets / 1000000);
     }
@@ -62,8 +74,6 @@ class Session {
         $sessionRecord = $this->cache->get($this->id);
         if ($sessionRecord) {
             $this->login              = $sessionRecord['login'];
-            $this->inOctets           = $sessionRecord['InO'];
-            $this->outOctets          = $sessionRecord['OutO'];
             $this->startTime          = $sessionRecord['Start'];
             $this->siteIP             = $sessionRecord['siteIP'];
             $this->mac                = $sessionRecord['mac'];
@@ -97,8 +107,8 @@ class Session {
         $db = DB::getInstance();
         $dbLink = $db->getConnection();
         $handle = $dbLink->prepare(
-                "update session set " . $stopField .
-                " inMB=:inMB, outMB=:outMB, building_identifier=:buildingID " .
+                "update sessions set " . $stopField .
+                " building_identifier=:buildingID " .
                 "where siteIP=:siteIP and username=:username " .
                     "and stop is null and mac=:mac " .
                     "and start between :startmin and :startmax");
@@ -115,8 +125,6 @@ class Session {
         $handle->bindValue(':siteIP',     $this->siteIP,             PDO::PARAM_STR);
         $handle->bindValue(':username',   $this->login,              PDO::PARAM_STR);
         $handle->bindValue(':mac',        $this->mac,                PDO::PARAM_STR);
-        $handle->bindValue(':inMB',       $this->inMB(),             PDO::PARAM_INT);
-        $handle->bindValue(':outMB',      $this->outMB(),            PDO::PARAM_INT);
         $handle->bindValue(':buildingID', $this->buildingIdentifier, PDO::PARAM_STR);
         $affectedRows = 0;
         try {
@@ -126,7 +134,7 @@ class Session {
             $dbLink->commit();
         } catch (PDOException $e) {
             $dbLink->rollBack();
-            error_log("Exception while updating session: " .
+            error_log("Exception while updating sessions: " .
                 $e->getMessage() . "|Trace: " . implode("|" . $e->getTrace()));
         }
         if ($affectedRows > 0) {

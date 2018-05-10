@@ -67,9 +67,9 @@ class ReportCompletionRate extends PerformancePlatformReport {
                     $channel['extras']
                 ),
                 'sql' => "SELECT count(distinct(userdetails.username)) AS count FROM "
-                    . "userdetails LEFT JOIN session ON (userdetails.username = session.username) "
+                    . "userdetails LEFT JOIN sessions ON (userdetails.username = sessions.username) "
                     . "WHERE date(userdetails.created_at) BETWEEN '" . $startDate . "' AND '" . $endDate . "' "
-                    . "AND session.username IS NOT NULL AND " . $channel['condition']
+                    . "AND sessions.username IS NOT NULL AND " . $channel['condition']
             ]));
         }
     }

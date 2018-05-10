@@ -171,8 +171,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
                 'stop'                => NULL,
                 'siteIP'              => "172.17.0.6",
                 'username'            => $userName,
-                'InMB'                => NULL,
-                'OutMB'               => NULL,
                 'mac'                 => $mac,
                 'ap'                  => NULL,
                 'building_identifier' => TestConstants::BUILDING_ID
@@ -387,8 +385,6 @@ class AAATest extends PHPUnit_Framework_TestCase {
                 'stop'                => NULL,
                 'siteIP'              => "172.17.0.6",
                 'username'            => $userName,
-                'InMB'                => 0,
-                'OutMB'               => 0,
                 'mac'                 => $mac,
                 'ap'                  => "",
                 'building_identifier' => TestConstants::ALTERNATIVE_BUILDING_ID
@@ -407,7 +403,8 @@ class AAATest extends PHPUnit_Framework_TestCase {
      */
     private function getSessionDataForUser($username, $mac) {
         $statement = DB::getInstance()->getConnection()->prepare(
-            "SELECT * FROM session WHERE username = :username AND mac = :mac ORDER BY start DESC LIMIT 1");
+            "SELECT start, stop, siteIP, username, mac, ap, building_identifier FROM sessions " .
+            "WHERE username = :username AND mac = :mac ORDER BY start DESC LIMIT 1");
         $statement->bindValue(":username", $username, PDO::PARAM_STR);
         $statement->bindValue(":mac", $mac, PDO::PARAM_STR);
         $statement->execute();

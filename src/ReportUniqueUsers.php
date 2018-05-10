@@ -28,7 +28,7 @@ class ReportUniqueUsers extends PerformancePlatformReport {
         $today = $dateObject->format('Y-m-d');
 
         $perWeekSql = "SELECT sum(users)/count(*) DIV 1 as `count` FROM (" .
-                "SELECT date(start) AS day, count(distinct(username)) AS users FROM session " .
+                "SELECT date(start) AS day, count(distinct(username)) AS users FROM sessions " .
                 "WHERE start BETWEEN " .
                 "date_sub('" . $today . "', INTERVAL 7 DAY) AND '" . $today . "' ".
                 "AND dayofweek(start) NOT IN (1,7) GROUP BY day" .
@@ -42,7 +42,7 @@ class ReportUniqueUsers extends PerformancePlatformReport {
         $lastMonthStart = (new DateTime($today))->sub(new DateInterval('P1M'))->format('Y-m-01');
         $thisMonthStart = (new DateTime($today))->format('Y-m-01');
         $perMonthSql = "SELECT sum(users)/count(*) DIV 1 as `month_count` FROM (" .
-                "SELECT date(start) AS day, count(distinct(username)) AS users FROM session " .
+                "SELECT date(start) AS day, count(distinct(username)) AS users FROM sessions " .
                 "WHERE start BETWEEN '" . $lastMonthStart . "' AND '" . $thisMonthStart . "' ".
                 "AND dayofweek(start) NOT IN (1,7) GROUP BY day" .
             ") foo;";
