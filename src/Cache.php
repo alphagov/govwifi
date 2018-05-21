@@ -13,6 +13,11 @@ use PDOException;
  */
 class Cache {
     /**
+     * Default expiration time to be used for all items - 24 hours.
+     */
+    const DEFAULT_EXPIRATION = 60*60*24;
+
+    /**
      * @var Cache The static instance.
      */
     private static $instance;
@@ -43,11 +48,12 @@ class Cache {
      *
      * @param $key string The key to use for identifying the value.
      * @param $value mixed The value to be stored.
+     * @param $expiration int Expiration time in seconds. Must be below 60*60*24*30 (30 days).
      * @return bool Indicates success.
      */
-    public function set($key, $value) {
+    public function set($key, $value, $expiration = self::DEFAULT_EXPIRATION) {
         try {
-            return $this->memcached->set($key, $value);
+            return $this->memcached->set($key, $value, $expiration);
         } catch (Exception $e) {
             error_log($e->getMessage());
             return false;

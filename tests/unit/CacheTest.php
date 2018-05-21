@@ -24,4 +24,12 @@ class CacheTest extends PHPUnit_Framework_TestCase {
         $this->assertFalse($cache->get(self::KEY));
         $this->assertTrue($cache->itemWasNotFound());
     }
+
+    function testValueExpiry() {
+        $cache = Cache::getInstance();
+        $this->assertTrue($cache->set(self::KEY, self::DATA, 1));
+        sleep(2);
+        $this->assertFalse($cache->get(self::KEY));
+        $this->assertTrue($cache->itemWasNotFound());
+    }
 }
