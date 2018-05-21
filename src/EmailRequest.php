@@ -468,7 +468,11 @@ class EmailRequest extends GovWifiBase {
 
     private function postProcess($emailBody) {
         if (! stripos($emailBody, self::CONTENT_BASE64) == false) {
-            $emailBody = base64_decode(preg_replace("/content.*\r?\n/i", '', $emailBody));
+            $emptyLinePos = strpos($emailBody, "\n\n");
+            if (false == $emptyLinePos) {
+                $emptyLinePos = strpos($emailBody, "\r\n\r\n");
+            }
+            $emailBody = base64_decode(trim(substr($emailBody, $emptyLinePos)));
         }
         return $this->ignoreSignature(strip_tags($emailBody));
     }

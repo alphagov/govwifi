@@ -1,0 +1,72 @@
+Return-Path: <Example.Admin@example.gov.uk>
+Received: from mail1.example.com (mail1.example.com [1.1.1.1])
+ by inbound-smtp.eu-west-1.amazonaws.com with SMTP id mg2l1trpo3g8ielhpnsg9ndiuobkhanuufdkmt81
+ for newsite@wifi.service.gov.uk;
+ Thu, 17 May 2018 10:22:14 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of example.gov.uk designates 1.1.1.2 as permitted sender) client-ip=1.1.1.3; envelope-from=Example.Admin@example.gov.uk; helo=mail1.example.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of example.gov.uk designates 1.1.1.4 as permitted sender) client-ip=1.1.1.5; envelope-from=Example.Admin@example.gov.uk; helo=mail1.example.com;
+ dkim=pass header.i=@example.gov.uk;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGTTBURXF5cXRWeGFsSVVsYVlQaHdERzl6d2hXVDVucDRaaJUVzJ6Q2tNSVdrbGVjUkZWM3A4d3JCZ2h2bzJGQ09vNi9hZTRSVWhOemxNcEVrY1NDcVJvZE5NaitKYjZ5RHcwTmJhZjF3bXpGSG10c21IYkRUb3ZOUWs5ZTY3WEJVRnZ0ZmxUa1hSY3RuV29YamFKNUR1UEtOMXRJdEpTTnF3ZzlZeHI0Q2wwdHRTRXVlMkxPR2NNcVlrRGRJRHNFVCtJWnhEaFcrZHJJbklWelJzR0FxSklRVU0vRExUcDVqZXNXOEIwUm8vQkFvckRxV1F2bTN2eXRmeVBYcy9SQUpWeWZDSDI5bzNKeHNrZ2svQXpmVURrcDNXU3k2QS9MUEhnNEsvTGNUSm1ma1JYZ2RsRWxJNnFMQ1Fwckp2RnhuQ210TE9BWFUwSm94ODI=
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=a8SsezffpMOfUpkjEFn5sTnBOGu4KtrGJAcQ1qdCZ6AqTFa8Hxxqgj/zHXPKQ9CcaCa8rkAJiRoLix9ZpZIyQ/x4yzPYtYXaPeOAaCiyGmkuUk3TWf0cGJzJIO8BskgDDX8rLhywPk7RrGR42s67xTRenDQHIg=; c=relaxed/simple; s=uku4taia5b5tsbglxyj6zym32efj7xqv; d=amazonses.com; t=1526552534; v=1; bh=rD1vmKW/f5hggtT22R+DDMnqcCZMfP7C1NUobBBrwXo=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+Return-Path: <Example.Admin@example.gov.uk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=example.gov.uk; s=s2048; t=1526552534;
+	i=@example.gov.uk;
+	bh=rD1vmKW/f5hggtT22R+DDMnqcCZMfP7C1NUobBBrwXo=;
+	h=Message-ID:From:To:Subject:Date:Content-Type:MIME-Version:
+	 Content-Transfer-Encoding;
+	b=uQQ7PSyqJbQFMYSa955aXF5PbpZMPLdatmccKHe0LKR0BuxkKLpv3U1FO17nqJ+E2
+	 w2yQHOkbZInZZpEPUuJIddGEJF6OrUUo839kdTAWLSJOpu2saDmCIaCI5Tg+erOA+l
+	 e7Pd/AQ16i/WAWqjM1dgCN1gQyxZuE3Mcj49TyvFqpqOkvBd/F+5U2QDlUVrqa9Wkt
+	 ajGSbfYDAtJPV/v5nLGq0boSMygA8RJifrlq5GyJq4C0ufacjButEUQxQLd2avUmKG
+	 jdnF+icFkWKsRkxXEL3W4+P/SX4hffandO5JrRDSTSm8SIEmXqerqqpxqLnONZdgO9
+	 mPurq+pj+de6g==
+Received: from [1.1.1.6] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+	by server-5.example.net id 76/E7-11732-6D75DFA5; Thu, 17 May 2018 10:22:14 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOIsWRWlGSWpSXmKPExsVyOEbDQPdq+N8
+  ogyWzDC2OfFjF6sDo0bjtMnsAYxRrZl5SfkUCa8aC5ScZC35xVmzvf8TYwPiCs4uRk0NCwFdi
+  7uzfbCA2r0CwxNVpnYwgNhuQPfnZGbC4iIC9xOpFy5m7GDk4hAW8JD5MNIQIB0hca/7CCmFbS
+  by43wFmswioSuze9JAZxGYUkJX40rgazGYWEJe49WQ+E8RaQYlFs/cwQ9hiEv92PWSDsA0kti
+  7dxwKyillAU2L9Ln2IywQlTs58wgIxRlFiSvdD9gmMArOQTJ2F0DELSccsJB0LGFlWMVomFWW
+  mZ5TkJmbm6BoaGOgaGhrrGusaGVvqJVbpJuqlluomp+aVFCUCZfUSy4v1iitzk3NS9PJSSzYx
+  AgOaAQh2ME45lHiIUZKDSUmUt+/f7yghvqT8lMqMxOKM+KLSnNTiQ4wyHBxKErx/wv5GCQkWp
+  aanVqRl5gBjCyYtwcGjJMK7MBQozVtckJhbnJkOkTrFaMnxpq2nh5njyeVpQPLfzf29zEIsef
+  l5qVLivOzACBYSAGnIKM2DGweL/0uMslLCvIxABwrxFKQW5WaWoMq/YhTnYFQS5k0EuYonM68
+  EbusroIOYgA5iPPAb5KCSRISUVAPjtIb725dcZZpeK3T9XqzRzfyVf3VuCc561HH7hpCF9XG3
+  VV5zzRjZBGtMon9yvOk69EtovdwssabFsxQ6/8x4tCa7Uc7E/UHl1humTMu5s0+z7A84lKx2l
+  DslO83hqdv6A2WHXuop/xCZ+V8lp1foA2/OLBHZ+G6tBeFLZ6h07fp20+ml5OJJSizFGYmGWs
+  xFxYkAAmwe1foCAAA=
+X-Env-Sender: Example.Admin@example.gov.uk
+X-Msg-Ref: server-8.tower-228.example.com!1526552533!902909!1
+X-Originating-IP: [1.1.1.7]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received:
+X-StarScan-Version: 9.9.15; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 524 invoked from network); 17 May 2018 10:22:13 -0000
+Received: from gateway-201.example.gov.uk (HELO example.gov.uk) (1.1.1.8)
+  by server-8.tower-228.example.com with DHE-RSA-AES128-SHA encrypted SMTP; 17 May 2018 10:22:13 -0000
+X-IronPort-AV: E=Sophos;i="5.49,410,1520899200"; 
+   d="scan'208";a="1081238"
+Message-ID: <627e2fa58c5b481590f408869da20186@mail01.example.gov.uk>
+From: "Admin, Example"
+	<Example.Admin@example.gov.uk>
+To: "newsite@wifi.service.gov.uk" <newsite@wifi.service.gov.uk>
+Subject: New Site address here
+Thread-Topic: New Site address here
+ random second line of multi-line subject
+Thread-Index: AdPHR3B8Ot5rUVwlQb+zhVSQehJqQQEuNUvACHIVvFA=
+Date: Thu, 17 May 2018 10:22:12 +0000
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+
+MjEzLjQyLjQyLjQyClBvc3Rjb2RlOiBBQkMzIDIxRAoKCioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKgoKVGhpcyBlbWFpbCwgdG9nZXRoZXIgd2l0aCBhbnkgZmlsZXMgb3IgYXR0YWNobWVudHMgdHJhbnNtaXR0ZWQgd2l0aCBpdCwgaXMgaW50ZW5kZWQgc29sZWx5IGZvciB0aGUgYWRkcmVzc2VlLiAgSWYgeW91IGFyZSBub3QgdGhlIGludGVuZGVkIHJlY2lwaWVudCwgcGxlYXNlIGRlbGV0ZSB0aGUgZW1haWwgYW5kIG5vdGlmeSB0aGUgb3JpZ2luYXRvciBpbW1lZGlhdGVseS4gIFBsZWFzZSBub3RlIHRoYXQgYW55IHVuYXV0aG9yaXNlZCBjb3B5aW5nLCBkaXNjbG9zdXJlIG9yIG90aGVyIHByb2Nlc3Npbmcgb2YgdGhpcyBpbmZvcm1hdGlvbiBtYXkgYmUgdW5sYXdmdWwuICBVbmxlc3Mgb3RoZXJ3aXNlIHN0YXRlZCwgYW55IG9waW5pb25zIGV4cHJlc3NlZCBpbiB0aGlzIGVtYWlsIGFyZSB0aG9zZSBvZiB0aGUgb3JpZ2luYXRvciBhbmQgbm90IG5lY2Vzc2FyaWx5IG9mIEdsb3VjZXN0ZXJzaGlyZSBDb25zdGFidWxhcnkuICBBbHRob3VnaCB0aGUgc2VuZGVyIGhhcyB0YWtlbiBzdGVwcyB0byBwcm90ZWN0IHRoZSBtYXRlcmlhbCBzZW50LCB0aGVyZSBpcyBubyBndWFyYW50ZWUgdGhhdCB0aGUgY29tbXVuaWNhdGlvbiB3aWxsIGJlIHZpcnVzLWZyZWUuICBHbG91Y2VzdGVyc2hpcmUgQ29uc3RhYnVsYXJ5IHJlc2VydmVzIHRoZSByaWdodCB0byBtb25pdG9yIGFsbCBlbWFpbCBhY3Rpdml0eSBhbmQgY29udGVudCBpbiBhY2NvcmRhbmNlIHdpdGggY3VycmVudCBsZWdpc2xhdGlvbi4KCioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq

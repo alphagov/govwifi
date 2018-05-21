@@ -48,6 +48,7 @@ class TestConstants {
     const FIXTURE_EMAIL_SPONSOR_BASE64_H  = "tests/unit/fixtures/email-sponsor-base64-htmlonly.txt";
     const FIXTURE_EMAIL_NEW_SITE_IP       = "tests/unit/fixtures/email-newsite-extraip.txt";
     const FIXTURE_EMAIL_NEW_SITE_MULTI    = "tests/unit/fixtures/email-newsite-multipart.txt";
+    const FIXTURE_EMAIL_NEW_SITE_BASE64   = "tests/unit/fixtures/email-newsite-base64.txt";
     const TIMESTAMP_PLACEHOLDER           = "#TIMESTAMP#";
     const EMPTY_SNS_JSON                  = '{"data":"empty"}';
 

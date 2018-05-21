@@ -119,4 +119,12 @@ class EmailRequestTest extends PHPUnit_Framework_TestCase {
         );
     }
 
+    function testNewSiteBase64EncodedIpParsed() {
+        $body = file_get_contents(TestConstants::FIXTURE_EMAIL_NEW_SITE_BASE64) . "\n";
+        $this->emailRequest->setEmailBody($body);
+        self::assertEquals(
+            array(self::SINGLE_IP1),
+            $this->emailRequest->ipList()
+        );
+    }
 }
