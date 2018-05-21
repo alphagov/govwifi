@@ -192,8 +192,6 @@ class AAA {
      * storage.
      */
     public function accounting() {
-        error_log("Accounting JSON: " . $this->requestJson);
-
         $acct = json_decode($this->requestJson, true);
         $accountingType = $acct['Acct-Status-Type']['value'][0];
 
