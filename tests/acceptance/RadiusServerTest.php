@@ -28,6 +28,21 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @coversNothing Do not count acceptance tests in code coverage analysis.
+     */
+    public function testRadiusPEAPMsChapV2AuthenticationReject() {
+        $template = file_get_contents(self::PEAP_MSCHAP_V2_CONFIG_TEMPLATE);
+        $configuration = str_replace(
+            self::PASSWORD_PLACEHOLDER, 'somewrongpassword',
+            str_replace(
+                self::USERNAME_PLACEHOLDER, TestConstants::getInstance()->getAcceptanceTestUserName(), $template)
+        );
+        file_put_contents(self::CONFIG_FILE, $configuration);
+
+        $this->assertEquals('FAILURE', $this->runEAPOverLanTest());
+    }
+
+    /**
      * @coversNothing
      */
     public function testRadiusHealthCheckAuthentication() {
