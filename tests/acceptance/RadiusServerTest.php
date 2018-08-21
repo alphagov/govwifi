@@ -43,15 +43,6 @@ class RadiusServerTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
-     * @coversNothing
-     */
-    public function testRadiusHealthCheckUrl() {
-        @file_get_contents(TestConstants::REQUEST_PROTOCOL
-            . TestConstants::getInstance()->getFrontendContainer() . "/");
-        $this->assertEquals(TestConstants::HTTP_OK, $http_response_header[0]);
-    }
-
-    /**
      * @return string
      */
     private function runEAPOverLanTest()
